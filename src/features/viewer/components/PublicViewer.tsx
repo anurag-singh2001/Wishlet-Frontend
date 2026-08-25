@@ -7,7 +7,7 @@ import { TemplateRenderer } from "@/features/templates/components/TemplateRender
 import type { TemplateProps } from "@/features/templates/types";
 import { trackWishViewed } from "@/lib/analytics";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
 
 interface PublicViewerProps {
   slug: string;

@@ -5,7 +5,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

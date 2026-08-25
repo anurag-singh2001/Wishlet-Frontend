@@ -22,7 +22,7 @@ const INITIAL_STATE: BuilderState = {
   photos: [],
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
 
 const DEFAULT_TEMPLATES: ApiTemplate[] = [
   { id: "birthday-minimal", name: "Birthday Minimal", occasion: "birthday", description: "A clean, elegant birthday template." },
