@@ -13,6 +13,51 @@ interface CustomizationFormProps {
   generationError?: string;
 }
 
+function compressImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob | File> {
+  return new Promise((resolve) => {
+    if (file.size < 300 * 1024) {
+      return resolve(file);
+    }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxWidth || height > maxWidth) {
+        if (width > height) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxWidth) / height);
+          height = maxWidth;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return resolve(file);
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            resolve(file);
+          }
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
 export function CustomizationForm({
   state,
   updateState,
@@ -26,14 +71,14 @@ export function CustomizationForm({
   const [uploadError, setUploadError] = React.useState("");
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     setUploadError("");
 
     // Client-side format validation (JPEG, PNG, WebP)
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedMimeTypes.includes(file.type)) {
+    if (!allowedMimeTypes.includes(rawFile.type)) {
       setUploadError("Unsupported format. Please upload a JPEG, PNG, or WebP image.");
       if (e.target) e.target.value = "";
       return;
@@ -41,7 +86,7 @@ export function CustomizationForm({
 
     // Client-side size validation (10 MB maximum)
     const MAX_SIZE_BYTES = 10 * 1024 * 1024;
-    if (file.size > MAX_SIZE_BYTES) {
+    if (rawFile.size > MAX_SIZE_BYTES) {
       setUploadError("File size exceeds the 10 MB limit.");
       if (e.target) e.target.value = "";
       return;
@@ -50,6 +95,8 @@ export function CustomizationForm({
     setIsUploading(true);
 
     try {
+      // Compress raw camera photo to ~1200px / JPEG 85% for instant upload
+      const fileToUpload = await compressImage(rawFile);
       const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
       
       // Step A: Attempt direct Cloudinary signed upload
@@ -64,7 +111,7 @@ export function CustomizationForm({
         if (sigRes.ok) {
           const sigData = await sigRes.json();
           const cloudinaryFormData = new FormData();
-          cloudinaryFormData.append("file", file);
+          cloudinaryFormData.append("file", fileToUpload, rawFile.name);
           cloudinaryFormData.append("api_key", sigData.apiKey);
           cloudinaryFormData.append("timestamp", sigData.timestamp.toString());
           cloudinaryFormData.append("signature", sigData.signature);
@@ -88,7 +135,7 @@ export function CustomizationForm({
       // Step B: Fallback to server-assisted upload if direct upload did not complete
       if (!uploadedUrl) {
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", fileToUpload, rawFile.name);
 
         const res = await fetch(`${API_URL}/api/v1/uploads/image`, {
           method: "POST",
@@ -261,10 +308,10 @@ export function CustomizationForm({
         <button
           type="button"
           onClick={onGenerate}
-          disabled={!isValid || isGenerating}
+          disabled={!isValid || isGenerating || isUploading}
           className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
         >
-          {isGenerating ? "Generating..." : "Generate Wish Link ✨"}
+          {isGenerating ? "Generating..." : isUploading ? "Uploading Photo..." : "Generate Wish Link ✨"}
         </button>
       </div>
 
