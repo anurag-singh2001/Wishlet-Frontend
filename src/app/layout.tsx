@@ -23,8 +23,20 @@ const playfairDisplay = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
-  title: "Wishlet",
-  description: "Create personalized wishes for special occasions",
+  title: {
+    default: "Wishlet — Send an experience",
+    template: "%s | Wishlet",
+  },
+  description: "Create beautiful, personalized, animated web pages for special occasions. Ready in seconds, remembered forever.",
+  keywords: ["wishlet", "birthday wish", "anniversary", "personalized greeting", "digital card"],
+  openGraph: {
+    siteName: "Wishlet",
+    type: "website",
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.jpg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
