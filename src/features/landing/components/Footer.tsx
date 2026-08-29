@@ -19,7 +19,6 @@ export function Footer() {
         <div className="flex gap-6 text-sm">
           <Link href="/build" className="hover:text-white transition-colors">Create a Wish</Link>
           <a href="https://forms.gle/5zA5dNXDY2PexPHx9" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Feedback</a>
-          <a href="https://github.com/wishlet/wishlet" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
         </div>
       </div>
     </footer>
