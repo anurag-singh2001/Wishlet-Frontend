@@ -16,9 +16,16 @@ export function Footer() {
           &copy; {new Date().getFullYear()} Wishlet. Designed for moments that matter.
         </p>
         
-        <div className="flex gap-6 text-sm">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-sm items-center">
           <Link href="/build" className="hover:text-white transition-colors">Create a Wish</Link>
-          <a href="https://forms.gle/5zA5dNXDY2PexPHx9" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Feedback</a>
+          <a
+            href="https://forms.gle/5zA5dNXDY2PexPHx9"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white text-slate-400 transition-colors"
+          >
+            Have feedback? Tell us what you think →
+          </a>
         </div>
       </div>
     </footer>

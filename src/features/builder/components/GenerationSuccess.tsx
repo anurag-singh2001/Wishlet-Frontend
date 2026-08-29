@@ -117,6 +117,23 @@ export function GenerationSuccess({ url, senderName, onReset }: GenerationSucces
           <span>Create Another</span>
         </button>
       </div>
+
+      <div className="w-full max-w-sm mt-8 pt-6 border-t border-slate-100/80 text-center">
+        <p className="text-sm font-semibold text-slate-800 mb-0.5">
+          How was your experience?
+        </p>
+        <p className="text-xs text-slate-500 mb-2.5">
+          We&apos;d love to hear what you think.
+        </p>
+        <a
+          href="https://forms.gle/5zA5dNXDY2PexPHx9"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 hover:underline transition-colors"
+        >
+          Share feedback →
+        </a>
+      </div>
     </div>
   );
 }
