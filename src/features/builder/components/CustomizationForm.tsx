@@ -2,6 +2,8 @@
 
 import React from "react";
 import type { BuilderState, ApiTemplate } from "../types";
+import { usePhotoUpload } from "../hooks/use-photo-upload";
+import { PhotoUploadField } from "./PhotoUploadField";
 
 interface CustomizationFormProps {
   state: BuilderState;
@@ -13,51 +15,6 @@ interface CustomizationFormProps {
   generationError?: string;
 }
 
-function compressImage(file: File, maxWidth = 1200, quality = 0.85): Promise<Blob | File> {
-  return new Promise((resolve) => {
-    if (file.size < 300 * 1024) {
-      return resolve(file);
-    }
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      let { width, height } = img;
-      if (width > maxWidth || height > maxWidth) {
-        if (width > height) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        } else {
-          width = Math.round((width * maxWidth) / height);
-          height = maxWidth;
-        }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return resolve(file);
-      ctx.drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            resolve(file);
-          }
-        },
-        "image/jpeg",
-        quality
-      );
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      resolve(file);
-    };
-    img.src = url;
-  });
-}
-
 export function CustomizationForm({
   state,
   updateState,
@@ -67,123 +24,18 @@ export function CustomizationForm({
   isValid,
   generationError,
 }: CustomizationFormProps) {
-  const [isUploading, setIsUploading] = React.useState(false);
-  const [uploadError, setUploadError] = React.useState("");
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawFile = e.target.files?.[0];
-    if (!rawFile) return;
-
-    setUploadError("");
-
-    // Client-side format validation (JPEG, PNG, WebP)
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedMimeTypes.includes(rawFile.type)) {
-      setUploadError("Unsupported format. Please upload a JPEG, PNG, or WebP image.");
-      if (e.target) e.target.value = "";
-      return;
-    }
-
-    // Client-side size validation (10 MB maximum)
-    const MAX_SIZE_BYTES = 10 * 1024 * 1024;
-    if (rawFile.size > MAX_SIZE_BYTES) {
-      setUploadError("File size exceeds the 10 MB limit.");
-      if (e.target) e.target.value = "";
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      // Compress raw camera photo to ~1200px / JPEG 85% for instant upload
-      const fileToUpload = await compressImage(rawFile);
-      const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
-      
-      // Step A: Attempt direct Cloudinary signed upload
-      let uploadedUrl: string | null = null;
-      let photoPublicId: string | null = null;
-
-      try {
-        const sigRes = await fetch(`${API_URL}/api/v1/uploads/signature`, {
-          method: "POST",
-        });
-
-        if (sigRes.ok) {
-          const sigData = await sigRes.json();
-          const cloudinaryFormData = new FormData();
-          cloudinaryFormData.append("file", fileToUpload, rawFile.name);
-          cloudinaryFormData.append("api_key", sigData.apiKey);
-          cloudinaryFormData.append("timestamp", sigData.timestamp.toString());
-          cloudinaryFormData.append("signature", sigData.signature);
-          cloudinaryFormData.append("folder", sigData.folder);
-
-          const cloudRes = await fetch(sigData.uploadUrl, {
-            method: "POST",
-            body: cloudinaryFormData,
-          });
-
-          if (cloudRes.ok) {
-            const cloudData = await cloudRes.json();
-            uploadedUrl = cloudData.secure_url;
-            photoPublicId = cloudData.public_id;
-          }
-        }
-      } catch {
-        // Fallback to server-assisted upload if direct signature fails
-      }
-
-      // Step B: Fallback to server-assisted upload if direct upload did not complete
-      if (!uploadedUrl) {
-        const formData = new FormData();
-        formData.append("file", fileToUpload, rawFile.name);
-
-        const res = await fetch(`${API_URL}/api/v1/uploads/image`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || "Failed to upload image. Please try again.");
-        }
-
-        const data = await res.json();
-        uploadedUrl = data.url;
-        photoPublicId = data.publicId || null;
-      }
-
-      if (uploadedUrl) {
-        updateState({
-          photos: [uploadedUrl],
-          ...(photoPublicId ? { photoPublicId } : {}),
-        });
-      }
-    } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : "Network error uploading file. Please try again.";
-      setUploadError(errorMsg);
-      console.error("Upload error:", err);
-    } finally {
-      setIsUploading(false);
-      if (e.target) {
-        e.target.value = ""; // Reset input
-      }
-    }
-  };
-
-  const handleRemovePhoto = () => {
-    updateState({ photos: [] });
-    setUploadError("");
-  };
+  const { isUploading, uploadError, handleUpload, removePhoto } = usePhotoUpload(updateState);
 
   const occasions = ["birthday", "anniversary", "sorry", "thank-you", "congratulations"];
 
   return (
     <div className="w-full flex flex-col space-y-8 p-6 bg-white overflow-y-auto h-full scrollbar-hide">
-      
       {/* 1. Basics */}
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">1. Basics</h3>
-        
+        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          1. Basics
+        </h3>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1">
             <label className="text-sm font-semibold text-slate-700">Occasion</label>
@@ -224,8 +76,10 @@ export function CustomizationForm({
 
       {/* 2. Personalization */}
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">2. Personalize</h3>
-        
+        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          2. Personalize
+        </h3>
+
         <div className="flex flex-col space-y-1">
           <label className="text-sm font-semibold text-slate-700">To (Recipient)</label>
           <input
@@ -259,43 +113,13 @@ export function CustomizationForm({
           />
         </div>
 
-        <div className="flex flex-col space-y-1">
-          <label className="text-sm font-semibold text-slate-700">Add a photo (optional)</label>
-          <p className="text-xs text-slate-500 mb-1">
-            Your photo will be displayed in the Wishlet you create and can be viewed by anyone you share the link with.
-          </p>
-          <div className="flex items-center space-x-4">
-            <label className={`flex-shrink-0 cursor-pointer border px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isUploading ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'}`}>
-              {isUploading ? "Uploading..." : state.photos.length > 0 ? "Replace Photo" : "Choose Photo"}
-              <input 
-                type="file" 
-                accept="image/jpeg,image/png,image/webp" 
-                onChange={handlePhotoUpload} 
-                className="hidden" 
-                disabled={isUploading} 
-              />
-            </label>
-            
-            {state.photos.length > 0 && !isUploading && (
-              <button 
-                type="button"
-                onClick={handleRemovePhoto}
-                className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors"
-              >
-                Remove
-              </button>
-            )}
-
-            <span className="text-xs text-slate-500 truncate">
-              {isUploading 
-                ? "Uploading photo..." 
-                : state.photos.length > 0 
-                  ? "Photo uploaded successfully" 
-                  : "No file chosen"}
-            </span>
-          </div>
-          {uploadError && <p className="text-xs text-red-500 mt-1">{uploadError}</p>}
-        </div>
+        <PhotoUploadField
+          hasPhoto={state.photos.length > 0}
+          isUploading={isUploading}
+          error={uploadError}
+          onUpload={handleUpload}
+          onRemove={removePhoto}
+        />
       </div>
 
       <div className="pt-8 mt-auto">
@@ -311,10 +135,13 @@ export function CustomizationForm({
           disabled={!isValid || isGenerating || isUploading}
           className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
         >
-          {isGenerating ? "Generating..." : isUploading ? "Uploading Photo..." : "Generate Wish Link ✨"}
+          {isGenerating
+            ? "Generating..."
+            : isUploading
+              ? "Uploading Photo..."
+              : "Generate Wish Link ✨"}
         </button>
       </div>
-
     </div>
   );
 }

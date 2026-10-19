@@ -19,7 +19,7 @@ export function BuilderStepper({ currentStep }: BuilderStepperProps) {
     <div className="w-full py-3 px-2 sm:px-4">
       <div className="flex items-center justify-between max-w-xl mx-auto relative">
         <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-[2px] bg-slate-200 z-0"></div>
-        <div 
+        <div
           className="absolute left-4 top-1/2 -translate-y-1/2 h-[2px] bg-indigo-600 z-0 transition-all duration-300"
           style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 2rem)` }}
         ></div>
@@ -35,8 +35,8 @@ export function BuilderStepper({ currentStep }: BuilderStepperProps) {
                   isCompleted
                     ? "bg-indigo-600 text-white"
                     : isCurrent
-                    ? "bg-indigo-600 text-white ring-4 ring-indigo-100"
-                    : "bg-white text-slate-400 border-2 border-slate-200"
+                      ? "bg-indigo-600 text-white ring-4 ring-indigo-100"
+                      : "bg-white text-slate-400 border-2 border-slate-200"
                 }`}
               >
                 {isCompleted ? <Check size={14} strokeWidth={3} /> : step.id}
@@ -55,4 +55,3 @@ export function BuilderStepper({ currentStep }: BuilderStepperProps) {
     </div>
   );
 }
-

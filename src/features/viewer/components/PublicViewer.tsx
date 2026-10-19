@@ -7,40 +7,16 @@ import { TemplateRenderer } from "@/features/templates/components/TemplateRender
 import type { TemplateProps } from "@/features/templates/types";
 import { trackWishViewed } from "@/lib/analytics";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
+import { getWish } from "@/lib/api";
 
 interface PublicViewerProps {
   slug: string;
 }
 
-interface ApiWishResponse {
-  id: string;
-  slug: string;
-  templateId: string;
-  occasion: string;
-  content: {
-    recipientName?: string;
-    senderName?: string;
-    message?: string;
-    photos?: string[];
-    [key: string]: unknown;
-  };
-  createdAt: string;
-}
-
 export function PublicViewer({ slug }: PublicViewerProps) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["wish", slug],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/v1/wishes/${slug}`);
-      if (!res.ok) {
-        if (res.status === 404) {
-          throw new Error("NOT_FOUND");
-        }
-        throw new Error("API_ERROR");
-      }
-      return res.json() as Promise<ApiWishResponse>;
-    },
+    queryFn: () => getWish(slug),
     retry: false, // Don't retry on 404
   });
 
@@ -57,7 +33,9 @@ export function PublicViewer({ slug }: PublicViewerProps) {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 text-slate-500 font-sans">
         <div className="animate-pulse flex flex-col items-center">
-          <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 text-2xl">✨</div>
+          <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+            ✨
+          </div>
           <p className="font-medium text-slate-600">Unwrapping your wish...</p>
         </div>
       </div>

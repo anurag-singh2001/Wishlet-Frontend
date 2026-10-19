@@ -5,21 +5,20 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001").replace(/\/+$/, "");
+import { getWish } from "@/lib/api";
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
-  
+
   let title = "A special wish for you";
   const description = "Someone made something special for you.";
-  
+
   try {
-    const res = await fetch(`${API_URL}/api/v1/wishes/${slug}`, { next: { revalidate: 60 } });
-    if (res.ok) {
-      const data = await res.json();
+    {
+      const data = await getWish(slug, { next: { revalidate: 60 } });
       const occasion = data.occasion || "special";
       const recipientName = data.content?.recipientName || "you";
-      
+
       const occasionMap: Record<string, string> = {
         birthday: "🎂 A birthday wish for",
         anniversary: "💍 An anniversary wish for",
@@ -27,7 +26,7 @@ export async function generateMetadata({ params }: PageProps) {
         congratulations: "🎉 Congratulations to",
         sorry: "🤍 An apology for",
       };
-      
+
       const prefix = occasionMap[occasion] || "A special wish for";
       title = `${prefix} ${recipientName}`;
     }
@@ -49,7 +48,7 @@ export async function generateMetadata({ params }: PageProps) {
       card: "summary_large_image",
       title,
       description,
-    }
+    },
   };
 }
 

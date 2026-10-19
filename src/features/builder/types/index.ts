@@ -8,7 +8,6 @@ export interface BuilderState {
   photoPublicId?: string;
 }
 
-
 export interface ApiTemplate {
   id: string;
   name: string;

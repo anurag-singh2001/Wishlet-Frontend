@@ -74,6 +74,11 @@ export function trackWishShared(method: "native_share" | "whatsapp" | "copy_link
   });
 }
 
+/** Triggered when the owner deletes their Wishlet */
+export function trackWishDeleted() {
+  trackEvent("wish_deleted");
+}
+
 /** Triggered when a public /w/[slug] Wishlet is successfully loaded */
 export function trackWishViewed(params: { occasion: string; template: string }) {
   trackEvent("wish_viewed", {
@@ -81,4 +86,3 @@ export function trackWishViewed(params: { occasion: string; template: string }) 
     template: params.template,
   });
 }
-
