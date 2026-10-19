@@ -68,7 +68,9 @@ export function trackWishCreated(params: { occasion: string; template: string })
 }
 
 /** Triggered when the user initiates a share action */
-export function trackWishShared(method: "native_share" | "whatsapp" | "copy_link") {
+export function trackWishShared(
+  method: "native_share" | "whatsapp" | "copy_link" | "instagram_story",
+) {
   trackEvent("wish_shared", {
     method,
   });

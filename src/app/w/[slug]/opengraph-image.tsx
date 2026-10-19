@@ -10,6 +10,7 @@ export const size = {
 export const contentType = "image/png";
 
 import { getWish } from "@/lib/api";
+import { getOccasionTheme } from "@/features/viewer/lib/occasion-theme";
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -27,20 +28,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     console.error("Failed to fetch wish for OG image:", error);
   }
 
-  const themeMap: Record<string, { bg: string; text: string; icon: string; title: string }> = {
-    birthday: { bg: "#fff1f2", text: "#f43f5e", icon: "🎂", title: "Happy Birthday" },
-    anniversary: { bg: "#fdf2f8", text: "#db2777", icon: "💍", title: "Happy Anniversary" },
-    "thank-you": { bg: "#ecfdf5", text: "#10b981", icon: "🙏", title: "Thank You" },
-    congratulations: { bg: "#f0f9ff", text: "#0ea5e9", icon: "🎉", title: "Congratulations" },
-    sorry: { bg: "#f8fafc", text: "#64748b", icon: "🤍", title: "I'm Sorry" },
-  };
-
-  const theme = themeMap[occasion] || {
-    bg: "#f8fafc",
-    text: "#475569",
-    icon: "✨",
-    title: "A Special Wish",
-  };
+  const theme = getOccasionTheme(occasion);
 
   return new ImageResponse(
     <div

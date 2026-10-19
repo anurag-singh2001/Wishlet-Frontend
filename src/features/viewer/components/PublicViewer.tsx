@@ -8,6 +8,7 @@ import type { TemplateProps } from "@/features/templates/types";
 import { trackWishViewed } from "@/lib/analytics";
 
 import { getWish } from "@/lib/api";
+import { InstagramShareButton } from "./InstagramShareButton";
 
 interface PublicViewerProps {
   slug: string;
@@ -84,6 +85,13 @@ export function PublicViewer({ slug }: PublicViewerProps) {
   return (
     <div className="min-h-[100dvh] w-full">
       <TemplateRenderer templateId={data.templateId} props={templateProps} />
+      <div className="fixed bottom-4 right-4 z-50 w-64">
+        <InstagramShareButton
+          slug={slug}
+          label="Share this on your story"
+          className="w-full bg-white/90 backdrop-blur text-slate-700 text-xs font-semibold py-2 px-4 rounded-full shadow border border-slate-200"
+        />
+      </div>
     </div>
   );
 }
