@@ -50,7 +50,8 @@ export function AppIntro(): React.JSX.Element | null {
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    // Previews render the app in iframes; only the top-level window plays the intro.
+    if (!Capacitor.isNativePlatform() || window.self !== window.top) return;
     document.documentElement.classList.add("native-app");
     void setStatusBar("LIGHT");
     const skip = alreadyShown() || reduced === true;

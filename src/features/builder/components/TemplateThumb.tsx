@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
+import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 
-const W = 360;
-const H = 640;
-const SCALE = 0.41;
+const WIDTH = 150;
 
 interface TemplateThumbProps {
   templateId: string;
@@ -13,36 +11,23 @@ interface TemplateThumbProps {
   recipientName: string;
 }
 
-/** A non-interactive scaled live render of a template. */
+/** A non-interactive live render of a template (real phone viewport, scaled down). */
 export function TemplateThumb({
   templateId,
   occasion,
   recipientName,
 }: TemplateThumbProps): React.ReactElement {
   return (
-    <div className="relative h-[262px] overflow-hidden bg-ground" aria-hidden="true">
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 select-none overflow-hidden"
-        style={{
-          width: W,
-          height: H,
-          transform: `translateX(-50%) scale(${SCALE})`,
-          transformOrigin: "top center",
-        }}
-      >
-        <TemplateRenderer
-          templateId={templateId}
-          props={{
-            recipientName: recipientName.trim() || "Priya",
-            senderName: "You",
-            message: "You make every day brighter. Can't wait to celebrate!",
-            autoOpen: true,
-            occasion,
-            photos: [],
-            content: {},
-          }}
-        />
-      </div>
+    <div className="relative flex h-[262px] justify-center overflow-hidden bg-ground">
+      <TemplateFrame
+        templateId={templateId}
+        occasion={occasion}
+        recipientName={recipientName.trim() || "Priya"}
+        senderName="You"
+        message="You make every day brighter. Can't wait to celebrate!"
+        width={WIDTH}
+        title={`${templateId} preview`}
+      />
     </div>
   );
 }

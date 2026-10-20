@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
+import React, { useEffect, useRef, useState } from "react";
+import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 import type { BuilderState } from "../types";
 
 interface LivePreviewProps {
@@ -11,15 +11,21 @@ interface LivePreviewProps {
 }
 
 export function LivePreview({ state, fill = false }: LivePreviewProps): React.ReactElement {
-  const templateProps = {
-    recipientName: state.recipientName || "Priya",
-    senderName: state.senderName || "You",
-    message: state.message || "Your message will appear here.",
-    occasion: state.occasion,
-    photos: state.photos,
-    content: {},
-    autoOpen: true,
-  };
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const measure = (): void => {
+      // Fit the 390x844 viewport inside the available box.
+      setWidth(Math.floor(Math.min(el.clientWidth, (el.clientHeight * 390) / 844)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <div
@@ -27,14 +33,23 @@ export function LivePreview({ state, fill = false }: LivePreviewProps): React.Re
         fill ? "h-full" : "mx-auto h-[min(720px,calc(100dvh-8rem))] max-w-[360px]"
       }`}
     >
-      <div className="h-full w-full overflow-y-auto overflow-x-hidden scrollbar-hide">
-        {state.templateId ? (
-          <TemplateRenderer templateId={state.templateId} props={templateProps} />
-        ) : (
+      <div ref={boxRef} className="flex h-full w-full justify-center overflow-hidden">
+        {!state.templateId ? (
           <div className="flex h-full items-center justify-center p-8 text-center text-muted">
             Pick a design to see your live preview.
           </div>
-        )}
+        ) : width > 0 ? (
+          <TemplateFrame
+            templateId={state.templateId}
+            recipientName={state.recipientName || "Priya"}
+            senderName={state.senderName || "You"}
+            message={state.message || "Your message will appear here."}
+            occasion={state.occasion}
+            photo={state.photos[0]}
+            width={width}
+            title="Live preview of your wish"
+          />
+        ) : null}
       </div>
     </div>
   );

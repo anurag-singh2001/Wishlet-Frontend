@@ -2,12 +2,8 @@
 
 import React from "react";
 import { Logo } from "@/components/ui";
-import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
+import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 import { templateRegistry } from "@/features/templates/registry";
-
-const W = 360;
-const H = 640;
-const SCALE = 0.2667;
 
 interface WishThumbProps {
   templateId?: string;
@@ -31,23 +27,15 @@ export function WishThumb({
       aria-hidden="true"
     >
       {canRender && templateId ? (
-        <div
-          className="pointer-events-none absolute left-0 top-0 select-none overflow-hidden"
-          style={{ width: W, height: H, transform: `scale(${SCALE})`, transformOrigin: "top left" }}
-        >
-          <TemplateRenderer
-            templateId={templateId}
-            props={{
-              recipientName: recipientName ?? "",
-              senderName: "You",
-              message: "You make every day brighter.",
-              occasion: occasion ?? "birthday",
-              photos: [],
-              content: {},
-              autoOpen: true,
-            }}
-          />
-        </div>
+        <TemplateFrame
+          templateId={templateId}
+          recipientName={recipientName ?? ""}
+          senderName="You"
+          message="You make every day brighter."
+          occasion={occasion ?? "birthday"}
+          width={96}
+          title="Wish preview"
+        />
       ) : (
         <div className="flex h-full items-center justify-center">
           <Logo size={36} wordmark={false} />

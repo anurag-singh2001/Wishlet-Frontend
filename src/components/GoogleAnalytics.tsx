@@ -17,7 +17,7 @@ export function GoogleAnalytics() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!isAnalyticsEnabled()) return;
+    if (!isAnalyticsEnabled() || pathname === "/preview") return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
     trackPageView(url);
   }, [pathname, searchParams]);

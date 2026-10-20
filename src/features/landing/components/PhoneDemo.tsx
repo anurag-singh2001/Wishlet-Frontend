@@ -2,8 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
-import type { TemplateProps } from "@/features/templates/types";
+import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 
 interface Demo {
   id: string;
@@ -17,7 +16,7 @@ interface Demo {
 const DEMOS: Demo[] = [
   {
     id: "birthday-minimal",
-    label: "Birthday � Minimal",
+    label: "Birthday · Minimal",
     occasion: "birthday",
     recipientName: "Priya",
     senderName: "Rahul",
@@ -25,7 +24,7 @@ const DEMOS: Demo[] = [
   },
   {
     id: "anniversary-cinematic",
-    label: "Anniversary � Cinematic",
+    label: "Anniversary · Cinematic",
     occasion: "anniversary",
     recipientName: "Meera",
     senderName: "Arjun",
@@ -33,7 +32,7 @@ const DEMOS: Demo[] = [
   },
   {
     id: "congratulations-gold",
-    label: "Congratulations � Black & Gold",
+    label: "Congratulations · Black & Gold",
     occasion: "congratulations",
     recipientName: "Kabir",
     senderName: "Team",
@@ -41,7 +40,7 @@ const DEMOS: Demo[] = [
   },
   {
     id: "thank-you-botanical",
-    label: "Thank you � Botanical",
+    label: "Thank you · Botanical",
     occasion: "thank-you",
     recipientName: "Mom",
     senderName: "Ananya",
@@ -50,16 +49,18 @@ const DEMOS: Demo[] = [
 ];
 const INTERVAL_MS = 5000;
 
-function propsFor(d: Demo): TemplateProps {
-  return {
-    recipientName: d.recipientName,
-    senderName: d.senderName,
-    message: d.message,
-    occasion: d.occasion,
-    photos: [],
-    content: {},
-    autoOpen: true,
-  };
+function Slide({ demo, width }: { demo: Demo; width: number }): React.JSX.Element {
+  return (
+    <TemplateFrame
+      templateId={demo.id}
+      recipientName={demo.recipientName}
+      senderName={demo.senderName}
+      message={demo.message}
+      occasion={demo.occasion}
+      width={width}
+      title={demo.label}
+    />
+  );
 }
 
 export function PhoneDemo(): React.JSX.Element {
@@ -72,7 +73,17 @@ export function PhoneDemo(): React.JSX.Element {
     return () => clearInterval(t);
   }, [reduce]);
 
+  const [width, setWidth] = useState(220);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = (): void => setWidth(mq.matches ? 276 : 220);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const demo = DEMOS[index];
+  const next = DEMOS[(index + 1) % DEMOS.length];
 
   return (
     <div className="relative flex flex-col items-center gap-3">
@@ -84,9 +95,13 @@ export function PhoneDemo(): React.JSX.Element {
       <div
         role="img"
         aria-label={`Example wish: ${demo.label}`}
-        className="relative h-[470px] w-[240px] rounded-[38px] bg-ink p-[10px] shadow-[0_24px_48px_rgba(79,70,229,0.18)] [--s:0.533] md:h-[620px] md:w-[300px] md:rounded-[44px] md:p-3 md:shadow-[0_30px_60px_rgba(79,70,229,0.18)] md:[--s:0.692]"
+        className="relative h-[470px] w-[240px] rounded-[38px] bg-ink p-[10px] shadow-[0_24px_48px_rgba(79,70,229,0.18)] md:h-[620px] md:w-[300px] md:rounded-[44px] md:p-3 md:shadow-[0_30px_60px_rgba(79,70,229,0.18)]"
       >
         <div className="pointer-events-none relative h-full w-full select-none overflow-hidden rounded-[30px] bg-white md:rounded-[34px]">
+          {/* Preload the next slide underneath so the crossfade has no blank frame. */}
+          <div className="absolute inset-0 flex justify-center" aria-hidden="true">
+            <Slide demo={next} width={width} />
+          </div>
           <AnimatePresence initial={false}>
             <motion.div
               key={demo.id}
@@ -94,10 +109,9 @@ export function PhoneDemo(): React.JSX.Element {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.8 }}
-              className="absolute left-1/2 top-1/2 h-[844px] w-[390px] origin-center overflow-hidden"
-              style={{ transform: "translate(-50%, -50%) scale(var(--s))" }}
+              className="absolute inset-0 flex justify-center bg-white"
             >
-              <TemplateRenderer templateId={demo.id} props={propsFor(demo)} />
+              <Slide demo={demo} width={width} />
             </motion.div>
           </AnimatePresence>
         </div>

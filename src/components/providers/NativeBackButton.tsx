@@ -9,7 +9,7 @@ import { Capacitor } from "@capacitor/core";
  */
 export function NativeBackButton(): null {
   useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (!Capacitor.isNativePlatform() || window.self !== window.top) return;
     let cancelled = false;
     let remove: (() => void) | undefined;
     void import("@capacitor/app").then(async ({ App }) => {

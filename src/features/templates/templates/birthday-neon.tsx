@@ -86,7 +86,7 @@ export default function BirthdayNeonTemplate({
 
         <motion.div
           variants={item}
-          className="w-full rounded-2xl border border-[#b967ff66] bg-white/5 px-5 py-6 backdrop-blur-sm"
+          className="w-full rounded-2xl border border-[#b967ff66] bg-[#0b0718]/85 px-5 py-6 backdrop-blur-sm"
           style={{ boxShadow: "0 0 24px #b967ff33" }}
         >
           <p className="whitespace-pre-wrap break-words text-base leading-relaxed text-slate-100 sm:text-lg">
