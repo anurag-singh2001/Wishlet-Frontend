@@ -149,8 +149,8 @@ export default function CongratulationsGold({
               </p>
             </motion.div>
 
-            <motion.div variants={item} className="mt-14 invert">
-              <WishletBranding theme="neutral" />
+            <motion.div variants={item} className="mt-14">
+              <WishletBranding theme="gold" />
             </motion.div>
           </motion.div>
         )}

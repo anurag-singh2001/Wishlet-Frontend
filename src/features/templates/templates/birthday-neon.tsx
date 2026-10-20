@@ -101,7 +101,7 @@ export default function BirthdayNeonTemplate({
         </motion.p>
 
         <motion.div variants={item} className="mt-10">
-          <WishletBranding theme="sky" />
+          <WishletBranding theme="night" />
         </motion.div>
       </motion.div>
     </div>

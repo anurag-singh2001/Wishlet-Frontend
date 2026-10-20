@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-export type BrandingTheme = "rose" | "sky" | "emerald" | "slate" | "neutral";
+export type BrandingTheme = "rose" | "sky" | "emerald" | "slate" | "neutral" | "night" | "gold";
 
 interface WishletBrandingProps {
   /** Visual theme — should match the template's color palette */
@@ -10,12 +10,33 @@ interface WishletBrandingProps {
   className?: string;
 }
 
-const themeStyles: Record<BrandingTheme, { accent: string; cta: string }> = {
-  rose:    { accent: "text-rose-900",    cta: "text-rose-400 hover:text-rose-600" },
-  sky:     { accent: "text-sky-600",     cta: "text-sky-400 hover:text-sky-600" },
-  emerald: { accent: "text-emerald-700", cta: "text-emerald-400 hover:text-emerald-600" },
-  slate:   { accent: "text-slate-700",   cta: "text-slate-400 hover:text-slate-600" },
-  neutral: { accent: "text-slate-600",   cta: "text-slate-400 hover:text-slate-500" },
+const LIGHT_MUTED = "text-slate-500";
+
+// "night" and "gold" are for templates on dark backgrounds.
+const themeStyles: Record<BrandingTheme, { muted: string; accent: string; cta: string }> = {
+  rose: { muted: LIGHT_MUTED, accent: "text-rose-900", cta: "text-rose-400 hover:text-rose-600" },
+  sky: { muted: LIGHT_MUTED, accent: "text-sky-600", cta: "text-sky-400 hover:text-sky-600" },
+  emerald: {
+    muted: LIGHT_MUTED,
+    accent: "text-emerald-700",
+    cta: "text-emerald-400 hover:text-emerald-600",
+  },
+  slate: {
+    muted: LIGHT_MUTED,
+    accent: "text-slate-700",
+    cta: "text-slate-400 hover:text-slate-600",
+  },
+  neutral: {
+    muted: LIGHT_MUTED,
+    accent: "text-slate-600",
+    cta: "text-slate-400 hover:text-slate-500",
+  },
+  night: { muted: "text-slate-300", accent: "text-white", cta: "text-slate-300 hover:text-white" },
+  gold: {
+    muted: "text-amber-100/80",
+    accent: "text-amber-200",
+    cta: "text-amber-300 hover:text-amber-200",
+  },
 };
 
 /**
@@ -30,8 +51,10 @@ export function WishletBranding({ theme = "neutral", className = "" }: WishletBr
   const styles = themeStyles[theme];
 
   return (
-    <div className={`flex flex-col items-center gap-2 opacity-50 hover:opacity-80 transition-opacity duration-300 ${className}`}>
-      <p className="text-xs text-slate-500 font-medium tracking-wide">
+    <div
+      className={`flex flex-col items-center gap-2 opacity-50 hover:opacity-80 transition-opacity duration-300 ${className}`}
+    >
+      <p className={`text-xs ${styles.muted} font-medium tracking-wide`}>
         Made with ✨ <span className={`font-bold ${styles.accent}`}>Wishlet</span>
       </p>
       <Link

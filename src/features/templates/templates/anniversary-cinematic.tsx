@@ -121,7 +121,7 @@ export default function AnniversaryCinematic({
           <p className="break-words text-2xl italic text-amber-100">{senderName}</p>
         </motion.div>
         <motion.div {...fade(4.2)} className="mt-14">
-          <WishletBranding theme="neutral" className="invert" />
+          <WishletBranding theme="night" />
         </motion.div>
       </main>
 
