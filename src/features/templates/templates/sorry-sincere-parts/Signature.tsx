@@ -4,10 +4,12 @@ import { motion, useReducedMotion } from "framer-motion";
 interface SignatureProps {
   senderName: string;
   delay: number;
+  /** Compress the draw-in so it finishes in about a second. */
+  quick?: boolean;
 }
 
 /** "I'm sorry" in script, revealed left to right like ink being drawn. */
-export function Signature({ senderName, delay }: SignatureProps): React.JSX.Element {
+export function Signature({ senderName, delay, quick }: SignatureProps): React.JSX.Element {
   const reduced = useReducedMotion();
   return (
     <div className="flex w-full flex-col items-center">
@@ -16,7 +18,7 @@ export function Signature({ senderName, delay }: SignatureProps): React.JSX.Elem
         style={{ fontFamily: "var(--font-great-vibes), cursive" }}
         initial={reduced ? false : { clipPath: "inset(-10% 100% -10% 0)" }}
         animate={{ clipPath: "inset(-10% 0% -10% 0)" }}
-        transition={{ duration: 2.6, delay, ease: "easeInOut" }}
+        transition={{ duration: quick ? 0.8 : 2.6, delay, ease: "easeInOut" }}
       >
         I&apos;m sorry
       </motion.p>
@@ -28,7 +30,11 @@ export function Signature({ senderName, delay }: SignatureProps): React.JSX.Elem
           strokeLinecap="round"
           initial={reduced ? false : { pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ duration: 1.6, delay: delay + 2.2, ease: "easeInOut" }}
+          transition={{
+            duration: quick ? 0.5 : 1.6,
+            delay: delay + (quick ? 0.4 : 2.2),
+            ease: "easeInOut",
+          }}
         />
       </svg>
       {senderName && (
@@ -36,7 +42,7 @@ export function Signature({ senderName, delay }: SignatureProps): React.JSX.Elem
           className="mt-5 break-words text-sm uppercase tracking-[0.25em] text-[#6b7699]"
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, delay: delay + 3.4 }}
+          transition={{ duration: quick ? 0.5 : 1.4, delay: delay + (quick ? 0.6 : 3.4) }}
         >
           {senderName}
         </motion.p>

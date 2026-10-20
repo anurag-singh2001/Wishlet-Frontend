@@ -7,7 +7,7 @@ export function Breathing(): React.JSX.Element {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none absolute left-1/2 top-1/2 h-[120vw] max-h-[720px] w-[120vw] max-w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+      className="pointer-events-none absolute z-0 left-1/2 top-1/2 h-[120vw] max-h-[720px] w-[120vw] max-w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full"
       style={{
         background:
           "radial-gradient(circle, rgba(186,196,235,0.55) 0%, rgba(205,196,236,0.28) 42%, transparent 70%)",

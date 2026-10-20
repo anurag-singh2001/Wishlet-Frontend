@@ -9,6 +9,7 @@ import { Breathing } from "./sorry-sincere-parts/Breathing";
 import { Signature } from "./sorry-sincere-parts/Signature";
 
 const STEP = 1.1;
+const QUICK_STEP = 0.15;
 
 /** Split into lines: keep user line breaks, else break after sentences. */
 function toLines(message: string): string[] {
@@ -25,20 +26,23 @@ export default function SorrySincere({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
   const lines = toLines(message ?? "");
+  const step = autoOpen ? QUICK_STEP : STEP;
+  const base = autoOpen ? 0.3 : 1.4;
   const fade = (delay: number) => ({
     initial: reduced ? false : { opacity: 0, y: 8 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 1.4, delay, ease: "easeOut" as const },
+    transition: { duration: autoOpen ? 0.6 : 1.4, delay, ease: "easeOut" as const },
   });
 
   return (
     <div
-      className={`${playfair.variable} ${greatVibes.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-12 text-[#3b4560]`}
+      className={`${playfair.variable} ${greatVibes.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 pt-12 pb-28 text-[#3b4560]`}
       style={{
         fontFamily: "var(--font-playfair), serif",
         background: "linear-gradient(180deg, #eef1fa 0%, #e6e6f5 55%, #dfe3f3 100%)",
@@ -52,7 +56,7 @@ export default function SorrySincere({
         minSize={3}
         maxSize={8}
         speed="slow"
-        opacity={0.5}
+        opacity={0.3}
       />
       <AnimatePresence mode="wait">
         {!isOpen ? (
@@ -81,12 +85,15 @@ export default function SorrySincere({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.h1 {...fade(0.3)} className="mb-8 w-full break-words text-2xl sm:text-3xl">
+            <motion.h1
+              {...fade(autoOpen ? 0.1 : 0.3)}
+              className="mb-8 w-full break-words text-2xl sm:text-3xl"
+            >
               Dear <span className="font-semibold">{recipientName}</span>,
             </motion.h1>
             {photoUrl && (
               <motion.div
-                {...fade(0.8)}
+                {...fade(autoOpen ? 0.2 : 0.8)}
                 className="mb-8 w-48 overflow-hidden rounded-full border-4 border-white/70 shadow-lg shadow-indigo-200/50 sm:w-56"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -99,13 +106,20 @@ export default function SorrySincere({
             )}
             <div className="mb-10 w-full space-y-3 px-2 text-base leading-relaxed text-[#46517a] sm:text-lg">
               {lines.map((line, i) => (
-                <motion.p key={i} {...fade(1.4 + i * STEP)} className="break-words italic">
+                <motion.p key={i} {...fade(base + i * step)} className="break-words italic">
                   {line}
                 </motion.p>
               ))}
             </div>
-            <Signature senderName={senderName} delay={1.8 + lines.length * STEP} />
-            <motion.div {...fade(5.5 + lines.length * STEP)} className="mb-2 mt-14">
+            <Signature
+              quick={autoOpen}
+              senderName={senderName}
+              delay={base + 0.4 + lines.length * step}
+            />
+            <motion.div
+              {...fade((autoOpen ? 0.6 : 5.5) + lines.length * step)}
+              className="mb-2 mt-14"
+            >
               <WishletBranding theme="slate" />
             </motion.div>
           </motion.div>

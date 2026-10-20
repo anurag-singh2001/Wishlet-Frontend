@@ -24,9 +24,10 @@ export default function CongratulationsGold({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
 
   const container = {
@@ -40,19 +41,35 @@ export default function CongratulationsGold({
 
   return (
     <div
-      className={`${playfair.variable} ${playfair.className} relative min-h-[100dvh] overflow-hidden bg-[#0a0907] text-[#f3ead0] flex flex-col items-center justify-center px-6 py-14`}
+      className={`${playfair.variable} ${playfair.className} relative min-h-[100dvh] overflow-hidden bg-[#0a0907] text-[#f3ead0] flex flex-col items-center justify-center px-6 pt-14 pb-28`}
     >
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
         <motion.div
           animate={reduced ? {} : { rotate: 360 }}
           transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
-          className="opacity-30"
+          className="opacity-20"
         >
           <LightRays color="#d4af37" rays={14} size={900} className="max-w-none" />
         </motion.div>
       </div>
       <AmbientGlow color1="#3a2a08" color2="#1a1405" opacity={0.6} />
 
+      {isOpen && (
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          <ConfettiBurst count={60} colors={GOLDS} origin={{ x: 50, y: 25 }} trigger={isOpen} />
+          {!reduced && (
+            <FloatingParticles
+              count={12}
+              shape="circle"
+              colors={GOLDS}
+              minSize={3}
+              maxSize={8}
+              speed="slow"
+              opacity={0.35}
+            />
+          )}
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.button
@@ -84,21 +101,6 @@ export default function CongratulationsGold({
             animate="show"
             className="relative z-10 flex w-full max-w-xl flex-col items-center text-center"
           >
-            <div className="pointer-events-none absolute inset-0">
-              <ConfettiBurst count={60} colors={GOLDS} origin={{ x: 50, y: 25 }} trigger={isOpen} />
-            </div>
-            {!reduced && (
-              <FloatingParticles
-                count={16}
-                shape="circle"
-                colors={GOLDS}
-                minSize={3}
-                maxSize={8}
-                speed="slow"
-                opacity={0.6}
-              />
-            )}
-
             <motion.p
               variants={item}
               className="mb-4 text-xs uppercase tracking-[0.4em] text-[#d4af37]"

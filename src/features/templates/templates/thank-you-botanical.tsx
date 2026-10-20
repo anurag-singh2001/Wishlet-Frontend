@@ -29,12 +29,14 @@ export default function ThankYouBotanical({
 
   return (
     <div
-      className={`${caveat.variable} ${caveat.className} relative min-h-[100dvh] overflow-hidden bg-[#f6f3e8] text-[#3f5545] flex flex-col items-center justify-center px-8 py-16`}
+      className={`${caveat.variable} ${caveat.className} relative min-h-[100dvh] overflow-hidden bg-[#f6f3e8] text-[#3f5545] flex flex-col items-center justify-center px-8 pt-16 pb-28`}
     >
-      <Vine delay={0.2} />
-      <Vine flip delay={0.7} />
-      <Petal size={18} animate color="#f6d5c8" className="absolute top-24 right-16 rotate-12" />
-      <Petal size={14} animate color="#d9e4d2" className="absolute bottom-32 left-14 -rotate-45" />
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+        <Vine delay={0.2} />
+        <Vine flip delay={0.7} />
+        <Petal size={18} animate color="#f6d5c8" className="absolute top-24 right-4 rotate-12" />
+        <Petal size={14} animate color="#d9e4d2" className="absolute top-1/2 left-3 -rotate-45" />
+      </div>
 
       <main className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
         {photoUrl ? (

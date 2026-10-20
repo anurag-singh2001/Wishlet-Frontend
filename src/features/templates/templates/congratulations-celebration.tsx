@@ -16,9 +16,10 @@ export default function CongratulationsCelebration({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
 
   const container = {
@@ -32,9 +33,27 @@ export default function CongratulationsCelebration({
 
   return (
     <div
-      className={`${bricolage.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-violet-50 via-pink-50 to-amber-50 px-5 py-12 text-slate-800`}
+      className={`${bricolage.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-violet-50 via-pink-50 to-amber-50 px-5 pt-12 pb-28 text-slate-800`}
       style={{ fontFamily: "var(--font-bricolage), system-ui, sans-serif" }}
     >
+      {isOpen && (
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          <AmbientGlow color1="#f9a8d4" color2="#a5f3fc" opacity={0.45} />
+          <FloatingParticles
+            count={reduced ? 0 : 14}
+            shape="star"
+            colors={COLORS}
+            minSize={8}
+            maxSize={20}
+            opacity={0.7}
+          />
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <ConfettiBurst count={60} colors={COLORS} origin={{ x: 50, y: 30 }} spread={320} />
+            <ConfettiBurst count={30} colors={COLORS} origin={{ x: 15, y: 60 }} trigger="l" />
+            <ConfettiBurst count={30} colors={COLORS} origin={{ x: 85, y: 60 }} trigger="r" />
+          </div>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <Cover key="cover" onOpen={() => setIsOpen(true)} />
@@ -44,23 +63,8 @@ export default function CongratulationsCelebration({
             variants={container}
             initial="hidden"
             animate="show"
-            className="z-10 flex w-full max-w-2xl flex-col items-center text-center"
+            className="relative z-10 flex w-full max-w-2xl flex-col items-center text-center"
           >
-            <AmbientGlow color1="#f9a8d4" color2="#a5f3fc" opacity={0.45} />
-            <FloatingParticles
-              count={22}
-              shape="star"
-              colors={COLORS}
-              minSize={8}
-              maxSize={20}
-              opacity={0.7}
-            />
-            <div className="pointer-events-none absolute inset-0 z-20">
-              <ConfettiBurst count={60} colors={COLORS} origin={{ x: 50, y: 30 }} spread={320} />
-              <ConfettiBurst count={30} colors={COLORS} origin={{ x: 15, y: 60 }} trigger="l" />
-              <ConfettiBurst count={30} colors={COLORS} origin={{ x: 85, y: 60 }} trigger="r" />
-            </div>
-
             <motion.div variants={item} className="relative mb-4 flex items-center justify-center">
               <motion.div
                 animate={reduced ? {} : { rotate: 360 }}
