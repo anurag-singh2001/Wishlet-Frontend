@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import QRCode from "qrcode";
+import { Button, Sheet } from "@/components/ui";
 
 interface InstagramDesktopPanelProps {
   wishUrl: string;
@@ -21,20 +22,24 @@ export function InstagramDesktopPanel({
   }, [wishUrl]);
 
   return (
-    <div className="w-full rounded-xl border border-slate-200 bg-white p-4 text-center text-slate-700 shadow-lg">
-      <p className="text-sm font-medium mb-3">Instagram Stories can only be posted from a phone.</p>
-      {qr && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={qr} alt="QR code to open this wish on your phone" className="mx-auto w-44 h-44" />
-      )}
-      <p className="text-xs text-slate-500 mt-2">Scan to open this wish on your phone.</p>
-      <button
-        type="button"
-        onClick={onClose}
-        className="mt-3 text-xs font-medium text-slate-500 hover:text-slate-800"
-      >
-        Close
-      </button>
-    </div>
+    <Sheet open onClose={onClose} title="Post from your phone">
+      <div className="text-center">
+        <p className="mb-3 text-sm text-muted">
+          Instagram Stories can only be posted from a phone.
+        </p>
+        {qr && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={qr}
+            alt="QR code to open this wish on your phone"
+            className="mx-auto h-44 w-44"
+          />
+        )}
+        <p className="mb-4 mt-2 text-xs text-muted">Scan to open this wish on your phone.</p>
+        <Button variant="secondary" fullWidth onClick={onClose}>
+          Close
+        </Button>
+      </div>
+    </Sheet>
   );
 }

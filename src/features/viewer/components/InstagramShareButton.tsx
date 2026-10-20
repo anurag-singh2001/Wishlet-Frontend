@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Camera } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { trackWishShared } from "@/lib/analytics";
 import {
   canRenderStoryVideo,
@@ -19,6 +19,34 @@ interface InstagramShareButtonProps {
   className?: string;
   /** Render the animated story on mount (success screen). Otherwise the first tap starts it. */
   pregenerate?: boolean;
+  /** "custom" (default): only `className` styles it. "pill": dark pill. "tile": secondary tile. */
+  variant?: "custom" | "pill" | "tile";
+}
+
+const VARIANTS = {
+  custom: "",
+  pill: "min-h-11 rounded-full bg-ink px-5 text-sm font-semibold text-white shadow-lg",
+  tile: "min-h-11 w-full rounded-control border border-hairline bg-surface px-4 text-sm font-semibold text-ink",
+} as const;
+
+function StoryIcon(): React.ReactElement {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+    </svg>
+  );
 }
 
 /** Shares the animated story (PNG fallback); never the wish link. */
@@ -27,6 +55,7 @@ export function InstagramShareButton({
   label,
   className = "",
   pregenerate = false,
+  variant = "custom",
 }: InstagramShareButtonProps): React.ReactElement {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -95,12 +124,20 @@ export function InstagramShareButton({
         type="button"
         onClick={handleClick}
         disabled={busy || rendering}
-        className={`flex items-center justify-center space-x-2 disabled:opacity-60 ${className}`}
+        className={cn(
+          "flex items-center justify-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60",
+          VARIANTS[variant],
+          className,
+        )}
       >
-        <Camera size={18} />
-        <span>{text}</span>
+        <StoryIcon />
+        <span role={rendering ? "status" : undefined}>{text}</span>
       </button>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && (
+        <p role="status" className="text-xs text-danger">
+          {error}
+        </p>
+      )}
       {panelUrl && <InstagramDesktopPanel wishUrl={panelUrl} onClose={() => setPanelUrl("")} />}
     </div>
   );

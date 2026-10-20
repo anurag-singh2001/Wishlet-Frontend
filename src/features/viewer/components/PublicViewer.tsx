@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
 import type { TemplateProps } from "@/features/templates/types";
 import { trackWishViewed } from "@/lib/analytics";
@@ -10,9 +9,33 @@ import { trackWishViewed } from "@/lib/analytics";
 import { getWish, recordWishView } from "@/lib/api";
 import { listOwnedWishes } from "@/lib/wish-tokens";
 import { InstagramShareButton } from "./InstagramShareButton";
+import { ViewerError, ViewerLoading } from "./ViewerStates";
 
 interface PublicViewerProps {
   slug: string;
+}
+
+const AFTER_INTERACTION_MS = 2500;
+const FALLBACK_MS = 8000;
+
+/** Visible once the recipient interacted with the template (+2.5s), or after 8s regardless. */
+function useShareReveal(enabled: boolean): { visible: boolean; onInteract: () => void } {
+  const [visible, setVisible] = useState(false);
+  const [interacted, setInteracted] = useState(false);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const t = setTimeout(() => setVisible(true), FALLBACK_MS);
+    return () => clearTimeout(t);
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled || !interacted) return;
+    const t = setTimeout(() => setVisible(true), AFTER_INTERACTION_MS);
+    return () => clearTimeout(t);
+  }, [enabled, interacted]);
+
+  return { visible, onInteract: () => setInteracted(true) };
 }
 
 export function PublicViewer({ slug }: PublicViewerProps) {
@@ -21,6 +44,7 @@ export function PublicViewer({ slug }: PublicViewerProps) {
     queryFn: () => getWish(slug),
     retry: false, // Don't retry on 404
   });
+  const share = useShareReveal(Boolean(data));
 
   useEffect(() => {
     if (data) {
@@ -44,46 +68,8 @@ export function PublicViewer({ slug }: PublicViewerProps) {
     }
   }, [data, slug]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 text-slate-500 font-sans">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 text-2xl">
-            ✨
-          </div>
-          <p className="font-medium text-slate-600">Unwrapping your wish...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    const isNotFound = error.message === "NOT_FOUND";
-    return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-slate-50 text-slate-900 font-sans p-6 text-center">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 sm:p-12">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-            {isNotFound ? "👀" : "🔧"}
-          </div>
-          <h1 className="text-2xl font-bold mb-2">
-            {isNotFound ? "Wishlet Not Found" : "Something went wrong"}
-          </h1>
-          <p className="text-slate-600 mb-8">
-            {isNotFound
-              ? "This Wishlet could not be found. The link might be invalid or expired."
-              : "We couldn't load this wish due to an unexpected error. Please try again later."}
-          </p>
-          <Link
-            href="/"
-            className="inline-block bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-6 rounded-xl transition-colors"
-          >
-            Back to Wishlet
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
+  if (isLoading) return <ViewerLoading />;
+  if (error) return <ViewerError notFound={error.message === "NOT_FOUND"} />;
   if (!data) return null;
 
   // Map API response to TemplateProps
@@ -97,15 +83,19 @@ export function PublicViewer({ slug }: PublicViewerProps) {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full">
+    <div
+      className="min-h-[100dvh] w-full"
+      onPointerDownCapture={share.onInteract}
+      onKeyDownCapture={share.onInteract}
+    >
       <TemplateRenderer templateId={data.templateId} props={templateProps} />
-      <div className="fixed bottom-4 right-4 z-50 w-64">
-        <InstagramShareButton
-          slug={slug}
-          label="Share this on your story"
-          className="w-full bg-white/90 backdrop-blur text-slate-700 text-xs font-semibold py-2 px-4 rounded-full shadow border border-slate-200"
-        />
-      </div>
+      {share.visible && (
+        <div className="safe-bottom pointer-events-none fixed inset-x-0 bottom-4 z-50 flex animate-fade-in justify-center px-4">
+          <div className="pointer-events-auto">
+            <InstagramShareButton slug={slug} label="Share to your story" variant="pill" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
