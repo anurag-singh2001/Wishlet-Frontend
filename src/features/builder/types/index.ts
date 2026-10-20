@@ -15,4 +15,4 @@ export interface ApiTemplate {
   description: string;
 }
 
-export type BuilderStep = "edit" | "success";
+export type BuilderStep = 1 | 2 | 3;

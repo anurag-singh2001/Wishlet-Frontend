@@ -1,22 +1,18 @@
 import React, { Suspense } from "react";
 import { BuilderShell } from "@/features/builder/components/BuilderShell";
+import { Skeleton } from "@/components/ui";
 
 export const metadata = {
   title: "Create a Wish | Wishlet",
   description: "Create a personalized, beautiful occasion page in seconds.",
 };
 
-export default function BuildPage() {
+export default function BuildPage(): React.ReactElement {
   return (
     <main>
-      <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
-          <div className="animate-pulse text-slate-400">Loading builder...</div>
-        </div>
-      }>
+      <Suspense fallback={<Skeleton className="m-5 h-96" />}>
         <BuilderShell />
       </Suspense>
     </main>
   );
 }
-

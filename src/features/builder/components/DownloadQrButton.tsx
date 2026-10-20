@@ -8,9 +8,14 @@ import { isNative } from "@/lib/native/share-native";
 interface DownloadQrButtonProps {
   url: string;
   slug: string;
+  className?: string;
 }
 
-export function DownloadQrButton({ url, slug }: DownloadQrButtonProps): React.ReactElement {
+export function DownloadQrButton({
+  url,
+  slug,
+  className = "",
+}: DownloadQrButtonProps): React.ReactElement {
   const [error, setError] = useState(false);
 
   const handleDownload = async (): Promise<void> => {
@@ -35,15 +40,15 @@ export function DownloadQrButton({ url, slug }: DownloadQrButtonProps): React.Re
 
   return (
     <div className="flex flex-col gap-1">
-      <button
-        type="button"
-        onClick={handleDownload}
-        className="w-full flex items-center justify-center space-x-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-4 px-6 rounded-xl font-medium transition-colors"
-      >
-        <QrCode size={20} />
-        <span>Download QR</span>
+      <button type="button" onClick={handleDownload} className={className}>
+        <QrCode size={22} aria-hidden="true" />
+        QR code
       </button>
-      {error && <p className="text-xs text-red-600">Could not create the QR code. Try again.</p>}
+      {error && (
+        <p role="alert" className="text-center text-xs text-danger">
+          Could not create the QR code.
+        </p>
+      )}
     </div>
   );
 }
