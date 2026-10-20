@@ -13,15 +13,19 @@ export default function SorryRainToSun({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const reduced = useReducedMotion();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const sunny = isOpen || !!reduced;
 
   const container = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.35, delayChildren: 0.8 } },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: autoOpen ? 0.12 : 0.35, delayChildren: autoOpen ? 0.1 : 0.8 },
+    },
   };
   const item = {
     hidden: { opacity: 0, y: reduced ? 0 : 14 },
@@ -30,14 +34,14 @@ export default function SorryRainToSun({
 
   return (
     <div
-      className={`${playfair.className} min-h-[100dvh] relative overflow-hidden flex flex-col items-center justify-center py-12 px-6`}
+      className={`${playfair.className} min-h-[100dvh] relative overflow-hidden flex flex-col items-center justify-center pt-12 pb-28 px-6`}
     >
       <SkyBackdrop sunny={sunny} />
       <Rain visible={!sunny} />
-      {sunny && <AmbientGlow color1="#fef3c7" color2="#fdba74" opacity={0.6} />}
+      {sunny && <AmbientGlow color1="#fef3c7" color2="#fdba74" opacity={0.5} />}
       {sunny && (
         <motion.div
-          className="absolute -top-24 left-1/2 -translate-x-1/2 pointer-events-none"
+          className="absolute -top-24 left-1/2 z-0 -translate-x-1/2 pointer-events-none opacity-70"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 3, delay: 1 }}

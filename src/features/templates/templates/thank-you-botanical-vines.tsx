@@ -23,7 +23,7 @@ export function Vine({ flip, delay = 0 }: { flip?: boolean; delay?: number }): R
         };
   return (
     <div
-      className="absolute top-0 w-24 sm:w-32 pointer-events-none"
+      className="absolute top-0 z-0 w-20 sm:w-32 pointer-events-none"
       style={flip ? { right: 0, transform: "scaleX(-1)" } : { left: 0 }}
       aria-hidden="true"
     >
