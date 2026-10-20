@@ -2,16 +2,19 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Button, useToast } from "@/components/ui";
+import { useToast } from "@/components/ui";
 import { DeleteWishSheet } from "@/features/builder/components/DeleteWishSheet";
 import { useDeleteWish } from "@/features/builder/hooks/use-delete-wish";
 import { listOwnedWishes, type OwnedWish } from "@/lib/wish-tokens";
+import { OccasionChips } from "./OccasionChips";
 import { WishCard } from "./WishCard";
+import { WishesEmpty } from "./WishesEmpty";
+import { WishesSummary } from "./WishesSummary";
 
 interface MyWishesListProps {
   /** Show only the newest N wishes. */
   limit?: number;
-  /** Trimmed cards (no menu) for embedding, e.g. on the app home. */
+  /** Trimmed cards (no delete) for embedding, e.g. on the app home. */
   compact?: boolean;
 }
 
@@ -19,6 +22,7 @@ export function MyWishesList({ limit, compact = false }: MyWishesListProps): Rea
   const toast = useToast();
   const queryClient = useQueryClient();
   const [wishes, setWishes] = useState<OwnedWish[] | null>(null);
+  const [filter, setFilter] = useState("all");
   const [target, setTarget] = useState<OwnedWish | null>(null);
 
   useEffect(() => {
@@ -38,22 +42,20 @@ export function MyWishesList({ limit, compact = false }: MyWishesListProps): Rea
   });
 
   if (wishes === null) return <div aria-busy="true" className="min-h-24" />;
+  if (wishes.length === 0) return <WishesEmpty />;
 
-  if (wishes.length === 0) {
-    return (
-      <div className="flex flex-col items-center gap-3 rounded-card border border-hairline bg-surface p-8 text-center">
-        <h2 className="font-display text-[22px] font-extrabold text-ink">No wishes yet</h2>
-        <p className="text-[15px] text-[#4B4766]">Make your first one in under a minute.</p>
-        <Button href="/build">Create a wish</Button>
-      </div>
-    );
-  }
-
-  const visible = limit ? wishes.slice(0, limit) : wishes;
+  const full = !compact && !limit;
+  const occasions = Array.from(new Set(wishes.map((w) => w.occasion).filter(Boolean))) as string[];
+  const showChips = full && occasions.length > 1;
+  const filtered =
+    showChips && filter !== "all" ? wishes.filter((w) => w.occasion === filter) : wishes;
+  const visible = limit ? filtered.slice(0, limit) : filtered;
 
   return (
-    <>
-      <ul className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-4">
+      {full && <WishesSummary wishes={wishes} />}
+      {showChips && <OccasionChips occasions={occasions} value={filter} onChange={setFilter} />}
+      <ul className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((w) => (
           <WishCard key={w.slug} wish={w} compact={compact} onGone={drop} onMore={setTarget} />
         ))}
@@ -69,6 +71,6 @@ export function MyWishesList({ limit, compact = false }: MyWishesListProps): Rea
           clearError();
         }}
       />
-    </>
+    </div>
   );
 }
