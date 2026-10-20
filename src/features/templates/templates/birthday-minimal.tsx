@@ -1,142 +1,143 @@
-import React, { useState } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { Gift } from "lucide-react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
+import { AmbientGlow } from "../components/animations/AmbientGlow";
+import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
+import { KenBurnsPhoto } from "../components/animations/KenBurnsPhoto";
 import { WishletBranding } from "../components/WishletBranding";
+import { Heart, HandDrawnUnderline } from "../kit/decor";
+import { caveat, playfair } from "../kit/fonts";
+import { Envelope } from "./birthday-minimal-parts/Envelope";
+
+const CONFETTI = ["#f43f5e", "#fb923c", "#facc15", "#34d399", "#60a5fa", "#a78bfa"];
+const PARTICLES = ["#fda4af", "#fcd34d", "#c4b5fd"];
+const DISPLAY = { fontFamily: "var(--font-playfair), serif" };
 
 export default function BirthdayMinimalTemplate({
   recipientName,
   senderName,
   message,
   photos,
-}: TemplateProps) {
-  const hasPhoto = photos && photos.length > 0;
-  const photoUrl = hasPhoto ? photos[0] : null;
-  
+}: TemplateProps): React.JSX.Element {
+  const photoUrl = photos && photos.length > 0 ? photos[0] : null;
+  const reduce = useReducedMotion();
+  const [opening, setOpening] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  
-  const prefersReducedMotion = useReducedMotion();
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
+  useEffect(() => {
+    if (!opening) return;
+    const t = setTimeout(() => setIsOpen(true), reduce ? 0 : 1000);
+    return () => clearTimeout(t);
+  }, [opening, reduce]);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 20 },
+  const item = {
+    hidden: { opacity: 0, y: reduce ? 0 : 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 50, damping: 15 } },
   };
 
-  const photoVariants = prefersReducedMotion ? itemVariants : {
-    hidden: { opacity: 0, scale: 0.9, rotate: -4, y: 20 },
-    show: { opacity: 1, scale: 1, rotate: 1, y: 0, transition: { type: "spring" as const, stiffness: 40, damping: 12 } },
-  };
-
   return (
-    <div className="min-h-[100dvh] bg-[#fdfbf7] flex flex-col items-center justify-center py-12 px-6 font-sans relative overflow-hidden text-slate-800">
-      
+    <div
+      className={`${playfair.variable} ${caveat.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fdf8f0] px-6 py-12 font-sans text-slate-800`}
+    >
+      <AmbientGlow color1="#fecdd3" color2="#fde68a" opacity={0.5} />
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.div
             key="envelope"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="flex flex-col items-center justify-center text-center max-w-sm z-50 cursor-pointer group"
-            onClick={() => setIsOpen(true)}
-            role="button"
-            aria-label="Open your birthday wish"
+            exit={{ opacity: 0, scale: 1.08, filter: "blur(8px)" }}
+            transition={{ duration: 0.6 }}
+            className="z-10 flex w-full max-w-sm flex-col items-center text-center"
           >
-            <motion.div 
-              animate={prefersReducedMotion ? {} : { y: [0, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-full shadow-xl flex items-center justify-center mb-8 border border-rose-100 group-hover:shadow-rose-200/50 group-hover:scale-105 transition-all duration-300"
-            >
-              <Gift className="w-10 h-10 sm:w-12 sm:h-12 text-rose-400" strokeWidth={1.5} />
-            </motion.div>
-            <h2 className="text-2xl font-serif text-slate-700 mb-3 tracking-tight">A special wish for you</h2>
-            <p className="text-slate-500 font-sans font-semibold tracking-[0.2em] uppercase text-xs animate-pulse">
-              Tap to open
+            <Envelope opening={opening} onOpen={() => setOpening(true)} />
+            <h2 className="mt-8 text-2xl text-slate-700" style={DISPLAY}>
+              A special wish for you
+            </h2>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-rose-400">
+              Tap the seal to open
             </p>
           </motion.div>
         ) : (
           <motion.div
             key="card"
-            variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="max-w-xl w-full flex flex-col items-center text-center z-10"
+            variants={{ show: { transition: { staggerChildren: 0.18, delayChildren: 0.2 } } }}
+            className="relative z-10 flex w-full max-w-xl flex-col items-center text-center"
           >
-            {/* Background Confetti */}
-            {isOpen && (
-              <FloatingParticles 
-                count={35} 
-                colors={["#f43f5e", "#8b5cf6", "#10b981", "#f59e0b", "#3b82f6"]} 
-                shape="circle"
-                minSize={6}
-                maxSize={10}
-                opacity={0.8}
-              />
-            )}
+            <FloatingParticles
+              count={14}
+              colors={PARTICLES}
+              shape="circle"
+              minSize={5}
+              maxSize={9}
+              opacity={0.6}
+            />
+            <div className="pointer-events-none fixed inset-0 z-20">
+              <ConfettiBurst count={60} colors={CONFETTI} origin={{ x: 50, y: 30 }} spread={320} />
+            </div>
 
-            <motion.div variants={itemVariants} className="font-sans uppercase tracking-[0.25em] text-xs font-bold text-rose-400 mb-8 z-10">
-              Happy Birthday
-            </motion.div>
-
-            <motion.h1
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-slate-800 mb-8 sm:mb-10 leading-tight z-10 px-4 break-words max-w-full w-full"
+            <motion.p
+              variants={item}
+              className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-rose-400"
             >
-              To <span className="text-rose-500 italic font-serif break-words">{recipientName}</span>
+              Happy Birthday
+            </motion.p>
+            <motion.h1
+              variants={item}
+              className="w-full max-w-full break-words px-2 text-5xl italic leading-tight text-rose-500 sm:text-6xl"
+              style={DISPLAY}
+            >
+              {recipientName}
             </motion.h1>
+            <motion.div variants={item} className="mb-8 mt-1">
+              <HandDrawnUnderline size={180} color="#fda4af" strokeWidth={3} />
+            </motion.div>
 
             {photoUrl && (
               <motion.div
-                variants={photoVariants}
-                whileHover={prefersReducedMotion ? {} : { scale: 1.02, rotate: 0 }}
-                className="w-full max-w-sm mx-auto mb-10 sm:mb-12 bg-white p-3 sm:p-4 pb-10 sm:pb-12 rounded-sm shadow-xl z-10 border border-slate-100"
+                variants={item}
+                className="mb-10 w-full max-w-xs -rotate-2 rounded-sm border border-amber-100 bg-white p-3 pb-10 shadow-xl"
               >
-                <div className="w-full aspect-square overflow-hidden bg-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photoUrl} alt="A special memory" className="w-full h-full object-cover" />
-                </div>
+                <KenBurnsPhoto
+                  src={photoUrl}
+                  alt="A special memory"
+                  className="aspect-square w-full bg-slate-100"
+                />
               </motion.div>
             )}
 
-            <motion.div 
-              variants={itemVariants}
-              className="relative z-10 w-full px-4 sm:px-8 md:px-12"
+            {!photoUrl && (
+              <motion.div variants={item} className="mb-6">
+                <Heart size={36} />
+              </motion.div>
+            )}
+
+            <motion.p
+              variants={item}
+              className="w-full max-w-full whitespace-pre-wrap break-words px-4 text-base leading-relaxed text-slate-600 sm:text-lg"
             >
-              <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed font-sans font-normal whitespace-pre-wrap break-words max-w-full">
-                {message}
+              {message}
+            </motion.p>
+
+            <motion.div variants={item} className="mt-10">
+              <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
+                With love,
+              </p>
+              <p
+                className="break-words text-4xl text-rose-700"
+                style={{ fontFamily: "var(--font-caveat), cursive" }}
+              >
+                {senderName}
               </p>
             </motion.div>
 
-            <motion.div
-              variants={itemVariants}
-              className="mt-8 sm:mt-12 text-slate-800 z-10"
-            >
-              <p className="text-xs text-slate-400 font-sans uppercase tracking-[0.2em] mb-2 font-medium">With love,</p>
-              <p className="text-xl sm:text-2xl font-serif italic text-rose-800 break-words">{senderName}</p>
-            </motion.div>
-
-
-            <motion.div
-              variants={itemVariants}
-              className="mt-16 sm:mt-20 mb-8 z-10"
-            >
+            <motion.div variants={item} className="mb-4 mt-16">
               <WishletBranding theme="rose" />
             </motion.div>
-            
           </motion.div>
         )}
       </AnimatePresence>
