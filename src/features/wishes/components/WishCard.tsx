@@ -2,11 +2,12 @@
 
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { MoreHorizontal } from "lucide-react";
-import { Badge, Button, Card, useToast } from "@/components/ui";
+import { Eye, Trash2 } from "lucide-react";
+import { Button, Card, useToast } from "@/components/ui";
 import { getWishStats } from "@/lib/api";
 import { removeWishToken, type OwnedWish } from "@/lib/wish-tokens";
-import { occasionLabel, OCCASIONS, templateName } from "@/features/builder/lib/occasions";
+import { occasionLabel, OCCASIONS } from "@/features/builder/lib/occasions";
+import { WishThumb } from "./WishThumb";
 
 interface WishCardProps {
   wish: OwnedWish;
@@ -46,13 +47,10 @@ export function WishCard({
 
   const name = wish.recipientName || "";
   const tint = OCCASIONS.find((o) => o.id === wish.occasion)?.tint ?? "#EEF0FF";
-  const meta = [
-    occasionLabel(wish.occasion),
-    templateName(wish.templateId),
-    formatDate(wish.createdAt || data?.createdAt),
-  ]
+  const meta = [occasionLabel(wish.occasion), formatDate(wish.createdAt || data?.createdAt)]
     .filter(Boolean)
     .join(" · ");
+  const opens = data?.viewCount;
 
   const handleShare = async (): Promise<void> => {
     const url = `${window.location.origin}/w/${slug}`;
@@ -69,45 +67,47 @@ export function WishCard({
   };
 
   return (
-    <Card as="li" className="flex flex-col gap-3 p-4">
-      <div className="flex items-center gap-3">
-        <span
-          className="h-11 w-11 flex-none rounded-xl"
-          style={{ background: tint }}
-          aria-hidden="true"
-        />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <strong className="truncate text-[17px] text-ink">
-            {name ? `For ${name}` : "Your wish"}
-          </strong>
-          {meta && <span className="truncate text-[13px] text-[#4B4766]">{meta}</span>}
-        </div>
-        {data && (
-          <Badge tone={data.viewCount > 0 ? "brand" : "neutral"}>
-            {data.viewCount > 0
-              ? `${data.viewCount} ${data.viewCount === 1 ? "view" : "views"}`
-              : "Not opened"}
-          </Badge>
-        )}
-      </div>
-      <div className="flex gap-2">
-        <Button size="sm" className="flex-1" onClick={() => void handleShare()}>
-          Share
-        </Button>
-        <Button size="sm" variant="secondary" className="flex-1" href={`/w/${slug}`}>
-          Open
-        </Button>
-        {!compact && (
-          <Button
-            size="sm"
-            variant="secondary"
-            aria-label={`More actions for ${name ? `${name}'s` : "this"} wish`}
-            className="w-11 !px-0"
-            onClick={() => onMore(wish)}
+    <Card as="li" className="flex gap-4 p-3.5 sm:flex-col sm:items-center sm:p-4">
+      <WishThumb
+        templateId={wish.templateId}
+        recipientName={name}
+        occasion={wish.occasion}
+        tint={tint}
+      />
+      <div className="flex min-w-0 flex-1 flex-col gap-1 self-stretch sm:w-full sm:flex-none">
+        <strong className="truncate font-display text-[18px] text-ink">
+          {name ? `For ${name}` : "Your wish"}
+        </strong>
+        {meta && <span className="truncate text-[13px] text-[#4B4766]">{meta}</span>}
+        {opens !== undefined && (
+          <span
+            className={`flex items-center gap-1.5 text-[13px] font-bold ${
+              opens > 0 ? "text-brand-deep" : "text-[#4B4766]"
+            }`}
           >
-            <MoreHorizontal size={18} aria-hidden="true" />
-          </Button>
+            <Eye size={15} aria-hidden="true" />
+            {opens > 0 ? `Opened ${opens} ${opens === 1 ? "time" : "times"}` : "Not opened yet"}
+          </span>
         )}
+        <div className="mt-auto flex gap-2 pt-2">
+          <Button size="sm" className="flex-1" onClick={() => void handleShare()}>
+            Share
+          </Button>
+          <Button size="sm" variant="secondary" className="flex-1" href={`/w/${slug}`}>
+            Open
+          </Button>
+          {!compact && (
+            <Button
+              size="sm"
+              variant="secondary"
+              aria-label={`Delete ${name ? `${name}'s` : "this"} wish`}
+              className="w-11 !px-0"
+              onClick={() => onMore(wish)}
+            >
+              <Trash2 size={18} aria-hidden="true" />
+            </Button>
+          )}
+        </div>
       </div>
     </Card>
   );
