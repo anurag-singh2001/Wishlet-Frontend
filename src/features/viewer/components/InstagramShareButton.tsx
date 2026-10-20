@@ -34,7 +34,6 @@ export function InstagramShareButton({
   const [videoOk, setVideoOk] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [videoReady, setVideoReady] = useState(false);
-  const [onPhone, setOnPhone] = useState(false);
 
   const startRender = useCallback(async (): Promise<void> => {
     setProgress(0);
@@ -48,9 +47,7 @@ export function InstagramShareButton({
     prepareStoryFile(slug).catch(() => {});
     let cancelled = false;
     canRenderStoryVideo().then((ok) => {
-      if (cancelled) return;
-      setOnPhone(true);
-      if (!ok) return;
+      if (cancelled || !ok) return;
       setVideoOk(true);
       if (pregenerate) void startRender();
     });
@@ -72,9 +69,6 @@ export function InstagramShareButton({
       await startRender();
       return;
     }
-    // A story video can't hold a tappable link, so copy one for Instagram's Link sticker.
-    // Called before any await so the clipboard still counts as part of the tap.
-    navigator.clipboard?.writeText(`${window.location.origin}/?ref=story`).catch(() => {});
     setBusy(true);
     try {
       await shareToInstagramStory(slug);
@@ -107,11 +101,6 @@ export function InstagramShareButton({
         <span>{text}</span>
       </button>
       {error && <p className="text-xs text-red-500">{error}</p>}
-      {onPhone && !error && (
-        <p className="text-[11px] text-center text-slate-400">
-          We copy your Wishlet link. In Instagram tap the sticker icon → Link → paste.
-        </p>
-      )}
       {panelUrl && <InstagramDesktopPanel wishUrl={panelUrl} onClose={() => setPanelUrl("")} />}
     </div>
   );

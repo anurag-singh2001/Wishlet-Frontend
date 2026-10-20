@@ -48,7 +48,6 @@ export async function renderStoryVideo(
     kind,
     particles: createParticles(kind),
     font,
-    host: window.location.host,
     icon,
   };
 
