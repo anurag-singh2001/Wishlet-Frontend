@@ -1,4 +1,4 @@
-import { drawEndCard, drawWatermark } from "./branding";
+import { drawEndCard, drawWatermark, type EndCardBrand } from "./branding";
 import {
   DURATION_S,
   END_CARD_START_S,
@@ -10,15 +10,13 @@ import {
 } from "./config";
 import { drawParticles, type ParticleKind } from "./particles";
 
-export interface FrameScene {
+export interface FrameScene extends EndCardBrand {
   ctx: CanvasRenderingContext2D;
   width: number;
   height: number;
   stages: ImageBitmap[];
   kind: ParticleKind;
   particles: Parameters<typeof drawParticles>[2];
-  font: string;
-  host: string;
 }
 
 /** Draws the frame at time `t` seconds. */
@@ -46,7 +44,9 @@ export function drawFrame(s: FrameScene, t: number): void {
 
   ctx.globalAlpha = ramp(t, 0, FADE_IN_S);
   drawParticles(ctx, s.kind, s.particles, t, w, h);
-  drawEndCard(ctx, w, h, s.font, s.host, ramp(t, END_CARD_START_S, CROSSFADE_S));
-  drawWatermark(ctx, w, s.font, ramp(t, 0, FADE_IN_S));
+  const end = ramp(t, END_CARD_START_S, CROSSFADE_S);
+  drawEndCard(ctx, w, h, s, end);
+  // The end card carries the full branding, so the corner mark fades out under it.
+  drawWatermark(ctx, w, s.font, ramp(t, 0, FADE_IN_S) * (1 - end));
   ctx.globalAlpha = 1;
 }

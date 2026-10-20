@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { NativeBackButton } from "@/components/providers/NativeBackButton";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const geistSans = Geist({
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GoogleAnalytics />
         </Suspense>
         <QueryProvider>{children}</QueryProvider>
+        <NativeBackButton />
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { ArrayBufferTarget, Muxer } from "mp4-muxer";
-import { loadBrandFont } from "./branding";
+import { loadBrandFont, loadBrandIcon } from "./branding";
 import { FPS, KEYFRAME_EVERY, STAGE_COUNT, TOTAL_FRAMES } from "./config";
 import { drawFrame, type FrameScene } from "./draw-frame";
 import { canRenderStoryVideo, findEncoderConfig } from "./encoder-config";
@@ -27,7 +27,11 @@ export async function renderStoryVideo(
   const config = await findEncoderConfig();
   if (!config) throw new Error("Video encoding is not supported");
   const { width, height } = config;
-  const [{ stages, occasion }, font] = await Promise.all([fetchStages(slug), loadBrandFont()]);
+  const [{ stages, occasion }, font, icon] = await Promise.all([
+    fetchStages(slug),
+    loadBrandFont(),
+    loadBrandIcon(),
+  ]);
   onProgress(0.03);
 
   const canvas = document.createElement("canvas");
@@ -45,6 +49,7 @@ export async function renderStoryVideo(
     particles: createParticles(kind),
     font,
     host: window.location.host,
+    icon,
   };
 
   const muxer = new Muxer({
