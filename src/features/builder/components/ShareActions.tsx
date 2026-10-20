@@ -85,7 +85,13 @@ export function ShareActions({
         </a>
       )}
       <div className="grid grid-cols-3 gap-2.5">
-        <InstagramShareButton slug={slug} pregenerate label="Post to story" className={TILE} />
+        <InstagramShareButton
+          slug={slug}
+          pregenerate
+          variant="tile"
+          label="Post to story"
+          className={TILE}
+        />
         <button type="button" onClick={handleCopy} className={TILE}>
           <Copy size={22} aria-hidden="true" />
           Copy link
