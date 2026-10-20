@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
   appName: "Wishlet",
   webDir: "mobile-shell",
   server: {
-    // Set CAP_SERVER_URL to the production site URL before `npx cap sync android`.
-    url: process.env.CAP_SERVER_URL ?? "https://wishlet.vercel.app",
+    // The live frontend. Single source of truth for the app; change it here and push to rebuild the APK.
+    url: "https://wishlet-frontend.vercel.app",
   },
   android: { allowMixedContent: false, appendUserAgent: "WishletApp" },
 };

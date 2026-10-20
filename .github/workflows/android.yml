@@ -20,7 +20,6 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     env:
-      CAP_SERVER_URL: ${{ vars.CAP_SERVER_URL }}
       GH_TOKEN: ${{ github.token }}
       APK_NAME: wishlet-1.0.${{ github.run_number }}.apk
     steps:
@@ -38,13 +37,6 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: gradle
-
-      - name: Check CAP_SERVER_URL
-        run: |
-          if [ -z "$CAP_SERVER_URL" ] || [ "$CAP_SERVER_URL" = "https://YOUR-PRODUCTION-URL" ]; then
-            echo "::error::Set the repository variable CAP_SERVER_URL (Settings > Secrets and variables > Actions > Variables) to the production site URL."
-            exit 1
-          fi
 
       - run: npx cap sync android
 
