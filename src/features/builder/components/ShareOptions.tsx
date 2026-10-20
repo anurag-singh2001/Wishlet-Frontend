@@ -98,6 +98,7 @@ export function ShareOptions({ url, slug, senderName }: ShareOptionsProps): Reac
         </p>
         <InstagramShareButton
           slug={slug}
+          pregenerate
           label="Share on Instagram Story"
           className="w-full bg-gradient-to-r from-fuchsia-600 to-orange-500 text-white py-4 px-6 rounded-xl font-semibold shadow-md"
         />

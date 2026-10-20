@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { canRenderStoryVideo, renderStoryVideo } from "./story-video";
 
 export type ShareTarget = "native" | "phone" | "desktop";
 
@@ -32,6 +33,48 @@ export function prepareStoryFile(slug: string): Promise<File> {
   return file;
 }
 
+interface VideoJob {
+  promise: Promise<File | null>;
+  listeners: Set<(fraction: number) => void>;
+  last: number;
+}
+
+const storyVideos = new Map<string, VideoJob>();
+
+/** True when this browser can encode the animated story video. */
+export { canRenderStoryVideo };
+
+/**
+ * Renders the animated story MP4 once per slug and reuses it. Resolves to null when the
+ * browser can't encode it or encoding fails, so callers fall back to the PNG.
+ */
+export function prepareStoryVideo(
+  slug: string,
+  onProgress: (fraction: number) => void = () => {},
+): Promise<File | null> {
+  let job = storyVideos.get(slug);
+  if (!job) {
+    const created: VideoJob = { promise: Promise.resolve(null), listeners: new Set(), last: 0 };
+    created.promise = (async () => {
+      try {
+        if (!(await canRenderStoryVideo())) return null;
+        const blob = await renderStoryVideo(slug, (f) => {
+          created.last = f;
+          created.listeners.forEach((l) => l(f));
+        });
+        return new File([blob], "wishlet-story.mp4", { type: "video/mp4" });
+      } catch {
+        return null;
+      }
+    })();
+    storyVideos.set(slug, created);
+    job = created;
+  }
+  job.listeners.add(onProgress);
+  onProgress(job.last);
+  return job.promise;
+}
+
 /** The image wasn't ready in time, so the browser blocked the share; a second tap works. */
 export class ShareNeedsRetryError extends Error {}
 
@@ -50,14 +93,15 @@ async function shareNative(slug: string): Promise<void> {
     import("@capacitor/filesystem"),
     import("@/lib/native/instagram-stories"),
   ]);
-  const file = await prepareStoryFile(slug);
+  const video = await prepareStoryVideo(slug);
+  const file = video ?? (await prepareStoryFile(slug));
   const { uri } = await Filesystem.writeFile({
-    path: "wishlet-story.png",
+    path: file.name,
     data: await blobToBase64(file),
     directory: Directory.Cache,
   });
   try {
-    await InstagramStories.shareToStory({ filePath: uri });
+    await InstagramStories.shareToStory({ filePath: uri, mimeType: file.type });
   } catch {
     const { Share } = await import("@capacitor/share");
     await Share.share({ files: [uri] });
@@ -65,11 +109,16 @@ async function shareNative(slug: string): Promise<void> {
 }
 
 async function shareFile(slug: string): Promise<void> {
+  const video = await prepareStoryVideo(slug);
+  if (video && navigator.canShare?.({ files: [video] })) {
+    await navigator.share({ files: [video] });
+    return;
+  }
   const file = await prepareStoryFile(slug);
   await navigator.share({ files: [file] });
 }
 
-/** Shares the story image only (never the wish link). Cancel is silent. */
+/** Shares the animated story (or the PNG fallback), never the wish link. Cancel is silent. */
 export async function shareToInstagramStory(slug: string): Promise<void> {
   try {
     if (getShareTarget() === "native") {

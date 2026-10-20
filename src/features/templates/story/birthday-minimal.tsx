@@ -1,5 +1,6 @@
 import React from "react";
 import { PLAYFAIR, CAVEAT } from "./fonts";
+import { stage } from "./reveal";
 import type { StoryCardProps } from "./types";
 
 const DOTS = [
@@ -17,6 +18,7 @@ export function BirthdayMinimalStory({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryCardProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -62,6 +64,7 @@ export function BirthdayMinimalStory({
           fontSize: 70,
           color: "#fecdd3",
           marginBottom: 40,
+          ...stage(reveal, 1),
         }}
       >
         ♥
@@ -75,6 +78,7 @@ export function BirthdayMinimalStory({
           textTransform: "uppercase",
           fontWeight: 700,
           marginBottom: 30,
+          ...stage(reveal, 1),
         }}
       >
         Happy Birthday
@@ -88,6 +92,7 @@ export function BirthdayMinimalStory({
           textAlign: "center",
           justifyContent: "center",
           marginBottom: 20,
+          ...stage(reveal, 2),
         }}
       >
         {recipientName}
@@ -122,6 +127,7 @@ export function BirthdayMinimalStory({
             color: "#475569",
             textAlign: "center",
             justifyContent: "center",
+            ...stage(reveal, 3),
           }}
         >
           {text}
@@ -135,6 +141,7 @@ export function BirthdayMinimalStory({
             color: "#be123c",
             fontFamily: CAVEAT,
             marginTop: 50,
+            ...stage(reveal, 4),
           }}
         >
           With love, {senderName}

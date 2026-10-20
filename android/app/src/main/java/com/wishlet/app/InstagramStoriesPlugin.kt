@@ -27,7 +27,7 @@ class InstagramStoriesPlugin : Plugin() {
 
             val intent = Intent("com.instagram.share.ADD_TO_STORY").apply {
                 putExtra("source_application", context.getString(R.string.facebook_app_id))
-                setDataAndType(uri, "image/png")
+                setDataAndType(uri, call.getString("mimeType") ?: "image/png")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 call.getString("topColor")?.let { putExtra("top_background_color", it) }
                 call.getString("bottomColor")?.let { putExtra("bottom_background_color", it) }

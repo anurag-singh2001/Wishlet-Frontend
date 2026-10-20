@@ -1,5 +1,6 @@
 import React from "react";
 import { PLAYFAIR } from "./fonts";
+import { stage } from "./reveal";
 import type { StoryCardProps } from "./types";
 
 const GOLD = "#d4af37";
@@ -12,6 +13,7 @@ export function CongratulationsGoldStory({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryCardProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -36,11 +38,12 @@ export function CongratulationsGoldStory({
           letterSpacing: "0.4em",
           textTransform: "uppercase",
           marginBottom: 40,
+          ...stage(reveal, 1),
         }}
       >
         Congratulations
       </div>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 50 }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 50, ...stage(reveal, 1) }}>
         <div style={{ display: "flex", width: 160, height: 2, background: GOLD }} />
         <div
           style={{
@@ -80,6 +83,7 @@ export function CongratulationsGoldStory({
           textAlign: "center",
           justifyContent: "center",
           marginBottom: 40,
+          ...stage(reveal, 2),
         }}
       >
         {recipientName}
@@ -94,13 +98,16 @@ export function CongratulationsGoldStory({
             textAlign: "center",
             justifyContent: "center",
             fontStyle: "italic",
+            ...stage(reveal, 3),
           }}
         >
           {text}
         </div>
       )}
       {senderName && (
-        <div style={{ display: "flex", fontSize: 38, color: GOLD, marginTop: 50 }}>
+        <div
+          style={{ display: "flex", fontSize: 38, color: GOLD, marginTop: 50, ...stage(reveal, 4) }}
+        >
           With admiration, {senderName}
         </div>
       )}

@@ -1,5 +1,6 @@
 import React from "react";
 import { CAVEAT, PLAYFAIR } from "./fonts";
+import { stage } from "./reveal";
 import type { StoryCardProps } from "./types";
 
 const INK = "#b4532a";
@@ -11,6 +12,7 @@ export function ThankYouSimpleStory({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryCardProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -27,7 +29,17 @@ export function ThankYouSimpleStory({
         padding: "120px 90px 160px",
       }}
     >
-      <div style={{ display: "flex", fontSize: 90, color: "#e11d48", marginBottom: 20 }}>♥</div>
+      <div
+        style={{
+          display: "flex",
+          fontSize: 90,
+          color: "#e11d48",
+          marginBottom: 20,
+          ...stage(reveal, 1),
+        }}
+      >
+        ♥
+      </div>
       {photo && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -46,7 +58,15 @@ export function ThankYouSimpleStory({
           }}
         />
       )}
-      <div style={{ display: "flex", fontSize: 64, color: "#78716c", fontFamily: CAVEAT }}>
+      <div
+        style={{
+          display: "flex",
+          fontSize: 64,
+          color: "#78716c",
+          fontFamily: CAVEAT,
+          ...stage(reveal, 1),
+        }}
+      >
         thank you,
       </div>
       <div
@@ -57,6 +77,7 @@ export function ThankYouSimpleStory({
           fontWeight: 700,
           textAlign: "center",
           justifyContent: "center",
+          ...stage(reveal, 2),
         }}
       >
         {recipientName}
@@ -82,6 +103,7 @@ export function ThankYouSimpleStory({
             justifyContent: "center",
             fontFamily: CAVEAT,
             fontSize: 56,
+            ...stage(reveal, 3),
           }}
         >
           {text}
@@ -89,7 +111,14 @@ export function ThankYouSimpleStory({
       )}
       {senderName && (
         <div
-          style={{ display: "flex", fontSize: 56, color: ROSE, marginTop: 50, fontFamily: CAVEAT }}
+          style={{
+            display: "flex",
+            fontSize: 56,
+            color: ROSE,
+            marginTop: 50,
+            fontFamily: CAVEAT,
+            ...stage(reveal, 4),
+          }}
         >
           with love, {senderName}
         </div>

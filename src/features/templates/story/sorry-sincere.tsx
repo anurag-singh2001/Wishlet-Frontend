@@ -1,5 +1,6 @@
 import React from "react";
 import { GREAT_VIBES, PLAYFAIR } from "./fonts";
+import { stage } from "./reveal";
 import type { StoryCardProps } from "./types";
 
 export function SorrySincereStory({
@@ -7,6 +8,7 @@ export function SorrySincereStory({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryCardProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -31,6 +33,7 @@ export function SorrySincereStory({
           borderRadius: 18,
           background: "#9aa6d6",
           marginBottom: 40,
+          ...stage(reveal, 1),
         }}
       />
       {photo && (
@@ -50,7 +53,15 @@ export function SorrySincereStory({
           }}
         />
       )}
-      <div style={{ display: "flex", fontSize: 80, color: "#3b4560", fontWeight: 700 }}>
+      <div
+        style={{
+          display: "flex",
+          fontSize: 80,
+          color: "#3b4560",
+          fontWeight: 700,
+          ...stage(reveal, 2),
+        }}
+      >
         {recipientName}
       </div>
       {text && (
@@ -64,6 +75,7 @@ export function SorrySincereStory({
             justifyContent: "center",
             fontStyle: "italic",
             marginTop: 40,
+            ...stage(reveal, 3),
           }}
         >
           {text}
@@ -76,6 +88,7 @@ export function SorrySincereStory({
           color: "#5b6aa8",
           fontFamily: GREAT_VIBES,
           marginTop: 60,
+          ...stage(reveal, 3),
         }}
       >
         I&apos;m sorry
@@ -88,6 +101,7 @@ export function SorrySincereStory({
             color: "#6b7699",
             marginTop: 30,
             letterSpacing: "0.2em",
+            ...stage(reveal, 4),
           }}
         >
           {senderName}

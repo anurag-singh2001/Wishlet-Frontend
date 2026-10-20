@@ -8,7 +8,7 @@ export const runtime = "edge";
 export const revalidate = 60;
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ slug: string }> },
 ): Promise<Response> {
   const { slug } = await params;
@@ -18,6 +18,8 @@ export async function GET(
   } catch {
     return new Response("Not found", { status: 404 });
   }
+  const raw = new URL(req.url).searchParams.get("reveal");
+  const parsed = raw !== null && /^[0-4]$/.test(raw) ? Number(raw) : undefined;
   const Card = getStoryCard(wish.templateId);
   const recipientName = wish.content.recipientName || "Someone special";
   const senderName = wish.content.senderName || "";
@@ -33,7 +35,13 @@ export async function GET(
       message={message}
       photo={wish.content.photos?.[0]}
       occasion={wish.occasion}
+      reveal={parsed}
     />,
-    { width: 1080, height: 1920, ...(fonts.length > 0 && { fonts }) },
+    {
+      width: 1080,
+      height: 1920,
+      headers: { "x-wishlet-occasion": encodeURIComponent(wish.occasion) },
+      ...(fonts.length > 0 && { fonts }),
+    },
   );
 }

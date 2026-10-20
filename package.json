@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^13.0.0",
     "lucide-react": "^1.30.0",
+    "mp4-muxer": "5.2.2",
     "next": "16.3.0",
     "qrcode": "^1.5.4",
     "react": "19.2.8",

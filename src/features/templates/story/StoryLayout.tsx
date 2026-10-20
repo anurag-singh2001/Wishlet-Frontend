@@ -1,4 +1,5 @@
 import React from "react";
+import { stage } from "./reveal";
 import type { StoryCardProps, StoryPalette } from "./types";
 
 interface StoryLayoutProps extends StoryCardProps {
@@ -16,6 +17,7 @@ export function StoryLayout({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryLayoutProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -32,7 +34,9 @@ export function StoryLayout({
         padding: "120px 90px 160px",
       }}
     >
-      <div style={{ display: "flex", fontSize: 90, marginBottom: 20 }}>{icon}</div>
+      <div style={{ display: "flex", fontSize: 90, marginBottom: 20, ...stage(reveal, 1) }}>
+        {icon}
+      </div>
       <div
         style={{
           display: "flex",
@@ -42,6 +46,7 @@ export function StoryLayout({
           textTransform: "uppercase",
           fontWeight: 700,
           marginBottom: 50,
+          ...stage(reveal, 1),
         }}
       >
         {title}
@@ -72,6 +77,7 @@ export function StoryLayout({
           textAlign: "center",
           justifyContent: "center",
           marginBottom: 40,
+          ...stage(reveal, 2),
         }}
       >
         {recipientName}
@@ -86,13 +92,22 @@ export function StoryLayout({
             textAlign: "center",
             justifyContent: "center",
             fontStyle: p.serif ? "italic" : "normal",
+            ...stage(reveal, 3),
           }}
         >
           {text}
         </div>
       )}
       {senderName && (
-        <div style={{ display: "flex", fontSize: 38, color: p.accent, marginTop: 50 }}>
+        <div
+          style={{
+            display: "flex",
+            fontSize: 38,
+            color: p.accent,
+            marginTop: 50,
+            ...stage(reveal, 4),
+          }}
+        >
           With love, {senderName}
         </div>
       )}

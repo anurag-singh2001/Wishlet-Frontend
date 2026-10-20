@@ -1,5 +1,6 @@
 import React from "react";
 import { GREAT_VIBES, PLAYFAIR } from "./fonts";
+import { stage } from "./reveal";
 import type { StoryCardProps } from "./types";
 
 const GOLD = "#c9a23c";
@@ -10,6 +11,7 @@ export function AnniversaryElegantStory({
   senderName,
   message,
   photo,
+  reveal,
 }: StoryCardProps): React.ReactElement {
   const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
   return (
@@ -26,7 +28,7 @@ export function AnniversaryElegantStory({
         padding: "120px 90px 160px",
       }}
     >
-      <div style={{ display: "flex", fontSize: 90, marginBottom: 16 }}>💍</div>
+      <div style={{ display: "flex", fontSize: 90, marginBottom: 16, ...stage(reveal, 1) }}>💍</div>
       <div
         style={{
           display: "flex",
@@ -35,6 +37,7 @@ export function AnniversaryElegantStory({
           letterSpacing: "0.35em",
           textTransform: "uppercase",
           marginBottom: 30,
+          ...stage(reveal, 1),
         }}
       >
         Happy Anniversary
@@ -72,6 +75,7 @@ export function AnniversaryElegantStory({
           textAlign: "center",
           justifyContent: "center",
           marginBottom: 20,
+          ...stage(reveal, 2),
         }}
       >
         {recipientName}
@@ -87,6 +91,7 @@ export function AnniversaryElegantStory({
             textAlign: "center",
             justifyContent: "center",
             fontStyle: "italic",
+            ...stage(reveal, 3),
           }}
         >
           {text}
@@ -100,6 +105,7 @@ export function AnniversaryElegantStory({
             color: GOLD,
             fontFamily: GREAT_VIBES,
             marginTop: 50,
+            ...stage(reveal, 4),
           }}
         >
           With all my love, {senderName}
