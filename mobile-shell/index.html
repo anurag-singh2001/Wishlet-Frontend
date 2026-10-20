@@ -1,15 +1,24 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Wishlet</title>
-    <style>
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center;
-        font-family: system-ui, sans-serif; text-align: center; background: #fff7ed; color: #44403c; }
-    </style>
-  </head>
-  <body>
-    <p>You're offline &mdash; Wishlet needs a connection.</p>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4F46E5">
+<title>Wishlet</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;background:#FBFAFF;color:#17142B;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.i{width:96px;height:96px;border-radius:28px;background:#EEF0FF;display:flex;align-items:center;justify-content:center}
+h1{margin:0;font-size:28px;font-weight:800}
+p{margin:0;font-size:16px;line-height:1.55;color:#4B4766;max-width:280px}
+button{margin-top:8px;width:100%;max-width:300px;height:54px;border:0;border-radius:14px;background:#4F46E5;color:#fff;font:700 17px system-ui,sans-serif}
+button:active{background:#3730A3}
+</style>
+</head>
+<body>
+<div class="i"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" aria-hidden="true"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><path d="M3 3l18 18"/></svg></div>
+<h1>You're offline</h1>
+<p>Wishlet needs the internet to make and open wishes. Check your connection and try again.</p>
+<button type="button" onclick="location.href='https://wishlet-frontend.vercel.app/app'">Try again</button>
+</body>
 </html>
