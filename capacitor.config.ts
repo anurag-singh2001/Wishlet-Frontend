@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: "mobile-shell",
   server: {
     // Set CAP_SERVER_URL to the production site URL before `npx cap sync android`.
-    url: process.env.CAP_SERVER_URL ?? "https://YOUR-PRODUCTION-URL",
+    url: process.env.CAP_SERVER_URL ?? "https://wishlet.vercel.app",
   },
   android: { allowMixedContent: false, appendUserAgent: "WishletApp" },
 };
