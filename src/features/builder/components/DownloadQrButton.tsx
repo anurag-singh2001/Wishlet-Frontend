@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import QRCode from "qrcode";
 import { QrCode } from "lucide-react";
+import { isNative } from "@/lib/native/share-native";
 
 interface DownloadQrButtonProps {
   url: string;
@@ -16,6 +17,11 @@ export function DownloadQrButton({ url, slug }: DownloadQrButtonProps): React.Re
     setError(false);
     try {
       const dataUrl = await QRCode.toDataURL(url, { width: 600, margin: 2 });
+      if (isNative()) {
+        const { shareFileNative } = await import("@/lib/native/share-native");
+        await shareFileNative(dataUrl.split(",")[1] ?? "", `wishlet-${slug}-qr.png`);
+        return;
+      }
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `wishlet-${slug}-qr.png`;

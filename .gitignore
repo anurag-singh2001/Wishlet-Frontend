@@ -52,3 +52,7 @@ next-env.d.ts
 /android/capacitor-cordova-android-plugins/
 *.apk
 *.aab
+
+# signing keys
+*.jks
+*.keystore

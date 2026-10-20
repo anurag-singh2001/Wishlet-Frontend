@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Copy, Check, Share2, MessageCircle } from "lucide-react";
+import { isNative } from "@/lib/native/share-native";
 import { trackWishShared } from "@/lib/analytics";
 import { DownloadQrButton } from "./DownloadQrButton";
 import { InstagramShareButton } from "@/features/viewer/components/InstagramShareButton";
@@ -17,7 +18,7 @@ export function ShareOptions({ url, slug, senderName }: ShareOptionsProps): Reac
   const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
+    if (isNative() || (typeof navigator !== "undefined" && "share" in navigator)) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCanShare(true);
     }
@@ -49,6 +50,11 @@ export function ShareOptions({ url, slug, senderName }: ShareOptionsProps): Reac
   const handleShare = async (): Promise<void> => {
     try {
       trackWishShared("native_share");
+      if (isNative()) {
+        const { shareTextNative } = await import("@/lib/native/share-native");
+        await shareTextNative({ text: shareText, url: absoluteUrl });
+        return;
+      }
       await navigator.share({ text: shareText, url: absoluteUrl });
     } catch (err) {
       // AbortError: user closed the share sheet

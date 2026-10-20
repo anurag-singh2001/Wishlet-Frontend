@@ -1,13 +1,23 @@
 # Wishlet Android (Capacitor, remote-URL mode)
 
-The app is a WebView that loads the production site; `mobile-shell/` is only the offline fallback.
+The app is a WebView that loads the production site (`CAP_SERVER_URL`); `mobile-shell/` is only
+the offline fallback. Web deploys to `main` show up in the app on next launch, no new APK needed.
+A new APK is only needed when native things change (plugin, icon/splash, Capacitor version,
+`capacitor.config.ts`, `android/`); GitHub Actions (`android.yml`) builds it on those pushes.
 
-1. Set the site URL: `CAP_SERVER_URL=https://your-site.com` (shell env) before syncing.
-2. Put your Facebook App ID in `app/src/main/res/values/strings.xml` (`facebook_app_id`; free app
-   at developers.facebook.com, no review needed).
-3. From the frontend root: `npx cap sync android && npx cap open android`.
-4. Run from Android Studio (JDK 21) on a real phone with Instagram installed. Without Instagram
-   the share falls back to the system share sheet.
+## One-time GitHub setup (repo Settings > Secrets and variables > Actions)
+1. Variable `CAP_SERVER_URL` = production site URL (the build fails early if missing).
+2. Create a release keystore (keep it OUTSIDE the repo):
+   `keytool -genkeypair -v -keystore wishlet-release.jks -alias wishlet -keyalg RSA -keysize 2048 -validity 10000`
+3. Base64 it (PowerShell): `[Convert]::ToBase64String([IO.File]::ReadAllBytes("wishlet-release.jks"))`
+4. Secrets: `ANDROID_KEYSTORE_BASE64` (step 3 output), `ANDROID_KEYSTORE_PASSWORD`,
+   `ANDROID_KEY_ALIAS` (`wishlet`), `ANDROID_KEY_PASSWORD`.
 
-Kotlin is enabled for `InstagramStoriesPlugin.kt` (registered in `MainActivity.java`).
-`app/build/` and generated assets are git-ignored.
+BACK UP the `.jks` and its passwords. If lost, users must uninstall the app to get updates.
+
+## Build and download
+Actions > "Android APK" > Run workflow (or push a native change to `main`).
+Download: https://github.com/anurag-singh2001/Wishlet-Frontend/releases/tag/app-latest
+
+Local: `CAP_SERVER_URL=https://your-site.com npx cap sync android`, then open in Android Studio
+(JDK 21). Without the signing env vars, release builds use the debug key.

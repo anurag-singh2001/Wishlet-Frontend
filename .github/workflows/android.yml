@@ -1,0 +1,93 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - "capacitor.config.ts"
+      - "mobile-shell/**"
+      - "src/lib/native/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CAP_SERVER_URL: ${{ vars.CAP_SERVER_URL }}
+      GH_TOKEN: ${{ github.token }}
+      APK_NAME: wishlet-1.0.${{ github.run_number }}.apk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Check CAP_SERVER_URL
+        run: |
+          if [ -z "$CAP_SERVER_URL" ] || [ "$CAP_SERVER_URL" = "https://YOUR-PRODUCTION-URL" ]; then
+            echo "::error::Set the repository variable CAP_SERVER_URL (Settings > Secrets and variables > Actions > Variables) to the production site URL."
+            exit 1
+          fi
+
+      - run: npx cap sync android
+
+      - name: Prepare signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+            echo "ANDROID_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "ANDROID_KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set; building a debug-signed release. It will not update over a release-signed install."
+          fi
+
+      - name: Build APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleRelease -PversionCode=${{ github.run_number }} -PversionName=1.0.${{ github.run_number }}
+
+      - name: Rename APK
+        run: |
+          APK=$(ls android/app/build/outputs/apk/release/*.apk | head -n 1)
+          mv "$APK" "$APK_NAME"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wishlet-apk
+          path: ${{ env.APK_NAME }}
+
+      - name: Remove previous app-latest release
+        run: gh release delete app-latest --cleanup-tag -y || true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-latest
+          name: Wishlet Android app (latest)
+          files: ${{ env.APK_NAME }}
+          make_latest: true
+          prerelease: false

@@ -6,5 +6,5 @@
     <string name="custom_url_scheme">com.wishlet.app</string>
     <!-- Facebook App ID, required by Instagram's Add to Story intent as source_application.
          Create a free app at developers.facebook.com (no review needed) and copy its App ID. -->
-    <string name="facebook_app_id">REPLACE_WITH_FACEBOOK_APP_ID</string>
+    <string name="facebook_app_id">1569707324824401</string>
 </resources>

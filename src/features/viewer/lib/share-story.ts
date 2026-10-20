@@ -89,22 +89,18 @@ function blobToBase64(blob: Blob): Promise<string> {
 
 /** Android app: direct Instagram story, falling back to the system share sheet. */
 async function shareNative(slug: string): Promise<void> {
-  const [{ Filesystem, Directory }, { InstagramStories }] = await Promise.all([
-    import("@capacitor/filesystem"),
+  const [{ InstagramStories }, { writeCacheFile, shareFileNative }] = await Promise.all([
     import("@/lib/native/instagram-stories"),
+    import("@/lib/native/share-native"),
   ]);
   const video = await prepareStoryVideo(slug);
   const file = video ?? (await prepareStoryFile(slug));
-  const { uri } = await Filesystem.writeFile({
-    path: file.name,
-    data: await blobToBase64(file),
-    directory: Directory.Cache,
-  });
+  const base64 = await blobToBase64(file);
+  const uri = await writeCacheFile(base64, file.name);
   try {
     await InstagramStories.shareToStory({ filePath: uri, mimeType: file.type });
   } catch {
-    const { Share } = await import("@capacitor/share");
-    await Share.share({ files: [uri] });
+    await shareFileNative(base64, file.name);
   }
 }
 
