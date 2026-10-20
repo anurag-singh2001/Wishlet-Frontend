@@ -21,7 +21,7 @@ function FilmBackdrop({
   still: boolean;
 }): React.JSX.Element {
   return (
-    <div className="fixed inset-0 bg-[#07060a]">
+    <div className="absolute inset-0 bg-[#07060a]">
       {photo ? (
         <KenBurnsPhoto
           src={photo}
@@ -68,8 +68,9 @@ export default function AnniversaryCinematic({
     transition: { duration: reduced ? 0 : 1.4, delay: reduced ? 0 : delay, ease: "easeOut" },
   });
   const bar = {
-    initial: { height: reduced ? "9dvh" : "50dvh" },
-    animate: { height: "9dvh" },
+    // Percent of the template root, not the viewport, so it stays inside preview frames.
+    initial: { height: reduced ? "9%" : "50%" },
+    animate: { height: "9%" },
     transition: { duration: 2, delay: 0.3, ease: [0.76, 0, 0.24, 1] as const },
   };
 
@@ -127,12 +128,12 @@ export default function AnniversaryCinematic({
       <motion.div
         aria-hidden
         {...bar}
-        className="pointer-events-none fixed inset-x-0 top-0 z-20 bg-black"
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-black"
       />
       <motion.div
         aria-hidden
         {...bar}
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-20 bg-black"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-black"
       />
     </div>
   );

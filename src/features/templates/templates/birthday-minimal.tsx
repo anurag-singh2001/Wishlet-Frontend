@@ -76,7 +76,7 @@ export default function BirthdayMinimalTemplate({
               maxSize={9}
               opacity={0.6}
             />
-            <div className="pointer-events-none fixed inset-0 z-20">
+            <div className="pointer-events-none absolute inset-0 z-20">
               <ConfettiBurst count={60} colors={CONFETTI} origin={{ x: 50, y: 30 }} spread={320} />
             </div>
 
