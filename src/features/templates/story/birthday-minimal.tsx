@@ -1,4 +1,5 @@
 import React from "react";
+import { PLAYFAIR, CAVEAT } from "./fonts";
 import type { StoryCardProps } from "./types";
 
 const DOTS = [
@@ -28,7 +29,7 @@ export function BirthdayMinimalStory({
         alignItems: "center",
         justifyContent: "center",
         background: "#fdf8f0",
-        fontFamily: "serif",
+        fontFamily: PLAYFAIR,
         padding: "120px 90px 160px",
         position: "relative",
       }}
@@ -130,9 +131,9 @@ export function BirthdayMinimalStory({
         <div
           style={{
             display: "flex",
-            fontSize: 54,
+            fontSize: 64,
             color: "#be123c",
-            fontStyle: "italic",
+            fontFamily: CAVEAT,
             marginTop: 50,
           }}
         >

@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Camera } from "lucide-react";
 import { trackWishShared } from "@/lib/analytics";
-import { getShareTarget, shareToInstagramStory } from "../lib/share-story";
+import {
+  getShareTarget,
+  prepareStoryFile,
+  shareToInstagramStory,
+  ShareNeedsRetryError,
+} from "../lib/share-story";
 import { InstagramDesktopPanel } from "./InstagramDesktopPanel";
 
 interface InstagramShareButtonProps {
@@ -22,6 +27,10 @@ export function InstagramShareButton({
   const [error, setError] = useState("");
   const [panelUrl, setPanelUrl] = useState("");
 
+  useEffect(() => {
+    if (getShareTarget() !== "desktop") prepareStoryFile(slug).catch(() => {});
+  }, [slug]);
+
   const handleClick = async (): Promise<void> => {
     setError("");
     if (getShareTarget() === "desktop") {
@@ -32,8 +41,12 @@ export function InstagramShareButton({
     try {
       await shareToInstagramStory(slug);
       trackWishShared("instagram_story");
-    } catch {
-      setError("Could not prepare the story image. Please try again.");
+    } catch (err) {
+      setError(
+        err instanceof ShareNeedsRetryError
+          ? "Your story image is ready. Tap the button again to share."
+          : "Could not prepare the story image. Please try again.",
+      );
     } finally {
       setBusy(false);
     }

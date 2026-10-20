@@ -1,4 +1,5 @@
 import React from "react";
+import { PLAYFAIR } from "./fonts";
 import type { StoryCardProps } from "./types";
 
 const GOLD = "#d4af37";
@@ -23,7 +24,7 @@ export function CongratulationsGoldStory({
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(180deg, #0a0907 0%, #1a1405 100%)",
-        fontFamily: "serif",
+        fontFamily: PLAYFAIR,
         padding: "120px 90px 160px",
       }}
     >

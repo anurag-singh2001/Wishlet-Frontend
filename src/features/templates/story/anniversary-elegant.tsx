@@ -1,4 +1,5 @@
 import React from "react";
+import { GREAT_VIBES, PLAYFAIR } from "./fonts";
 import type { StoryCardProps } from "./types";
 
 const GOLD = "#c9a23c";
@@ -21,7 +22,7 @@ export function AnniversaryElegantStory({
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(180deg,#fffaf6 0%,#ffe9ec 100%)",
-        fontFamily: "serif",
+        fontFamily: PLAYFAIR,
         padding: "120px 90px 160px",
       }}
     >
@@ -65,9 +66,9 @@ export function AnniversaryElegantStory({
       <div
         style={{
           display: "flex",
-          fontSize: 110,
+          fontSize: 130,
           color: GOLD,
-          fontStyle: "italic",
+          fontFamily: GREAT_VIBES,
           textAlign: "center",
           justifyContent: "center",
           marginBottom: 20,
@@ -93,7 +94,13 @@ export function AnniversaryElegantStory({
       )}
       {senderName && (
         <div
-          style={{ display: "flex", fontSize: 50, color: GOLD, fontStyle: "italic", marginTop: 50 }}
+          style={{
+            display: "flex",
+            fontSize: 64,
+            color: GOLD,
+            fontFamily: GREAT_VIBES,
+            marginTop: 50,
+          }}
         >
           With all my love, {senderName}
         </div>

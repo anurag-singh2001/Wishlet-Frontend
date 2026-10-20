@@ -28,7 +28,7 @@ export function StoryLayout({
         alignItems: "center",
         justifyContent: "center",
         background: p.bg,
-        fontFamily: p.serif ? "serif" : "sans-serif",
+        fontFamily: p.font ?? (p.serif ? "serif" : "sans-serif"),
         padding: "120px 90px 160px",
       }}
     >

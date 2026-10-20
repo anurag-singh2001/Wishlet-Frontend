@@ -1,4 +1,5 @@
 import React from "react";
+import { CAVEAT, PLAYFAIR } from "./fonts";
 import type { StoryCardProps } from "./types";
 
 const INK = "#b4532a";
@@ -22,7 +23,7 @@ export function ThankYouSimpleStory({
         alignItems: "center",
         justifyContent: "center",
         background: "radial-gradient(circle at 50% 35%, #fffaf0 0%, #fbf0dc 60%, #f1e0c0 100%)",
-        fontFamily: "serif",
+        fontFamily: PLAYFAIR,
         padding: "120px 90px 160px",
       }}
     >
@@ -45,7 +46,7 @@ export function ThankYouSimpleStory({
           }}
         />
       )}
-      <div style={{ display: "flex", fontSize: 54, color: "#78716c", fontStyle: "italic" }}>
+      <div style={{ display: "flex", fontSize: 64, color: "#78716c", fontFamily: CAVEAT }}>
         thank you,
       </div>
       <div
@@ -75,19 +76,21 @@ export function ThankYouSimpleStory({
         <div
           style={{
             display: "flex",
-            fontSize: 48,
             lineHeight: 1.4,
             color: "#44403c",
             textAlign: "center",
             justifyContent: "center",
-            fontStyle: "italic",
+            fontFamily: CAVEAT,
+            fontSize: 56,
           }}
         >
           {text}
         </div>
       )}
       {senderName && (
-        <div style={{ display: "flex", fontSize: 44, color: ROSE, marginTop: 50 }}>
+        <div
+          style={{ display: "flex", fontSize: 56, color: ROSE, marginTop: 50, fontFamily: CAVEAT }}
+        >
           with love, {senderName}
         </div>
       )}

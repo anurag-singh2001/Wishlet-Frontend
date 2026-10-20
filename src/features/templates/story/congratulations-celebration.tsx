@@ -1,5 +1,6 @@
 import React from "react";
 import { StoryLayout } from "./StoryLayout";
+import { BRICOLAGE } from "./fonts";
 import type { StoryCardProps, StoryPalette } from "./types";
 
 const PALETTE: StoryPalette = {
@@ -11,6 +12,7 @@ const PALETTE: StoryPalette = {
   muted: "#f472b6",
   frame: "#fbbf24",
   serif: false,
+  font: BRICOLAGE,
 };
 
 export function CongratulationsCelebrationStory(props: StoryCardProps): React.ReactElement {

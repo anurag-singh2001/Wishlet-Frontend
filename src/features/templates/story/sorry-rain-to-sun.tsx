@@ -1,5 +1,6 @@
 import React from "react";
 import { StoryLayout } from "./StoryLayout";
+import { PLAYFAIR } from "./fonts";
 import type { StoryCardProps, StoryPalette } from "./types";
 
 const PALETTE: StoryPalette = {
@@ -11,6 +12,7 @@ const PALETTE: StoryPalette = {
   muted: "#92400e",
   frame: "#fff7ed",
   serif: true,
+  font: PLAYFAIR,
 };
 
 export function SorryRainToSunStory(props: StoryCardProps): React.ReactElement {

@@ -12,12 +12,28 @@ export function getShareTarget(): ShareTarget {
   return coarse && canShareFiles ? "phone" : "desktop";
 }
 
-async function fetchStoryFile(slug: string): Promise<File> {
-  const res = await fetch(`/w/${slug}/story`);
-  if (!res.ok) throw new Error("Could not create story image");
-  const blob = await res.blob();
-  return new File([blob], "wishlet-story.png", { type: "image/png" });
+const storyFiles = new Map<string, Promise<File>>();
+
+/**
+ * Starts generating the story image ahead of the tap. Phone browsers only allow
+ * `navigator.share` shortly after a tap, so a slow fetch inside the click handler
+ * can make the share fail with NotAllowedError. Failed fetches aren't cached.
+ */
+export function prepareStoryFile(slug: string): Promise<File> {
+  let file = storyFiles.get(slug);
+  if (!file) {
+    file = fetch(`/w/${slug}/story`).then(async (res) => {
+      if (!res.ok) throw new Error("Could not create story image");
+      return new File([await res.blob()], "wishlet-story.png", { type: "image/png" });
+    });
+    file.catch(() => storyFiles.delete(slug));
+    storyFiles.set(slug, file);
+  }
+  return file;
 }
+
+/** The image wasn't ready in time, so the browser blocked the share; a second tap works. */
+export class ShareNeedsRetryError extends Error {}
 
 function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -34,7 +50,7 @@ async function shareNative(slug: string): Promise<void> {
     import("@capacitor/filesystem"),
     import("@/lib/native/instagram-stories"),
   ]);
-  const file = await fetchStoryFile(slug);
+  const file = await prepareStoryFile(slug);
   const { uri } = await Filesystem.writeFile({
     path: "wishlet-story.png",
     data: await blobToBase64(file),
@@ -49,7 +65,7 @@ async function shareNative(slug: string): Promise<void> {
 }
 
 async function shareFile(slug: string): Promise<void> {
-  const file = await fetchStoryFile(slug);
+  const file = await prepareStoryFile(slug);
   await navigator.share({ files: [file] });
 }
 
@@ -63,6 +79,9 @@ export async function shareToInstagramStory(slug: string): Promise<void> {
     await shareFile(slug);
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") return;
+    if (err instanceof DOMException && err.name === "NotAllowedError") {
+      throw new ShareNeedsRetryError("Share blocked: tap expired");
+    }
     throw err;
   }
 }

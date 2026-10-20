@@ -1,4 +1,5 @@
 import React from "react";
+import { GREAT_VIBES, PLAYFAIR } from "./fonts";
 import type { StoryCardProps } from "./types";
 
 export function SorrySincereStory({
@@ -18,7 +19,7 @@ export function SorrySincereStory({
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(180deg, #eef1fa 0%, #e2e2f4 100%)",
-        fontFamily: "serif",
+        fontFamily: PLAYFAIR,
         padding: "120px 90px 160px",
       }}
     >
@@ -71,9 +72,9 @@ export function SorrySincereStory({
       <div
         style={{
           display: "flex",
-          fontSize: 96,
+          fontSize: 110,
           color: "#5b6aa8",
-          fontStyle: "italic",
+          fontFamily: GREAT_VIBES,
           marginTop: 60,
         }}
       >

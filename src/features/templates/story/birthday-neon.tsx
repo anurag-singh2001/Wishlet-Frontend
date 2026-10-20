@@ -1,5 +1,6 @@
 import React from "react";
 import { StoryLayout } from "./StoryLayout";
+import { SPACE_GROTESK } from "./fonts";
 import type { StoryCardProps, StoryPalette } from "./types";
 
 const PALETTE: StoryPalette = {
@@ -11,6 +12,7 @@ const PALETTE: StoryPalette = {
   muted: "#64748b",
   frame: "#22d3ee",
   serif: false,
+  font: SPACE_GROTESK,
 };
 
 export function BirthdayNeonStory(props: StoryCardProps): React.ReactElement {

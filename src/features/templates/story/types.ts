@@ -15,4 +15,6 @@ export interface StoryPalette {
   muted: string;
   frame: string;
   serif: boolean;
+  /** Base font family; must be loaded for the template in `fonts.ts`. */
+  font?: string;
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { StoryLayout } from "./StoryLayout";
+import { CAVEAT } from "./fonts";
 import type { StoryCardProps, StoryPalette } from "./types";
 
 const PALETTE: StoryPalette = {
@@ -11,6 +12,7 @@ const PALETTE: StoryPalette = {
   muted: "#8fa894",
   frame: "#d9e4d2",
   serif: true,
+  font: CAVEAT,
 };
 
 export function ThankYouBotanicalStory(props: StoryCardProps): React.ReactElement {
