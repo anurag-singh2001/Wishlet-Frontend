@@ -7,11 +7,11 @@ import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 export const NEON_COLORS = ["#ff2e97", "#22d3ee", "#a3ff12", "#b967ff", "#ffe600"];
 
 const SPOTS = [
-  { left: 9, top: 14, color: NEON_COLORS[0], size: 46, delay: 0 },
-  { left: 88, top: 22, color: NEON_COLORS[1], size: 40, delay: 0.8 },
-  { left: 14, top: 58, color: NEON_COLORS[2], size: 38, delay: 1.5 },
-  { left: 86, top: 68, color: NEON_COLORS[3], size: 48, delay: 0.4 },
-  { left: 50, top: 90, color: NEON_COLORS[4], size: 34, delay: 1.1 },
+  { left: 8, top: 14, color: NEON_COLORS[0], size: 46, delay: 0 },
+  { left: 90, top: 22, color: NEON_COLORS[1], size: 40, delay: 0.8 },
+  { left: 10, top: 52, color: NEON_COLORS[2], size: 38, delay: 1.5 },
+  { left: 90, top: 56, color: NEON_COLORS[3], size: 48, delay: 0.4 },
+  { left: 91, top: 36, color: NEON_COLORS[4], size: 34, delay: 1.1 },
 ];
 
 /** Floating neon balloons; tapping one pops it into confetti, then it floats back. */
@@ -28,7 +28,7 @@ export function NeonBalloons(): React.JSX.Element {
   };
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       {SPOTS.map((s, i) =>
         popped.includes(i) ? null : (
           <motion.button

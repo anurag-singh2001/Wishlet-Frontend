@@ -36,7 +36,7 @@ export function Envelope({ onOpen }: { onOpen: () => void }): React.JSX.Element 
       <h2 className="mb-3 text-3xl" style={{ fontFamily: "var(--font-great-vibes)", ...GOLD_TEXT }}>
         A special wish for you
       </h2>
-      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-400">Tap to open</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.3em] text-rose-700">Tap to open</p>
     </motion.button>
   );
 }

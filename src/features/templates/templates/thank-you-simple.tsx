@@ -16,9 +16,10 @@ export default function ThankYouSimple({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!autoOpen);
   const reduced = useReducedMotion();
 
   const container = {
@@ -32,17 +33,17 @@ export default function ThankYouSimple({
 
   return (
     <div
-      className={`${caveat.variable} ${playfair.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-12 text-stone-800`}
+      className={`${caveat.variable} ${playfair.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 pb-28 pt-12 text-stone-800`}
     >
       <Paper />
       <Flower
         size={70}
-        className="absolute -left-4 top-6 opacity-70"
+        className="pointer-events-none absolute -left-4 top-6 z-0 opacity-70"
         colors={["#fdba74", "#fde68a"]}
       />
       <Flower
         size={56}
-        className="absolute -right-3 bottom-10 opacity-70"
+        className="pointer-events-none absolute -right-3 bottom-32 z-0 opacity-70"
         colors={["#fda4af", "#fde68a"]}
       />
       <AnimatePresence mode="wait">

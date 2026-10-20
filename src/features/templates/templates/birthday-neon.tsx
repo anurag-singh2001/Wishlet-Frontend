@@ -26,18 +26,29 @@ export default function BirthdayNeonTemplate({
 
   return (
     <div
-      className={`${spaceGrotesk.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#07040f] px-6 py-14 text-white`}
+      className={`${spaceGrotesk.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#07040f] px-6 pb-28 pt-14 text-white`}
       style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
     >
       <AmbientGlow color1="#ff2e97" color2="#22d3ee" opacity={0.35} />
-      <FloatingParticles
-        count={18}
-        colors={NEON_COLORS}
-        shape="star"
-        minSize={5}
-        maxSize={10}
-        opacity={0.7}
-      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          maskImage:
+            "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+          WebkitMaskImage:
+            "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+        }}
+      >
+        <FloatingParticles
+          count={18}
+          colors={NEON_COLORS}
+          shape="star"
+          minSize={5}
+          maxSize={10}
+          opacity={0.7}
+        />
+      </div>
       <NeonBalloons />
 
       <motion.div
@@ -84,7 +95,7 @@ export default function BirthdayNeonTemplate({
         </motion.div>
 
         <motion.div variants={item} className="mt-8">
-          <p className="mb-1 text-xs uppercase tracking-[0.25em] text-slate-400">With love</p>
+          <p className="mb-1 text-xs uppercase tracking-[0.25em] text-slate-300">With love</p>
           <p
             className="break-words text-2xl font-bold"
             style={{ color: "#a3ff12", textShadow: "0 0 12px #a3ff12aa" }}
@@ -95,7 +106,7 @@ export default function BirthdayNeonTemplate({
 
         <motion.p
           variants={item}
-          className="mt-6 text-[11px] uppercase tracking-widest text-slate-500"
+          className="mt-6 text-[11px] uppercase tracking-widest text-slate-300"
         >
           Tap a balloon to pop it
         </motion.p>

@@ -9,14 +9,21 @@ import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { WishletBranding } from "../components/WishletBranding";
 import { Envelope, PhotoFrame, GOLD_TEXT } from "./anniversary-elegant-parts/shared";
 
+const EDGE_MASK: React.CSSProperties = {
+  maskImage: "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+  WebkitMaskImage:
+    "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+};
+
 export default function AnniversaryElegant({
   recipientName,
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!autoOpen);
   const reduce = useReducedMotion();
 
   const container: Variants = {
@@ -30,9 +37,45 @@ export default function AnniversaryElegant({
 
   return (
     <div
-      className={`${playfair.variable} ${greatVibes.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fffaf6] px-6 py-12 text-rose-950`}
+      className={`${playfair.variable} ${greatVibes.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fffaf6] px-6 pb-28 pt-12 text-rose-950`}
       style={{ fontFamily: "var(--font-playfair), serif" }}
     >
+      {isOpen && (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+          <AmbientGlow color1="#ffe4e6" color2="#fdf2d0" opacity={0.6} />
+          <div className="absolute inset-0" style={EDGE_MASK}>
+            <FloatingParticles
+              count={8}
+              shape="heart"
+              colors={["#fda4af"]}
+              speed="slow"
+              opacity={0.25}
+            />
+            <ConfettiBurst count={30} colors={["#e9c85f", "#fda4af", "#fff1b8"]} trigger={isOpen} />
+          </div>
+          {!reduce && (
+            <>
+              <Petal
+                size={22}
+                animate
+                className="absolute left-3 top-6 rotate-[-20deg] opacity-70"
+              />
+              <Petal
+                size={16}
+                animate
+                color="#fecdd3"
+                className="absolute right-4 top-24 rotate-[25deg] opacity-70"
+              />
+              <Petal
+                size={18}
+                animate
+                color="#fbcfe8"
+                className="absolute bottom-44 left-6 rotate-[40deg] opacity-60"
+              />
+            </>
+          )}
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <Envelope key="envelope" onOpen={() => setIsOpen(true)} />
@@ -44,43 +87,12 @@ export default function AnniversaryElegant({
             animate="show"
             className="z-10 flex w-full max-w-xl flex-col items-center text-center"
           >
-            <AmbientGlow color1="#ffe4e6" color2="#fdf2d0" opacity={0.6} />
-            <FloatingParticles
-              count={8}
-              shape="heart"
-              colors={["#fda4af"]}
-              speed="slow"
-              opacity={0.25}
-            />
-            {!reduce && (
-              <>
-                <Petal
-                  size={22}
-                  animate
-                  className="absolute left-3 top-6 rotate-[-20deg] opacity-70"
-                />
-                <Petal
-                  size={16}
-                  animate
-                  color="#fecdd3"
-                  className="absolute right-4 top-24 rotate-[25deg] opacity-70"
-                />
-                <Petal
-                  size={18}
-                  animate
-                  color="#fbcfe8"
-                  className="absolute bottom-24 left-6 rotate-[40deg] opacity-60"
-                />
-              </>
-            )}
-            <ConfettiBurst count={30} colors={["#e9c85f", "#fda4af", "#fff1b8"]} trigger={isOpen} />
-
             <motion.div variants={item} className="mb-4">
               <Rings size={64} />
             </motion.div>
             <motion.p
               variants={item}
-              className="mb-3 text-[10px] font-semibold uppercase tracking-[0.35em] text-rose-400"
+              className="mb-3 text-[10px] font-semibold uppercase tracking-[0.35em] text-rose-700"
             >
               Happy Anniversary
             </motion.p>
@@ -106,7 +118,7 @@ export default function AnniversaryElegant({
             </motion.div>
 
             <motion.div variants={item}>
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-rose-400">
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-rose-700">
                 With all my love
               </p>
               <p

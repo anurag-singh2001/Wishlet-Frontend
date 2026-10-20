@@ -13,6 +13,11 @@ import { Envelope } from "./birthday-minimal-parts/Envelope";
 
 const CONFETTI = ["#f43f5e", "#fb923c", "#facc15", "#34d399", "#60a5fa", "#a78bfa"];
 const PARTICLES = ["#fda4af", "#fcd34d", "#c4b5fd"];
+const EDGE_MASK: React.CSSProperties = {
+  maskImage: "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+  WebkitMaskImage:
+    "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+};
 const DISPLAY = { fontFamily: "var(--font-playfair), serif" };
 
 export default function BirthdayMinimalTemplate({
@@ -20,11 +25,12 @@ export default function BirthdayMinimalTemplate({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const reduce = useReducedMotion();
   const [opening, setOpening] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(!!autoOpen);
 
   useEffect(() => {
     if (!opening) return;
@@ -39,9 +45,24 @@ export default function BirthdayMinimalTemplate({
 
   return (
     <div
-      className={`${playfair.variable} ${caveat.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fdf8f0] px-6 py-12 font-sans text-slate-800`}
+      className={`${playfair.variable} ${caveat.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-[#fdf8f0] px-6 pb-28 pt-12 font-sans text-slate-800`}
     >
       <AmbientGlow color1="#fecdd3" color2="#fde68a" opacity={0.5} />
+      {isOpen && (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+          <div className="absolute inset-0" style={EDGE_MASK}>
+            <FloatingParticles
+              count={14}
+              colors={PARTICLES}
+              shape="circle"
+              minSize={5}
+              maxSize={9}
+              opacity={0.6}
+            />
+            <ConfettiBurst count={60} colors={CONFETTI} origin={{ x: 50, y: 30 }} spread={320} />
+          </div>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.div
@@ -56,7 +77,7 @@ export default function BirthdayMinimalTemplate({
             <h2 className="mt-8 text-2xl text-slate-700" style={DISPLAY}>
               A special wish for you
             </h2>
-            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-rose-400">
+            <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600">
               Tap the seal to open
             </p>
           </motion.div>
@@ -68,21 +89,9 @@ export default function BirthdayMinimalTemplate({
             variants={{ show: { transition: { staggerChildren: 0.18, delayChildren: 0.2 } } }}
             className="relative z-10 flex w-full max-w-xl flex-col items-center text-center"
           >
-            <FloatingParticles
-              count={14}
-              colors={PARTICLES}
-              shape="circle"
-              minSize={5}
-              maxSize={9}
-              opacity={0.6}
-            />
-            <div className="pointer-events-none absolute inset-0 z-20">
-              <ConfettiBurst count={60} colors={CONFETTI} origin={{ x: 50, y: 30 }} spread={320} />
-            </div>
-
             <motion.p
               variants={item}
-              className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-rose-400"
+              className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-rose-600"
             >
               Happy Birthday
             </motion.p>
@@ -124,7 +133,7 @@ export default function BirthdayMinimalTemplate({
             </motion.p>
 
             <motion.div variants={item} className="mt-10">
-              <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
+              <p className="mb-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-600">
                 With love,
               </p>
               <p

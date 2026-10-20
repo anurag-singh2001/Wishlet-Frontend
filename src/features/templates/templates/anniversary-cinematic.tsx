@@ -38,6 +38,7 @@ function FilmBackdrop({
         />
       )}
       {!photo && <AmbientGlow color1="#be4d63" color2="#d9a441" opacity={0.18} />}
+      <div className="absolute inset-0 bg-black/25" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/80" />
       <div
         className="absolute inset-0"
@@ -59,17 +60,22 @@ export default function AnniversaryCinematic({
   senderName,
   message,
   photos,
+  autoOpen,
 }: TemplateProps): React.JSX.Element {
   const reduced = !!useReducedMotion();
   const photo = photos && photos.length > 0 ? photos[0] : null;
   const fade = (delay: number): React.ComponentProps<typeof motion.div> => ({
     initial: { opacity: 0, y: reduced ? 0 : 16 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: reduced ? 0 : 1.4, delay: reduced ? 0 : delay, ease: "easeOut" },
+    transition: {
+      duration: reduced ? 0 : autoOpen ? 0.6 : 1.4,
+      delay: reduced ? 0 : autoOpen ? delay * 0.15 : delay,
+      ease: "easeOut",
+    },
   });
   const bar = {
     // Percent of the template root, not the viewport, so it stays inside preview frames.
-    initial: { height: reduced ? "9%" : "50%" },
+    initial: { height: reduced || autoOpen ? "9%" : "50%" },
     animate: { height: "9%" },
     transition: { duration: 2, delay: 0.3, ease: [0.76, 0, 0.24, 1] as const },
   };
@@ -80,18 +86,29 @@ export default function AnniversaryCinematic({
     >
       <FilmBackdrop photo={photo} still={reduced} />
       {!reduced && (
-        <FloatingParticles
-          count={14}
-          shape="circle"
-          colors={["#f5e6c8"]}
-          minSize={2}
-          maxSize={5}
-          speed="slow"
-          opacity={0.3}
-        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            maskImage:
+              "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+            WebkitMaskImage:
+              "linear-gradient(90deg,#000 0,#000 18%,transparent 18%,transparent 82%,#000 82%)",
+          }}
+        >
+          <FloatingParticles
+            count={14}
+            shape="circle"
+            colors={["#f5e6c8"]}
+            minSize={2}
+            maxSize={5}
+            speed="slow"
+            opacity={0.3}
+          />
+        </div>
       )}
 
-      <main className="relative z-10 mx-auto flex min-h-[100dvh] max-w-xl flex-col items-center justify-center px-6 py-[14dvh] text-center">
+      <main className="relative z-10 mx-auto flex min-h-[100dvh] max-w-xl flex-col items-center justify-center px-6 pb-28 pt-[14dvh] text-center">
         <motion.p
           {...fade(1.8)}
           className="mb-6 text-[10px] uppercase tracking-[0.5em] text-amber-200/80"
