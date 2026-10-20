@@ -6,6 +6,7 @@ import { BuilderStepper } from "./BuilderStepper";
 import { CustomizationForm } from "./CustomizationForm";
 import { LivePreview } from "./LivePreview";
 import { GenerationSuccess } from "./GenerationSuccess";
+import { MyWishes } from "./MyWishes";
 import { MobileTabBar, type MobileTab } from "./MobileTabBar";
 import { useTemplates } from "../hooks/use-templates";
 import { useGenerateWish } from "../hooks/use-generate-wish";
@@ -175,6 +176,8 @@ export function BuilderShell() {
           </button>
         </div>
       )}
+
+      <MyWishes />
 
       <MobileTabBar tab={mobileTab} onChange={setMobileTab} />
 

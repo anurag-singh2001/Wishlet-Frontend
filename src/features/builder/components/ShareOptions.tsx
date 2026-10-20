@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Copy, Check, Share2, MessageCircle } from "lucide-react";
 import { trackWishShared } from "@/lib/analytics";
+import { DownloadQrButton } from "./DownloadQrButton";
 import { InstagramShareButton } from "@/features/viewer/components/InstagramShareButton";
 
 interface ShareOptionsProps {
@@ -88,6 +89,7 @@ export function ShareOptions({ url, slug, senderName }: ShareOptionsProps): Reac
           {copied ? <Check size={20} className="text-emerald-600" /> : <Copy size={20} />}
           <span>{copied ? "Link Copied!" : "Copy Link"}</span>
         </button>
+        <DownloadQrButton url={absoluteUrl} slug={slug} />
       </div>
 
       <div className="flex flex-col gap-3">

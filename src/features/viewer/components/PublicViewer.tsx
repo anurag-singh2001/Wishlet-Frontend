@@ -7,7 +7,8 @@ import { TemplateRenderer } from "@/features/templates/components/TemplateRender
 import type { TemplateProps } from "@/features/templates/types";
 import { trackWishViewed } from "@/lib/analytics";
 
-import { getWish } from "@/lib/api";
+import { getWish, recordWishView } from "@/lib/api";
+import { listOwnedWishes } from "@/lib/wish-tokens";
 import { InstagramShareButton } from "./InstagramShareButton";
 
 interface PublicViewerProps {
@@ -29,6 +30,19 @@ export function PublicViewer({ slug }: PublicViewerProps) {
       });
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!data) return;
+    try {
+      if (listOwnedWishes().some((w) => w.slug === slug)) return;
+      const key = `wishlet:viewed:${slug}`;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, "1");
+      recordWishView(slug).catch(() => undefined);
+    } catch {
+      // storage unavailable: skip silently
+    }
+  }, [data, slug]);
 
   if (isLoading) {
     return (

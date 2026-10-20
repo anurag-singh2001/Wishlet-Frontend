@@ -77,6 +77,29 @@ export async function getWish(slug: string, init?: RequestInit): Promise<ApiWish
   return res.json() as Promise<ApiWish>;
 }
 
+/** Records one view; callers should treat failures as non-fatal. */
+export async function recordWishView(slug: string): Promise<{ viewCount: number }> {
+  const res = await fetch(`${API_URL}/api/v1/wishes/${slug}/view`, { method: "POST" });
+  if (!res.ok) throw new Error("API_ERROR");
+  return res.json() as Promise<{ viewCount: number }>;
+}
+
+/** Throws Error("FORBIDDEN"|"NOT_FOUND"|"API_ERROR"). Requires the owner's delete token. */
+export async function getWishStats(
+  slug: string,
+  token: string,
+): Promise<{ viewCount: number; createdAt: string }> {
+  const res = await fetch(`${API_URL}/api/v1/wishes/${slug}/stats`, {
+    headers: { "x-delete-token": token },
+  });
+  if (!res.ok) {
+    throw new Error(
+      res.status === 403 ? "FORBIDDEN" : res.status === 404 ? "NOT_FOUND" : "API_ERROR",
+    );
+  }
+  return res.json() as Promise<{ viewCount: number; createdAt: string }>;
+}
+
 export async function deleteWish(slug: string, token: string): Promise<void> {
   const res = await fetch(`${API_URL}/api/v1/wishes/${slug}`, {
     method: "DELETE",
