@@ -1,144 +1,135 @@
 import React, { useState } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { Star } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
+import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { WishletBranding } from "../components/WishletBranding";
+import { LightRays, Star, Trophy } from "../kit/decor";
+import { bricolage } from "../kit/fonts";
+import { Cover } from "../congratulations-celebration-parts/Cover";
 
-export default function CongratulationsCelebration({ recipientName, senderName, message, photos }: TemplateProps) {
-  const hasPhoto = photos && photos.length > 0;
-  const photoUrl = hasPhoto ? photos[0] : null;
+const COLORS = ["#f472b6", "#fbbf24", "#22d3ee", "#a78bfa", "#34d399", "#fb7185"];
+
+export default function CongratulationsCelebration({
+  recipientName,
+  senderName,
+  message,
+  photos,
+}: TemplateProps): React.JSX.Element {
+  const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const [isOpen, setIsOpen] = useState(false);
-  
-  const prefersReducedMotion = useReducedMotion();
+  const reduced = useReducedMotion();
 
-  const containerVariants = {
+  const container = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
+    show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
   };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: prefersReducedMotion ? 1 : 0.9, y: prefersReducedMotion ? 0 : 20 },
-    show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" as const, stiffness: 60, damping: 15 } },
+  const item = {
+    hidden: { opacity: 0, y: reduced ? 0 : 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 70, damping: 14 } },
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#f0f9ff] flex flex-col items-center justify-center py-12 px-6 font-sans relative overflow-hidden text-slate-800">
+    <div
+      className={`${bricolage.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-violet-50 via-pink-50 to-amber-50 px-5 py-12 text-slate-800`}
+      style={{ fontFamily: "var(--font-bricolage), system-ui, sans-serif" }}
+    >
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <motion.div
-            key="envelope"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1, filter: "blur(5px)" }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="flex flex-col items-center justify-center text-center max-w-sm z-50 cursor-pointer group"
-            onClick={() => setIsOpen(true)}
-            role="button"
-            aria-label="Open your congratulations message"
-          >
-            <motion.div 
-              animate={prefersReducedMotion ? {} : { rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-2xl shadow-xl shadow-sky-200/50 flex items-center justify-center mb-6 border-2 border-sky-100 group-hover:scale-105 group-hover:border-sky-300 transition-all duration-300 rotate-3"
-            >
-              <Star className="w-12 h-12 text-sky-400 fill-sky-200" strokeWidth={1.5} />
-            </motion.div>
-            <h2 className="text-xl font-bold font-sans text-sky-900 mb-2">Great news inside</h2>
-            <p className="text-sky-500 font-sans font-black tracking-[0.2em] uppercase text-xs animate-pulse">
-              Tap to open
-            </p>
-          </motion.div>
+          <Cover key="cover" onOpen={() => setIsOpen(true)} />
         ) : (
           <motion.div
             key="card"
-            variants={containerVariants}
+            variants={container}
             initial="hidden"
             animate="show"
-            className="max-w-2xl w-full flex flex-col items-center text-center z-10"
+            className="z-10 flex w-full max-w-2xl flex-col items-center text-center"
           >
-            {isOpen && (
-              <>
-                <AmbientGlow color1="#bae6fd" color2="#e0f2fe" opacity={0.5} />
-                <FloatingParticles 
-                  count={25} 
-                  shape="star" 
-                  colors={["#38bdf8", "#7dd3fc", "#e0f2fe"]} 
-                  minSize={6} 
-                  maxSize={18} 
-                  speed="normal" 
-                  opacity={0.7} 
-                />
-              </>
-            )}
-            
-            {!prefersReducedMotion && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 0.1, scale: 1, rotate: 180 }}
-                transition={{ duration: 2, ease: "easeOut" }}
-                className="absolute inset-0 pointer-events-none flex items-center justify-center"
-              >
-                <div className="w-[150vw] h-[150vw] max-w-[800px] max-h-[800px] bg-[conic-gradient(var(--tw-gradient-stops))] from-transparent via-sky-300 to-transparent rounded-full animate-spin-slow" style={{ animationDuration: '20s' }} />
-              </motion.div>
-            )}
+            <AmbientGlow color1="#f9a8d4" color2="#a5f3fc" opacity={0.45} />
+            <FloatingParticles
+              count={22}
+              shape="star"
+              colors={COLORS}
+              minSize={8}
+              maxSize={20}
+              opacity={0.7}
+            />
+            <div className="pointer-events-none absolute inset-0 z-20">
+              <ConfettiBurst count={60} colors={COLORS} origin={{ x: 50, y: 30 }} spread={320} />
+              <ConfettiBurst count={30} colors={COLORS} origin={{ x: 15, y: 60 }} trigger="l" />
+              <ConfettiBurst count={30} colors={COLORS} origin={{ x: 85, y: 60 }} trigger="r" />
+            </div>
 
-            <motion.div 
-              variants={itemVariants}
-              className="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center text-4xl mb-8 shadow-inner shadow-sky-200 z-10"
-            >
-              🏆
+            <motion.div variants={item} className="relative mb-4 flex items-center justify-center">
+              <motion.div
+                animate={reduced ? {} : { rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                className="pointer-events-none absolute"
+              >
+                <LightRays size={300} color="#f9a8d4" rays={14} />
+              </motion.div>
+              <motion.div
+                initial={reduced ? false : { scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 160, damping: 11, delay: 0.3 }}
+                className="relative"
+              >
+                <Trophy size={130} colors={["#fbbf24", "#8b5cf6"]} />
+                <Star size={34} color="#f472b6" className="absolute -left-6 top-2" />
+                <Star size={24} color="#22d3ee" className="absolute -right-5 top-10" />
+              </motion.div>
             </motion.div>
 
             <motion.h1
-              variants={itemVariants}
-              className="text-3xl sm:text-4xl md:text-6xl font-black font-sans text-sky-950 mb-6 tracking-tight uppercase z-10 px-4 w-full break-words max-w-full"
+              initial={reduced ? false : { scale: 0.3, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 140, damping: 10, delay: 0.5 }}
+              className="mb-6 w-full max-w-full break-words px-2 text-4xl font-extrabold leading-tight tracking-tight text-violet-950 sm:text-5xl md:text-6xl"
             >
-              Way to go,<br />
-              <span className="text-sky-500 break-words">{recipientName}!</span>
+              Congratulations,
+              <br />
+              <span className="bg-gradient-to-r from-pink-500 via-amber-400 to-cyan-500 bg-clip-text text-transparent">
+                {recipientName}!
+              </span>
             </motion.h1>
 
             {photoUrl && (
               <motion.div
-                variants={itemVariants}
-                className="w-full max-w-sm mx-auto mb-8 sm:mb-10 bg-white p-3 rounded-2xl shadow-xl shadow-sky-900/10 z-10 border-2 border-sky-50"
+                variants={item}
+                className="mx-auto mb-8 w-full max-w-sm -rotate-2 rounded-2xl border-4 border-white bg-white p-2 shadow-xl shadow-violet-300/40"
               >
-                <div className="w-full aspect-video rounded-xl overflow-hidden bg-sky-50">
+                <div className="aspect-video w-full overflow-hidden rounded-xl bg-violet-50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photoUrl} alt="Celebration memory" className="w-full h-full object-cover" />
+                  <img
+                    src={photoUrl}
+                    alt="Celebration memory"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               </motion.div>
             )}
 
-            <motion.div 
-              variants={itemVariants}
-              className="relative z-10 w-full px-4 sm:px-8 md:px-16 mb-8 sm:mb-12 bg-white/50 backdrop-blur-sm py-6 sm:py-8 rounded-3xl"
+            <motion.div
+              variants={item}
+              className="mb-8 w-full rounded-3xl border-2 border-pink-100 bg-white/70 px-5 py-6 backdrop-blur-sm sm:px-10"
             >
-              <p className="text-lg sm:text-xl md:text-2xl text-slate-800 leading-relaxed font-sans font-semibold whitespace-pre-wrap break-words max-w-full">
+              <p className="whitespace-pre-wrap break-words text-lg font-semibold leading-relaxed sm:text-xl">
                 {message}
               </p>
             </motion.div>
 
             <motion.div
-              variants={itemVariants}
-              className="mt-4 text-slate-800 z-10 bg-white px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-md shadow-sky-900/5 inline-block max-w-full"
+              variants={item}
+              className="inline-block max-w-full rounded-full bg-gradient-to-r from-violet-500 to-pink-500 px-7 py-3 text-white shadow-lg shadow-pink-300/40"
             >
-              <p className="text-xs text-sky-400 font-sans font-bold uppercase tracking-widest mb-1">Cheering for you,</p>
-              <p className="text-lg sm:text-xl font-sans font-extrabold text-sky-900 break-words">{senderName}</p>
+              <p className="mb-0.5 text-xs font-bold uppercase tracking-widest text-pink-100">
+                Cheering for you,
+              </p>
+              <p className="break-words text-lg font-extrabold">{senderName}</p>
             </motion.div>
 
-
-            <motion.div
-              variants={itemVariants}
-              className="mt-12 sm:mt-16 mb-4 z-10"
-            >
+            <motion.div variants={item} className="mb-4 mt-12">
               <WishletBranding theme="sky" />
             </motion.div>
           </motion.div>
@@ -147,4 +138,3 @@ export default function CongratulationsCelebration({ recipientName, senderName, 
     </div>
   );
 }
-
