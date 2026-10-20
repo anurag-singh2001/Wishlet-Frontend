@@ -6,6 +6,12 @@ export interface TemplateProps {
   photos: string[];
   // Template-specific fields can be passed inside content
   content: Record<string, unknown>;
+  /**
+   * Skip any "tap to open" cover and show the opened card straight away.
+   * Used by previews (landing demo, builder thumbnails, live preview, My wishes);
+   * the recipient's real view leaves it off.
+   */
+  autoOpen?: boolean;
 }
 
 export interface TemplateConfig {
