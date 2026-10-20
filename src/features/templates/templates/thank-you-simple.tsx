@@ -1,129 +1,125 @@
+"use client";
 import React, { useState } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { MailOpen } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
-import { FloatingParticles } from "../components/animations/FloatingParticles";
-import { AmbientGlow } from "../components/animations/AmbientGlow";
+import { caveat, playfair } from "../kit/fonts";
+import { Flower, Heart } from "../kit/decor";
 import { WishletBranding } from "../components/WishletBranding";
+import { Paper } from "../thank-you-simple-parts/paper";
+import { DrawHeart, DrawUnderline } from "../thank-you-simple-parts/draw";
 
-export default function ThankYouSimple({ recipientName, senderName, message, photos }: TemplateProps) {
-  const hasPhoto = photos && photos.length > 0;
-  const photoUrl = hasPhoto ? photos[0] : null;
+const HAND = { fontFamily: "var(--font-caveat), cursive" };
+const SERIF = { fontFamily: "var(--font-playfair), serif" };
+
+export default function ThankYouSimple({
+  recipientName,
+  senderName,
+  message,
+  photos,
+}: TemplateProps): React.JSX.Element {
+  const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const [isOpen, setIsOpen] = useState(false);
-  
-  const prefersReducedMotion = useReducedMotion();
+  const reduced = useReducedMotion();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.2,
-      },
-    },
+  const container = {
+    hidden: {},
+    show: { transition: { staggerChildren: reduced ? 0 : 0.25, delayChildren: 0.1 } },
   };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 50, damping: 15 } },
+  const item = {
+    hidden: { opacity: reduced ? 1 : 0, y: reduced ? 0 : 16 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#f2fdf7] flex flex-col items-center justify-center py-12 px-6 font-sans relative overflow-hidden text-slate-800">
+    <div
+      className={`${caveat.variable} ${playfair.variable} relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-12 text-stone-800`}
+    >
+      <Paper />
+      <Flower
+        size={70}
+        className="absolute -left-4 top-6 opacity-70"
+        colors={["#fdba74", "#fde68a"]}
+      />
+      <Flower
+        size={56}
+        className="absolute -right-3 bottom-10 opacity-70"
+        colors={["#fda4af", "#fde68a"]}
+      />
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <motion.div
-            key="envelope"
+          <motion.button
+            key="cover"
+            type="button"
+            onClick={() => setIsOpen(true)}
+            aria-label="Open your thank you note"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20, filter: "blur(5px)" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="flex flex-col items-center justify-center text-center max-w-sm z-50 cursor-pointer group"
-            onClick={() => setIsOpen(true)}
-            role="button"
-            aria-label="Open your thank you note"
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10 flex cursor-pointer flex-col items-center text-center"
           >
-            <div className="w-24 h-24 sm:w-28 sm:h-28 bg-emerald-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-emerald-200 transition-colors duration-300">
-              <MailOpen className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" strokeWidth={1.5} />
-            </div>
-            <h2 className="text-xl font-medium text-emerald-900 mb-2">A note of appreciation</h2>
-            <p className="text-emerald-500 font-semibold tracking-wider uppercase text-xs animate-pulse">
-              Tap to open
-            </p>
-          </motion.div>
+            <DrawHeart className="mb-4 h-20 w-24" />
+            <span className="text-4xl text-rose-700" style={HAND}>
+              A little note for you
+            </span>
+            <span className="mt-3 text-xl text-stone-500" style={HAND}>
+              tap to open
+            </span>
+          </motion.button>
         ) : (
-          <motion.div
-            key="card"
-            variants={containerVariants}
+          <motion.main
+            key="note"
+            variants={container}
             initial="hidden"
             animate="show"
-            className="max-w-3xl w-full flex flex-col md:flex-row bg-white rounded-3xl shadow-2xl shadow-emerald-900/5 overflow-hidden border border-emerald-50 z-10"
+            className="relative z-10 flex w-full max-w-md flex-col items-center rounded-sm bg-[#fffdf7]/80 px-6 py-10 text-center shadow-[0_10px_40px_-12px_rgba(120,70,20,0.35)] sm:px-10"
           >
-            {isOpen && (
-              <>
-                <AmbientGlow color1="#d1fae5" color2="#a7f3d0" opacity={0.4} />
-                <FloatingParticles 
-                  count={15} 
-                  shape="circle" 
-                  colors={["#6ee7b7", "#34d399"]} 
-                  minSize={3} 
-                  maxSize={8} 
-                  speed="slow" 
-                  opacity={0.4} 
-                />
-              </>
-            )}
-
             {photoUrl && (
-              <motion.div 
-                variants={itemVariants}
-                className="md:w-2/5 h-64 md:h-auto relative overflow-hidden bg-emerald-50"
+              <motion.div
+                variants={item}
+                className="mb-8 -rotate-2 bg-white p-2 pb-6 shadow-md ring-1 ring-stone-200"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photoUrl} alt="Thank you memory" className="w-full h-full object-cover" />
+                <img
+                  src={photoUrl}
+                  alt="Thank you memory"
+                  className="h-56 w-56 object-cover sm:h-64 sm:w-64"
+                />
               </motion.div>
             )}
-
-            <div className={`p-6 sm:p-10 md:p-14 flex-1 flex flex-col justify-center ${!hasPhoto ? "py-12 sm:py-16 items-center text-center max-w-xl mx-auto" : ""}`}>
-              <motion.div variants={itemVariants} className={`w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-6 ${!hasPhoto ? "mx-auto" : ""}`}>
-                🙏
-              </motion.div>
-              
-              <motion.h1
-                variants={itemVariants}
-                className="text-3xl sm:text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight break-words max-w-full"
-              >
-                Thank You, <span className="font-serif italic font-medium text-emerald-700">{recipientName}</span>
-              </motion.h1>
-              
-              <motion.p
-                variants={itemVariants}
-                className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed mb-8 font-sans font-normal whitespace-pre-wrap break-words max-w-full"
-              >
-                {message}
-              </motion.p>
-              
-              <motion.div 
-                variants={itemVariants}
-                className={`mt-auto pt-6 border-t border-slate-100 ${!hasPhoto ? "w-full max-w-xs text-center" : ""}`}
-              >
-                <p className="text-xs text-slate-400 font-sans font-semibold uppercase tracking-[0.2em] mb-1">Warmly,</p>
-                <p className="text-xl font-serif font-semibold text-slate-800 break-words">{senderName}</p>
-              </motion.div>
-
-
-              <motion.div
-                variants={itemVariants}
-                className={`mt-10 pt-4 ${!hasPhoto ? "flex justify-center" : ""}`}
-              >
-                <WishletBranding theme="emerald" />
-              </motion.div>
-            </div>
-          </motion.div>
+            <motion.p variants={item} className="text-2xl text-stone-500" style={HAND}>
+              thank you,
+            </motion.p>
+            <motion.h1
+              variants={item}
+              className="mt-1 max-w-full break-words text-4xl font-semibold text-rose-800 sm:text-5xl"
+              style={SERIF}
+            >
+              {recipientName}
+            </motion.h1>
+            <DrawUnderline className="mt-1 h-5 w-44" />
+            <motion.p
+              variants={item}
+              className="mt-8 max-w-full whitespace-pre-wrap break-words text-2xl leading-relaxed text-stone-700 sm:text-3xl"
+              style={HAND}
+            >
+              {message}
+            </motion.p>
+            <motion.div variants={item} className="mt-8 flex flex-col items-center">
+              <span className="text-xl text-stone-500" style={HAND}>
+                with love,
+              </span>
+              <span className="break-words text-3xl text-rose-700" style={HAND}>
+                {senderName}
+              </span>
+              <Heart size={26} className="mt-2" color="#e11d48" />
+            </motion.div>
+            <motion.div variants={item} className="mt-8">
+              <WishletBranding theme="neutral" />
+            </motion.div>
+          </motion.main>
         )}
       </AnimatePresence>
     </div>
   );
 }
-

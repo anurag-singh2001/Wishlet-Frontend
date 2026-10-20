@@ -1,18 +1,108 @@
 import React from "react";
-import { StoryLayout } from "./StoryLayout";
-import type { StoryCardProps, StoryPalette } from "./types";
+import type { StoryCardProps } from "./types";
 
-const PALETTE: StoryPalette = {
-  bg: "#ecfdf5",
-  accent: "#10b981",
-  title: "#059669",
-  heading: "#0f172a",
-  body: "#475569",
-  muted: "#94a3b8",
-  frame: "#d1fae5",
-  serif: true,
-};
+const INK = "#b4532a";
+const ROSE = "#be123c";
 
-export function ThankYouSimpleStory(props: StoryCardProps): React.ReactElement {
-  return <StoryLayout {...props} palette={PALETTE} icon="🙏" title="Thank You" />;
+/** Static 1080x1920 card. Flexbox + inline styles only (Satori). */
+export function ThankYouSimpleStory({
+  recipientName,
+  senderName,
+  message,
+  photo,
+}: StoryCardProps): React.ReactElement {
+  const text = message.length > 220 ? `${message.slice(0, 217)}...` : message;
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "radial-gradient(circle at 50% 35%, #fffaf0 0%, #fbf0dc 60%, #f1e0c0 100%)",
+        fontFamily: "serif",
+        padding: "120px 90px 160px",
+      }}
+    >
+      <div style={{ display: "flex", fontSize: 90, color: "#e11d48", marginBottom: 20 }}>♥</div>
+      {photo && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={photo}
+          width={480}
+          height={480}
+          alt=""
+          style={{
+            width: 480,
+            height: 480,
+            objectFit: "cover",
+            border: "16px solid #ffffff",
+            borderBottom: "60px solid #ffffff",
+            transform: "rotate(-2deg)",
+            marginBottom: 60,
+          }}
+        />
+      )}
+      <div style={{ display: "flex", fontSize: 54, color: "#78716c", fontStyle: "italic" }}>
+        thank you,
+      </div>
+      <div
+        style={{
+          display: "flex",
+          fontSize: 100,
+          color: "#9f1239",
+          fontWeight: 700,
+          textAlign: "center",
+          justifyContent: "center",
+        }}
+      >
+        {recipientName}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          width: 420,
+          height: 10,
+          borderRadius: 5,
+          background: INK,
+          marginTop: 16,
+          marginBottom: 50,
+        }}
+      />
+      {text && (
+        <div
+          style={{
+            display: "flex",
+            fontSize: 48,
+            lineHeight: 1.4,
+            color: "#44403c",
+            textAlign: "center",
+            justifyContent: "center",
+            fontStyle: "italic",
+          }}
+        >
+          {text}
+        </div>
+      )}
+      {senderName && (
+        <div style={{ display: "flex", fontSize: 44, color: ROSE, marginTop: 50 }}>
+          with love, {senderName}
+        </div>
+      )}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 90,
+          display: "flex",
+          fontSize: 32,
+          color: "#a8a29e",
+          fontWeight: 700,
+        }}
+      >
+        Made with Wishlet
+      </div>
+    </div>
+  );
 }
