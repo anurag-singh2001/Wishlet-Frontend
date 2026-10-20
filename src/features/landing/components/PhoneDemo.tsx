@@ -5,38 +5,60 @@ import { useEffect, useState } from "react";
 import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
 import type { TemplateProps } from "@/features/templates/types";
 
-const DEMOS: { id: string; occasion: string; message: string }[] = [
+interface Demo {
+  id: string;
+  label: string;
+  recipientName: string;
+  senderName: string;
+  message: string;
+  occasion: string;
+}
+
+const DEMOS: Demo[] = [
   {
     id: "birthday-minimal",
+    label: "Birthday � Minimal",
     occasion: "birthday",
-    message: "You make every day brighter. Can't wait to celebrate!",
+    recipientName: "Priya",
+    senderName: "Rahul",
+    message: "Happy birthday! You make every day brighter. Can't wait to celebrate with you.",
   },
   {
     id: "anniversary-cinematic",
+    label: "Anniversary � Cinematic",
     occasion: "anniversary",
-    message: "Every year with you is my favourite one yet.",
+    recipientName: "Meera",
+    senderName: "Arjun",
+    message: "Five years of us, and I'd choose you every single time.",
   },
   {
     id: "congratulations-gold",
+    label: "Congratulations � Black & Gold",
     occasion: "congratulations",
-    message: "You earned every bit of this. So proud of you!",
+    recipientName: "Kabir",
+    senderName: "Team",
+    message: "You did it! So proud of you, the new job is lucky to have you.",
   },
   {
     id: "thank-you-botanical",
+    label: "Thank you � Botanical",
     occasion: "thank-you",
-    message: "Thank you for always being there when it counted.",
+    recipientName: "Mom",
+    senderName: "Ananya",
+    message: "Thank you for every packed lunch and every late-night talk.",
   },
 ];
-const INTERVAL_MS = 4000;
+const INTERVAL_MS = 5000;
 
-function propsFor(d: (typeof DEMOS)[number]): TemplateProps {
+function propsFor(d: Demo): TemplateProps {
   return {
-    recipientName: "Priya",
-    senderName: "Rahul",
+    recipientName: d.recipientName,
+    senderName: d.senderName,
     message: d.message,
     occasion: d.occasion,
     photos: [],
     content: {},
+    autoOpen: true,
   };
 }
 
@@ -53,7 +75,7 @@ export function PhoneDemo(): React.JSX.Element {
   const demo = DEMOS[index];
 
   return (
-    <div className="relative flex justify-center">
+    <div className="relative flex flex-col items-center gap-3">
       <div
         aria-hidden="true"
         className="absolute top-10 hidden h-[440px] w-[440px] rounded-full md:block"
@@ -61,8 +83,8 @@ export function PhoneDemo(): React.JSX.Element {
       />
       <div
         role="img"
-        aria-label="Live preview of Wishlet designs for Priya"
-        className="relative h-[470px] w-[240px] rounded-[38px] bg-ink p-[10px] shadow-[0_24px_48px_rgba(79,70,229,0.18)] [--s:0.564] md:h-[620px] md:w-[300px] md:rounded-[44px] md:p-3 md:shadow-[0_30px_60px_rgba(79,70,229,0.18)] md:[--s:0.708]"
+        aria-label={`Example wish: ${demo.label}`}
+        className="relative h-[470px] w-[240px] rounded-[38px] bg-ink p-[10px] shadow-[0_24px_48px_rgba(79,70,229,0.18)] [--s:0.533] md:h-[620px] md:w-[300px] md:rounded-[44px] md:p-3 md:shadow-[0_30px_60px_rgba(79,70,229,0.18)] md:[--s:0.692]"
       >
         <div className="pointer-events-none relative h-full w-full select-none overflow-hidden rounded-[30px] bg-white md:rounded-[34px]">
           <AnimatePresence initial={false}>
@@ -72,28 +94,34 @@ export function PhoneDemo(): React.JSX.Element {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.8 }}
-              className="absolute left-1/2 top-1/2 w-[390px] origin-center overflow-hidden"
-              style={{ height: "100dvh", transform: "translate(-50%, -50%) scale(var(--s))" }}
+              className="absolute left-1/2 top-1/2 h-[844px] w-[390px] origin-center overflow-hidden"
+              style={{ transform: "translate(-50%, -50%) scale(var(--s))" }}
             >
               <TemplateRenderer templateId={demo.id} props={propsFor(demo)} />
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
-      <div className="absolute bottom-[60px] left-0 flex items-center gap-2 rounded-2xl border border-hairline bg-surface px-4 py-3 text-sm font-semibold md:bottom-[70px]">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#4F46E5"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        Opened 3 times
+      <p className="relative text-sm font-semibold text-ink" aria-live="polite">
+        {demo.label}
+      </p>
+      <div className="relative flex items-center">
+        {DEMOS.map((d, i) => (
+          <button
+            key={d.id}
+            type="button"
+            aria-label={`Show ${d.label} example`}
+            aria-current={i === index}
+            onClick={() => setIndex(i)}
+            className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            <span
+              className={`h-2 rounded-full transition-all ${
+                i === index ? "w-5 bg-brand" : "w-2 bg-hairline"
+              }`}
+            />
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -35,7 +35,8 @@ export function TemplateThumb({
           props={{
             recipientName: recipientName.trim() || "Priya",
             senderName: "You",
-            message: "You make every day brighter.",
+            message: "You make every day brighter. Can't wait to celebrate!",
+            autoOpen: true,
             occasion,
             photos: [],
             content: {},
