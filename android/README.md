@@ -21,3 +21,11 @@ Download: https://github.com/anurag-singh2001/Wishlet-Frontend/releases/tag/app-
 
 Local: `npx cap sync android`, then open in Android Studio
 (JDK 21). Without the signing env vars, release builds use the debug key.
+
+## Launch sequence and plugins
+- Start URL is `/app` (app home). Native splash (indigo + icon, `AppTheme.NoActionBarLaunch`) stays up
+  (`launchAutoHide: false`) until the web `AppIntro` provider hides it and plays the ~1.5 s logo and
+  confetti intro (once per cold start, skipped with reduced motion; hard stop at 4 s).
+- Plugins: `@capacitor/app` (back button), `@capacitor/splash-screen`, `@capacitor/status-bar`, share, filesystem.
+- Offline: `mobile-shell/index.html` is shown via `server.errorPath`; "Try again" reloads `/app`.
+- After changing plugins or config run `npx cap sync android`.
