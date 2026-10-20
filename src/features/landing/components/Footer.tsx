@@ -1,32 +1,29 @@
-import React from "react";
-import Link from "next/link";
+const LINK =
+  "inline-flex min-h-11 items-center rounded-control underline-offset-2 hover:text-brand-deep hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
 
-export function Footer() {
+export function Footer(): React.JSX.Element {
   return (
-    <footer className="bg-slate-900 py-12 px-6 text-slate-400">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-indigo-500 rounded flex items-center justify-center text-white text-xs">
-            ✨
-          </div>
-          <span className="font-bold text-white tracking-tight">Wishlet</span>
-        </div>
-        
-        <p className="text-sm">
-          &copy; {new Date().getFullYear()} Wishlet. Designed for moments that matter.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-sm items-center">
-          <Link href="/build" className="hover:text-white transition-colors">Create a Wish</Link>
+    <footer className="border-t border-hairline">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-1 px-5 py-5 text-sm text-muted md:flex-row md:items-center md:justify-between md:px-8 md:py-7">
+        <div className="flex flex-col md:flex-row md:gap-5">
           <a
             href="https://forms.gle/5zA5dNXDY2PexPHx9"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-white text-slate-400 transition-colors"
+            className={LINK}
           >
-            Have feedback? Tell us what you think →
+            Send feedback
+          </a>
+          <a
+            href="https://github.com/anurag-singh2001/Wishlet-Frontend/releases/tag/app-latest"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={LINK}
+          >
+            Get the Android app
           </a>
         </div>
+        <span>&copy; {new Date().getFullYear()} Wishlet</span>
       </div>
     </footer>
   );

@@ -1,22 +1,75 @@
-import React from "react";
-import Link from "next/link";
+"use client";
 
-export function Header() {
+import Link from "next/link";
+import { useState } from "react";
+import { Button, Logo, Sheet } from "@/components/ui";
+
+const LINKS = [
+  { href: "/#occasions", label: "Occasions" },
+  { href: "/#how", label: "How it works" },
+  { href: "/wishes", label: "My wishes" },
+];
+
+const LINK_CLASS =
+  "inline-flex min-h-11 items-center rounded-control text-[15px] font-semibold text-muted hover:text-brand-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
+
+export function Header(): React.JSX.Element {
+  const [open, setOpen] = useState(false);
+
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 z-50">
-      <div className="max-w-6xl mx-auto px-6 h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-            ✨
-          </div>
-          <span className="font-bold text-xl tracking-tight text-slate-900">Wishlet</span>
+    <header className="border-b border-hairline bg-ground md:border-b-0">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-8 md:py-5">
+        <Link href="/" aria-label="Wishlet home" className="rounded-control">
+          <Logo size={34} className="font-display text-[20px] font-extrabold md:text-[22px]" />
         </Link>
-        <nav className="flex items-center gap-6">
-          <Link href="/build" className="bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-5 rounded-full transition-colors text-sm">
-            Create a Wish
-          </Link>
+        <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
+          {LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className={LINK_CLASS}>
+              {l.label}
+            </Link>
+          ))}
+          <Button href="/build" size="sm">
+            Create a wish
+          </Button>
         </nav>
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={() => setOpen(true)}
+          className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-hairline bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:hidden"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
       </div>
+      <Sheet open={open} onClose={() => setOpen(false)} title="Menu">
+        <nav aria-label="Menu" className="flex flex-col gap-1">
+          {LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className={`${LINK_CLASS} text-base`}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div className="pt-3">
+            <Button href="/build" fullWidth>
+              Create a wish
+            </Button>
+          </div>
+        </nav>
+      </Sheet>
     </header>
   );
 }

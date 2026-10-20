@@ -1,41 +1,117 @@
-import React from "react";
-import Link from "next/link";
+"use client";
 
-const occasions = [
-  { id: "birthday", title: "Birthday", emoji: "🎂", color: "bg-orange-100 text-orange-600" },
-  { id: "anniversary", title: "Anniversary", emoji: "💍", color: "bg-rose-100 text-rose-600" },
-  { id: "thank-you", title: "Thank You", emoji: "🙏", color: "bg-emerald-100 text-emerald-600" },
-  { id: "congratulations", title: "Congrats", emoji: "🎉", color: "bg-blue-100 text-blue-600" },
-  { id: "sorry", title: "I'm Sorry", emoji: "🥺", color: "bg-purple-100 text-purple-600" },
+import Link from "next/link";
+import { templateRegistry } from "@/features/templates/registry";
+
+interface Occasion {
+  id: string;
+  label: string;
+  bg: string;
+  stroke: string;
+  icon: React.ReactNode;
+}
+
+const OCCASIONS: Occasion[] = [
+  {
+    id: "birthday",
+    label: "Birthday",
+    bg: "#FFF1EC",
+    stroke: "#B4401F",
+    icon: (
+      <>
+        <rect x="4" y="11" width="16" height="9" rx="2" />
+        <path d="M8 11V8M12 11V6M16 11V8" />
+      </>
+    ),
+  },
+  {
+    id: "anniversary",
+    label: "Anniversary",
+    bg: "#FDEBF3",
+    stroke: "#B0285E",
+    icon: (
+      <>
+        <circle cx="9" cy="14" r="5" />
+        <circle cx="15" cy="14" r="5" />
+        <path d="M9 5l3-2 3 2" />
+      </>
+    ),
+  },
+  {
+    id: "thank-you",
+    label: "Thank you",
+    bg: "#EAF7EF",
+    stroke: "#1F7A45",
+    icon: <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />,
+  },
+  {
+    id: "congratulations",
+    label: "Congratulations",
+    bg: "#FFF6DC",
+    stroke: "#8A5A00",
+    icon: (
+      <>
+        <path d="M7 4h10v5a5 5 0 0 1-10 0z" />
+        <path d="M12 14v4M8 20h8M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3" />
+      </>
+    ),
+  },
+  {
+    id: "sorry",
+    label: "Sorry",
+    bg: "#ECEFFB",
+    stroke: "#3B4A8C",
+    icon: (
+      <>
+        <path d="M7 15a5 5 0 0 1 0-10 6 6 0 0 1 11 3 4 4 0 0 1-1 7z" />
+        <path d="M9 19l-1 2M13 19l-1 2M17 19l-1 2" />
+      </>
+    ),
+  },
 ];
 
-export function Occasions() {
+function designCount(id: string): number {
+  return Object.values(templateRegistry).filter((t) => t.occasion === id).length;
+}
+
+export function Occasions(): React.JSX.Element {
   return (
-    <section className="py-20 px-6 bg-slate-50 border-y border-slate-100">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">Perfect for every moment</h2>
-          <p className="text-slate-600 max-w-2xl mx-auto">
-            Whether it&apos;s a major milestone or just because, we have a beautiful template ready for you to customize.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {occasions.map((occ) => (
+    <section
+      id="occasions"
+      className="mx-auto flex max-w-[1200px] scroll-mt-4 flex-col gap-4 px-5 py-6 md:gap-7 md:px-8 md:pb-20 md:pt-10"
+    >
+      <h2 className="font-display text-[28px] font-extrabold md:text-[40px] md:tracking-[-0.02em]">
+        What&apos;s the occasion?
+      </h2>
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4">
+        {OCCASIONS.map((o, i) => (
+          <li key={o.id} className={i === 4 ? "col-span-2 md:col-span-1" : undefined}>
             <Link
-              key={occ.id}
-              href={`/build?occasion=${occ.id}`}
-              className="group flex flex-col items-center justify-center p-6 bg-white rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all hover:-translate-y-1"
+              href={`/build?occasion=${o.id}`}
+              className="flex h-full flex-col gap-2.5 rounded-[20px] border border-hairline bg-surface p-4 transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:gap-3.5 md:rounded-card md:p-6"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl mb-4 ${occ.color} group-hover:scale-110 transition-transform`}>
-                {occ.emoji}
-              </div>
-              <h3 className="font-semibold text-slate-900">{occ.title}</h3>
+              <span
+                className="flex h-10 w-10 items-center justify-center rounded-[12px] md:h-12 md:w-12 md:rounded-control"
+                style={{ background: o.bg }}
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={o.stroke}
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  {o.icon}
+                </svg>
+              </span>
+              <strong className="text-base md:text-lg">{o.label}</strong>
+              <span className="text-sm text-muted">{designCount(o.id)} designs</span>
             </Link>
-          ))}
-        </div>
-
-      </div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
