@@ -1,10 +1,25 @@
 const KEY = "wishlet:owned";
 
-function readAll(): Record<string, string> {
+export interface WishMeta {
+  recipientName?: string;
+  occasion?: string;
+  templateId?: string;
+  createdAt?: string;
+}
+
+export interface OwnedWish extends WishMeta {
+  slug: string;
+  token: string;
+}
+
+/** Old entries are a bare token string; new entries are objects. */
+type StoredEntry = string | ({ token: string } & WishMeta);
+
+function readAll(): Record<string, StoredEntry> {
   try {
     const parsed: unknown = JSON.parse(localStorage.getItem(KEY) || "{}");
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return parsed as Record<string, string>;
+      return parsed as Record<string, StoredEntry>;
     }
   } catch {
     // storage unavailable or corrupt
@@ -12,7 +27,7 @@ function readAll(): Record<string, string> {
   return {};
 }
 
-function writeAll(map: Record<string, string>): void {
+function writeAll(map: Record<string, StoredEntry>): void {
   try {
     localStorage.setItem(KEY, JSON.stringify(map));
   } catch {
@@ -20,12 +35,17 @@ function writeAll(map: Record<string, string>): void {
   }
 }
 
-export function saveWishToken(slug: string, token: string): void {
-  writeAll({ ...readAll(), [slug]: token });
+function tokenOf(entry: StoredEntry | undefined): string | null {
+  if (typeof entry === "string") return entry;
+  return entry && typeof entry.token === "string" ? entry.token : null;
+}
+
+export function saveWishToken(slug: string, token: string, meta: WishMeta = {}): void {
+  writeAll({ ...readAll(), [slug]: { token, createdAt: new Date().toISOString(), ...meta } });
 }
 
 export function getWishToken(slug: string): string | null {
-  return readAll()[slug] ?? null;
+  return tokenOf(readAll()[slug]);
 }
 
 export function removeWishToken(slug: string): void {
@@ -34,6 +54,16 @@ export function removeWishToken(slug: string): void {
   writeAll(map);
 }
 
-export function listOwnedWishes(): { slug: string; token: string }[] {
-  return Object.entries(readAll()).map(([slug, token]) => ({ slug, token }));
+/** Newest first. Entries without a createdAt sort last (kept in storage order). */
+export function listOwnedWishes(): OwnedWish[] {
+  const out: OwnedWish[] = [];
+  for (const [slug, entry] of Object.entries(readAll())) {
+    const token = tokenOf(entry);
+    if (!token) continue;
+    out.push(typeof entry === "string" ? { slug, token } : { ...entry, slug, token });
+  }
+  return out
+    .map((w, i) => ({ w, i }))
+    .sort((a, b) => (b.w.createdAt ?? "").localeCompare(a.w.createdAt ?? "") || b.i - a.i)
+    .map(({ w }) => w);
 }

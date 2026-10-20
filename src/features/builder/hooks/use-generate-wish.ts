@@ -19,7 +19,11 @@ export function useGenerateWish(onCreated: (created: Created) => void) {
       return createWish(payload);
     },
     onSuccess: (data, variables) => {
-      saveWishToken(data.slug, data.deleteToken);
+      saveWishToken(data.slug, data.deleteToken, {
+        recipientName: variables.recipientName.trim(),
+        occasion: variables.occasion,
+        templateId: variables.templateId,
+      });
       onCreated({ url: data.url, slug: data.slug });
       trackWishCreated({ occasion: variables.occasion, template: variables.templateId });
     },
