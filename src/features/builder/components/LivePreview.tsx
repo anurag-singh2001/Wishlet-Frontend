@@ -18,6 +18,7 @@ export function LivePreview({ state, fill = false }: LivePreviewProps): React.Re
     occasion: state.occasion,
     photos: state.photos,
     content: {},
+    autoOpen: true,
   };
 
   return (

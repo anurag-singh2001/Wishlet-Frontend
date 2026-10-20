@@ -14,14 +14,6 @@ export function Footer(): React.JSX.Element {
           >
             Send feedback
           </a>
-          <a
-            href="https://github.com/anurag-singh2001/Wishlet-Frontend/releases/tag/app-latest"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={LINK}
-          >
-            Get the Android app
-          </a>
         </div>
         <span>&copy; {new Date().getFullYear()} Wishlet</span>
       </div>
