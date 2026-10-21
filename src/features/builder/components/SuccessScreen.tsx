@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useToast } from "@/components/ui";
-import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
+import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 import { useDeleteWish } from "../hooks/use-delete-wish";
 import { DeleteWishSheet } from "./DeleteWishSheet";
 import { ShareActions } from "./ShareActions";
@@ -45,23 +45,17 @@ export function SuccessScreen({
       </div>
 
       <div className="flex flex-col items-center gap-3.5 text-center">
-        <div
-          className="h-[230px] w-[150px] overflow-hidden rounded-[22px] border-[6px] border-ink shadow-xl"
-          aria-hidden="true"
-        >
-          <div className="pointer-events-none h-[640px] w-[360px] origin-top-left scale-[0.38]">
-            <TemplateRenderer
-              templateId={state.templateId}
-              props={{
-                recipientName: name,
-                senderName: state.senderName,
-                message: state.message,
-                occasion: state.occasion,
-                photos: state.photos,
-                content: {},
-              }}
-            />
-          </div>
+        <div className="h-[230px] w-[150px] overflow-hidden rounded-[22px] border-[6px] border-ink shadow-xl">
+          <TemplateFrame
+            templateId={state.templateId}
+            recipientName={name}
+            senderName={state.senderName}
+            message={state.message}
+            occasion={state.occasion}
+            photo={state.photos[0]}
+            cover
+            title={`Preview of ${name || "your"} wish`}
+          />
         </div>
         <h1 className="font-display text-[30px] font-extrabold text-ink">
           {name ? `${name}'s wish is ready` : "Your wish is ready"}
