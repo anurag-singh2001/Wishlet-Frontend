@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const VIEW_W = 390;
 const VIEW_H = 844;
@@ -13,8 +13,10 @@ interface TemplateFrameProps {
   message: string;
   occasion: string;
   photo?: string;
-  /** Rendered pixel width; height follows the 390x844 phone ratio. */
-  width: number;
+  /** Rendered pixel width; height follows the 390x844 phone ratio. Ignored with `cover`. */
+  width?: number;
+  /** Fill the parent box instead: scale to cover it, centred, cropping the overflow. */
+  cover?: boolean;
   className?: string;
   title: string;
 }
@@ -34,10 +36,12 @@ function buildSrc(p: TemplateFrameProps): string {
 
 /** Non-interactive template preview rendered in a real 390x844 viewport via an iframe. */
 export function TemplateFrame(props: TemplateFrameProps): React.JSX.Element {
-  const { width, className, title } = props;
+  const { width = VIEW_W, cover = false, className, title } = props;
   const target = buildSrc(props);
   const [src, setSrc] = useState(target);
   const [loaded, setLoaded] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
     if (target === src) return;
@@ -45,13 +49,24 @@ export function TemplateFrame(props: TemplateFrameProps): React.JSX.Element {
     return () => clearTimeout(id);
   }, [target, src]);
 
-  const scale = width / VIEW_W;
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!cover || !el) return;
+    const ro = new ResizeObserver(() => setBox({ w: el.clientWidth, h: el.clientHeight }));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [cover]);
+
+  const scale = cover ? Math.max(box.w / VIEW_W, box.h / VIEW_H) : width / VIEW_W;
+  const left = cover ? (box.w - VIEW_W * scale) / 2 : 0;
+  const top = cover ? (box.h - VIEW_H * scale) / 2 : 0;
   return (
     <div
+      ref={boxRef}
       role="img"
       aria-label={title}
-      className={`relative overflow-hidden bg-ground ${className ?? ""}`}
-      style={{ width, height: (width * VIEW_H) / VIEW_W }}
+      className={`relative overflow-hidden bg-ground ${cover ? "h-full w-full" : ""} ${className ?? ""}`}
+      style={cover ? undefined : { width, height: (width * VIEW_H) / VIEW_W }}
     >
       {!loaded && <div className="absolute inset-0 animate-pulse bg-hairline/60" />}
       <iframe
@@ -65,8 +80,9 @@ export function TemplateFrame(props: TemplateFrameProps): React.JSX.Element {
         style={{
           width: VIEW_W,
           height: VIEW_H,
-          transform: `scale(${scale})`,
+          transform: `translate(${left}px, ${top}px) scale(${scale})`,
           transformOrigin: "top left",
+          visibility: cover && box.w === 0 ? "hidden" : undefined,
         }}
       />
     </div>

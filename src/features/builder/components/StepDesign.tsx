@@ -20,10 +20,12 @@ export function StepDesign({
   onSelect,
 }: StepDesignProps): React.ReactElement {
   const options = templatesFor(templates, occasion);
+  const label = occasionLabel(occasion).toLowerCase();
+  const article = /^[aeiou]/.test(label) ? "an" : "a";
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-display text-[30px] font-extrabold text-ink">
-        Pick a {occasionLabel(occasion).toLowerCase()} design
+        Pick {article} {label} design
       </h1>
       <div role="radiogroup" aria-label="Design" className="grid grid-cols-2 gap-3.5">
         {options.map((t) => {

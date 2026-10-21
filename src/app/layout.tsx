@@ -12,6 +12,7 @@ import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { NativeBackButton } from "@/components/providers/NativeBackButton";
 import { AppIntro } from "@/components/providers/AppIntro";
+import { NativeHomeRedirect } from "@/components/providers/NativeHomeRedirect";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const geistSans = Geist({
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </QueryProvider>
         <NativeBackButton />
         <AppIntro />
+        <NativeHomeRedirect />
       </body>
     </html>
   );

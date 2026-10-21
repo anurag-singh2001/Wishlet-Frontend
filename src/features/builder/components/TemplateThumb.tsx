@@ -3,8 +3,6 @@
 import React from "react";
 import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 
-const WIDTH = 150;
-
 interface TemplateThumbProps {
   templateId: string;
   occasion: string;
@@ -18,14 +16,14 @@ export function TemplateThumb({
   recipientName,
 }: TemplateThumbProps): React.ReactElement {
   return (
-    <div className="relative flex h-[262px] justify-center overflow-hidden bg-ground">
+    <div className="h-[340px] w-full overflow-hidden bg-ground">
       <TemplateFrame
         templateId={templateId}
         occasion={occasion}
         recipientName={recipientName.trim() || "Priya"}
         senderName="You"
         message="You make every day brighter. Can't wait to celebrate!"
-        width={WIDTH}
+        cover
         title={`${templateId} preview`}
       />
     </div>

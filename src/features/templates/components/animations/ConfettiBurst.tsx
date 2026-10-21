@@ -38,8 +38,9 @@ export function ConfettiBurst({
           x: Math.cos(angle) * dist,
           y: Math.sin(angle) * dist - 40,
           rotate: rand(i, k++) * 720 - 360,
-          w: 6 + rand(i, k++) * 6,
-          h: 4 + rand(i, k++) * 6,
+          // Whole pixels: fractional sizes serialize differently on server and client (hydration warning).
+          w: Math.round(6 + rand(i, k++) * 6),
+          h: Math.round(4 + rand(i, k++) * 6),
           duration: 1.1 + rand(i, k++) * 0.9,
         };
       }),
