@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TemplateRenderer } from "@/features/templates/components/TemplateRenderer";
 import type { TemplateProps } from "@/features/templates/types";
@@ -15,36 +15,12 @@ interface PublicViewerProps {
   slug: string;
 }
 
-const AFTER_INTERACTION_MS = 2500;
-const FALLBACK_MS = 8000;
-
-/** Visible once the recipient interacted with the template (+2.5s), or after 8s regardless. */
-function useShareReveal(enabled: boolean): { visible: boolean; onInteract: () => void } {
-  const [visible, setVisible] = useState(false);
-  const [interacted, setInteracted] = useState(false);
-
-  useEffect(() => {
-    if (!enabled) return;
-    const t = setTimeout(() => setVisible(true), FALLBACK_MS);
-    return () => clearTimeout(t);
-  }, [enabled]);
-
-  useEffect(() => {
-    if (!enabled || !interacted) return;
-    const t = setTimeout(() => setVisible(true), AFTER_INTERACTION_MS);
-    return () => clearTimeout(t);
-  }, [enabled, interacted]);
-
-  return { visible, onInteract: () => setInteracted(true) };
-}
-
 export function PublicViewer({ slug }: PublicViewerProps) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["wish", slug],
     queryFn: () => getWish(slug),
     retry: false, // Don't retry on 404
   });
-  const share = useShareReveal(Boolean(data));
 
   useEffect(() => {
     if (data) {
@@ -83,19 +59,16 @@ export function PublicViewer({ slug }: PublicViewerProps) {
   };
 
   return (
-    <div
-      className="min-h-[100dvh] w-full"
-      onPointerDownCapture={share.onInteract}
-      onKeyDownCapture={share.onInteract}
-    >
+    <div className="w-full">
       <TemplateRenderer templateId={data.templateId} props={templateProps} />
-      {share.visible && (
-        <div className="safe-bottom pointer-events-none fixed inset-x-0 bottom-4 z-50 flex animate-fade-in justify-center px-4">
-          <div className="pointer-events-auto">
-            <InstagramShareButton slug={slug} label="Share to your story" variant="pill" />
-          </div>
-        </div>
-      )}
+      {/* Below the wish, in normal flow: it never sits on top of the card. */}
+      <section
+        aria-label="Share this wish"
+        className="safe-bottom flex flex-col items-center gap-3 border-t border-hairline bg-ground px-4 py-8 text-center"
+      >
+        <p className="text-sm text-muted">Loved it? Share the moment on your story.</p>
+        <InstagramShareButton slug={slug} label="Share to your story" variant="pill" />
+      </section>
     </div>
   );
 }
