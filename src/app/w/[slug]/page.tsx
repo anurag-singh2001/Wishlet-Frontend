@@ -31,7 +31,9 @@ export async function generateMetadata({ params }: PageProps) {
       title = `${prefix} ${recipientName}`;
     }
   } catch (error) {
-    console.error("Failed to fetch wish for metadata:", error);
+    // Missing or expired wishes keep the generic title.
+    if (!(error instanceof Error && (error.message === "NOT_FOUND" || error.message === "EXPIRED")))
+      console.error("Failed to fetch wish for metadata:", error);
   }
 
   return {

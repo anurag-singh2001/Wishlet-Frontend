@@ -7,6 +7,8 @@ import { Button, Card, useToast } from "@/components/ui";
 import { getWishStats } from "@/lib/api";
 import { removeWishToken, type OwnedWish } from "@/lib/wish-tokens";
 import { occasionLabel, OCCASIONS } from "@/features/builder/lib/occasions";
+import { timeLeft } from "@/lib/expiry";
+import { ExpiryChip } from "./ExpiryChip";
 import { WishThumb } from "./WishThumb";
 
 interface WishCardProps {
@@ -39,11 +41,20 @@ export function WishCard({
   });
 
   useEffect(() => {
-    if (isError && (error.message === "FORBIDDEN" || error.message === "NOT_FOUND")) {
+    if (isError && ["FORBIDDEN", "NOT_FOUND", "EXPIRED"].includes(error.message)) {
       removeWishToken(slug);
       onGone(slug);
     }
   }, [isError, error, slug, onGone]);
+
+  const expiresAt = wish.expiresAt ?? data?.expiresAt;
+  const passed = timeLeft(expiresAt).expired;
+  useEffect(() => {
+    if (passed) {
+      removeWishToken(slug);
+      onGone(slug);
+    }
+  }, [passed, slug, onGone]);
 
   const name = wish.recipientName || "";
   const tint = OCCASIONS.find((o) => o.id === wish.occasion)?.tint ?? "#EEF0FF";
@@ -79,6 +90,7 @@ export function WishCard({
           {name ? `For ${name}` : "Your wish"}
         </strong>
         {meta && <span className="truncate text-[13px] text-[#4B4766]">{meta}</span>}
+        <ExpiryChip expiresAt={expiresAt} />
         {opens !== undefined && (
           <span
             className={`flex items-center gap-1.5 text-[13px] font-bold ${

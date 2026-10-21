@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button, Sheet, Skeleton } from "@/components/ui";
+import { Button, Sheet } from "@/components/ui";
 import { trackCreateWishStarted } from "@/lib/analytics";
 import { useTemplates } from "../hooks/use-templates";
 import { useGenerateWish } from "../hooks/use-generate-wish";
@@ -36,7 +36,8 @@ export function BuilderShell(): React.ReactElement {
   const occasionParam = searchParams.get("occasion") ?? "";
   const deepLinked = OCCASIONS.some((o) => o.id === occasionParam);
 
-  const { data, isLoading } = useTemplates();
+  // The bundled list renders immediately; the API (which may be waking from sleep) only refines it.
+  const { data } = useTemplates();
   const templates: ApiTemplate[] = data?.templates?.length ? data.templates : DEFAULT_TEMPLATES;
 
   const [step, setStep] = useState<BuilderStep>(deepLinked ? 2 : 1);
@@ -51,7 +52,11 @@ export function BuilderShell(): React.ReactElement {
   const [stepError, setStepError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [created, setCreated] = useState<{ url: string; slug: string } | null>(null);
+  const [created, setCreated] = useState<{
+    url: string;
+    slug: string;
+    expiresAt?: string;
+  } | null>(null);
 
   useEffect(() => {
     trackCreateWishStarted();
@@ -99,6 +104,7 @@ export function BuilderShell(): React.ReactElement {
       <SuccessScreen
         url={created.url}
         slug={created.slug}
+        expiresAt={created.expiresAt}
         state={state}
         onReset={reset}
         onDeleted={reset}
@@ -115,9 +121,7 @@ export function BuilderShell(): React.ReactElement {
           onPreview={() => setPreviewOpen(true)}
         />
         <main className="flex-1 overflow-y-auto px-5 py-6">
-          {isLoading && step === 2 ? (
-            <Skeleton className="h-72 w-full" />
-          ) : step === 1 ? (
+          {step === 1 ? (
             <StepOccasion value={state.occasion} templates={templates} onSelect={selectOccasion} />
           ) : step === 2 ? (
             <StepDesign

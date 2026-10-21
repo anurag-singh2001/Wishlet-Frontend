@@ -22,7 +22,24 @@ export function ViewerLoading(): React.ReactElement {
   );
 }
 
-export function ViewerError({ notFound }: { notFound: boolean }): React.ReactElement {
+export function ViewerError({
+  kind,
+}: {
+  kind: "notFound" | "expired" | "error";
+}): React.ReactElement {
+  const notFound = kind === "notFound";
+  if (kind === "expired") {
+    return (
+      <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-ground p-6 text-center">
+        <Logo size={48} wordmark={false} />
+        <h1 className="font-display text-2xl font-extrabold text-ink">This wish has expired</h1>
+        <p className="max-w-sm text-muted">Wishlet links last 24 hours.</p>
+        <Button href="/build" size="lg">
+          Make your own wish
+        </Button>
+      </div>
+    );
+  }
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-ground p-6 text-center">
       <Logo size={48} wordmark={false} />

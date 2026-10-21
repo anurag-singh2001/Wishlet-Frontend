@@ -45,7 +45,19 @@ export function PublicViewer({ slug }: PublicViewerProps) {
   }, [data, slug]);
 
   if (isLoading) return <ViewerLoading />;
-  if (error) return <ViewerError notFound={error.message === "NOT_FOUND"} />;
+  if (error) {
+    return (
+      <ViewerError
+        kind={
+          error.message === "EXPIRED"
+            ? "expired"
+            : error.message === "NOT_FOUND"
+              ? "notFound"
+              : "error"
+        }
+      />
+    );
+  }
   if (!data) return null;
 
   // Map API response to TemplateProps

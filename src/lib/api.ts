@@ -19,6 +19,14 @@ export interface ApiWish {
     [key: string]: unknown;
   };
   createdAt: string;
+  /** null = old wish that never expires. */
+  expiresAt: string | null;
+}
+
+export interface WishStats {
+  viewCount: number;
+  createdAt: string;
+  expiresAt?: string | null;
 }
 
 export interface CreatedWish {
@@ -26,6 +34,7 @@ export interface CreatedWish {
   slug: string;
   url: string;
   deleteToken: string;
+  expiresAt?: string;
 }
 
 export interface UploadSignature {
@@ -70,10 +79,14 @@ export async function createWish(payload: BuilderState): Promise<CreatedWish> {
   return res.json() as Promise<CreatedWish>;
 }
 
-/** Throws Error("NOT_FOUND") on 404 and Error("API_ERROR") on other failures. */
+/** Throws Error("NOT_FOUND") on 404, Error("EXPIRED") on 410 and Error("API_ERROR") on other failures. */
 export async function getWish(slug: string, init?: RequestInit): Promise<ApiWish> {
   const res = await fetch(`${API_URL}/api/v1/wishes/${slug}`, init);
-  if (!res.ok) throw new Error(res.status === 404 ? "NOT_FOUND" : "API_ERROR");
+  if (!res.ok) {
+    throw new Error(
+      res.status === 404 ? "NOT_FOUND" : res.status === 410 ? "EXPIRED" : "API_ERROR",
+    );
+  }
   return res.json() as Promise<ApiWish>;
 }
 
@@ -85,19 +98,22 @@ export async function recordWishView(slug: string): Promise<{ viewCount: number 
 }
 
 /** Throws Error("FORBIDDEN"|"NOT_FOUND"|"API_ERROR"). Requires the owner's delete token. */
-export async function getWishStats(
-  slug: string,
-  token: string,
-): Promise<{ viewCount: number; createdAt: string }> {
+export async function getWishStats(slug: string, token: string): Promise<WishStats> {
   const res = await fetch(`${API_URL}/api/v1/wishes/${slug}/stats`, {
     headers: { "x-delete-token": token },
   });
   if (!res.ok) {
     throw new Error(
-      res.status === 403 ? "FORBIDDEN" : res.status === 404 ? "NOT_FOUND" : "API_ERROR",
+      res.status === 403
+        ? "FORBIDDEN"
+        : res.status === 404
+          ? "NOT_FOUND"
+          : res.status === 410
+            ? "EXPIRED"
+            : "API_ERROR",
     );
   }
-  return res.json() as Promise<{ viewCount: number; createdAt: string }>;
+  return res.json() as Promise<WishStats>;
 }
 
 export async function deleteWish(slug: string, token: string): Promise<void> {

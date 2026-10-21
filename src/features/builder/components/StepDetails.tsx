@@ -66,6 +66,7 @@ export function StepDetails({
         onUpload={handleUpload}
         onRemove={removePhoto}
       />
+      <p className="text-center text-[13px] text-[#4B4766]">Your link works for 24 hours.</p>
     </div>
   );
 }

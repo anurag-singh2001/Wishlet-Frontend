@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Clock, X } from "lucide-react";
 import { useToast } from "@/components/ui";
 import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
+import { msLeft, timeLeft, useNow } from "@/lib/expiry";
 import { useDeleteWish } from "../hooks/use-delete-wish";
 import { DeleteWishSheet } from "./DeleteWishSheet";
 import { ShareActions } from "./ShareActions";
@@ -13,6 +14,7 @@ import type { BuilderState } from "../types";
 interface SuccessScreenProps {
   url: string;
   slug: string;
+  expiresAt?: string;
   state: BuilderState;
   onReset: () => void;
   onDeleted: () => void;
@@ -21,9 +23,17 @@ interface SuccessScreenProps {
 const LINK =
   "flex h-11 items-center justify-center rounded-control text-[15px] font-bold text-brand focus-visible:outline-2 focus-visible:outline-brand";
 
+function expiryClock(expiresAt: string, now: number): string {
+  const d = new Date(expiresAt);
+  const time = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(d);
+  const sameDay = d.toDateString() === new Date(now).toDateString();
+  return `${time} ${sameDay ? "today" : "tomorrow"}`;
+}
+
 export function SuccessScreen({
   url,
   slug,
+  expiresAt,
   state,
   onReset,
   onDeleted,
@@ -34,6 +44,7 @@ export function SuccessScreen({
     toast("Wish deleted");
     onDeleted();
   });
+  const now = useNow();
   const name = state.recipientName.trim();
 
   return (
@@ -63,6 +74,13 @@ export function SuccessScreen({
         <p className="text-[15px] leading-normal text-[#4B4766]">
           Only people you send the link to can open it.
         </p>
+        {expiresAt && now !== null && (msLeft(expiresAt, now) ?? 0) > 0 && (
+          <p className="flex items-center justify-center gap-1.5 text-[13px] text-[#4B4766]">
+            <Clock size={15} aria-hidden="true" />
+            Link expires in {timeLeft(expiresAt, now).label.replace(" left", "")} · at{" "}
+            {expiryClock(expiresAt, now)}
+          </p>
+        )}
       </div>
 
       <div className="mt-6">

@@ -5,6 +5,8 @@ export interface WishMeta {
   occasion?: string;
   templateId?: string;
   createdAt?: string;
+  /** ISO time the link stops working; absent on old wishes (never expire). */
+  expiresAt?: string;
 }
 
 export interface OwnedWish extends WishMeta {

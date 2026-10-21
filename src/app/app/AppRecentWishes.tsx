@@ -1,11 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { Badge, Skeleton } from "@/components/ui";
 import { getWishStats } from "@/lib/api";
-import { listOwnedWishes } from "@/lib/wish-tokens";
+import { removeWishToken, listOwnedWishes } from "@/lib/wish-tokens";
+import { timeLeft } from "@/lib/expiry";
+import { ExpiryChip } from "@/features/wishes/components/ExpiryChip";
 
 interface OwnedWish {
   slug: string;
@@ -13,11 +15,16 @@ interface OwnedWish {
   recipientName?: string;
   occasion?: string;
   createdAt?: string;
+  expiresAt?: string;
 }
 
 function readLatest(): string {
   try {
-    const all = listOwnedWishes() as OwnedWish[];
+    const all = (listOwnedWishes() as OwnedWish[]).filter((w) => {
+      if (!timeLeft(w.expiresAt).expired) return true;
+      removeWishToken(w.slug);
+      return false;
+    });
     const sorted = [...all].sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
     return JSON.stringify(sorted.slice(0, 3));
   } catch {
@@ -42,11 +49,17 @@ function label(occasion?: string): string {
 }
 
 function Row({ wish }: { wish: OwnedWish }): React.JSX.Element {
-  const { data } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["wish-stats", wish.slug],
     queryFn: () => getWishStats(wish.slug, wish.token),
     staleTime: 60_000,
+    retry: false,
   });
+  const gone = isError && ["NOT_FOUND", "EXPIRED"].includes(error.message);
+  useEffect(() => {
+    if (gone) removeWishToken(wish.slug);
+  }, [gone, wish.slug]);
+  if (gone) return <></>;
   const meta = [label(wish.occasion), formatDate(wish.createdAt)].filter(Boolean).join(" · ");
   return (
     <Link
@@ -59,6 +72,7 @@ function Row({ wish }: { wish: OwnedWish }): React.JSX.Element {
           {wish.recipientName ? `For ${wish.recipientName}` : "Your wish"}
         </strong>
         {meta && <span className="text-[13px] text-muted">{meta}</span>}
+        <ExpiryChip expiresAt={wish.expiresAt ?? data?.expiresAt} />
       </span>
       {data ? (
         <Badge>

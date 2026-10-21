@@ -8,6 +8,7 @@ import type { BuilderState } from "../types";
 interface Created {
   url: string;
   slug: string;
+  expiresAt?: string;
 }
 
 export function useGenerateWish(onCreated: (created: Created) => void) {
@@ -23,8 +24,9 @@ export function useGenerateWish(onCreated: (created: Created) => void) {
         recipientName: variables.recipientName.trim(),
         occasion: variables.occasion,
         templateId: variables.templateId,
+        expiresAt: data.expiresAt,
       });
-      onCreated({ url: data.url, slug: data.slug });
+      onCreated({ url: data.url, slug: data.slug, expiresAt: data.expiresAt });
       trackWishCreated({ occasion: variables.occasion, template: variables.templateId });
     },
     onError: (err) => {
