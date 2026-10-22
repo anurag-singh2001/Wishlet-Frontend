@@ -1,9 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Logo, Skeleton } from "@/components/ui";
 
 export function ViewerLoading(): React.ReactElement {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setSlow(true), 8000);
+    return () => window.clearTimeout(t);
+  }, []);
   return (
     <div
       role="status"
@@ -14,6 +19,7 @@ export function ViewerLoading(): React.ReactElement {
         <Logo size={56} wordmark={false} />
       </div>
       <p className="font-display text-lg font-bold text-ink">Unwrapping your wish…</p>
+      {slow && <p className="text-sm text-muted">Still loading… slow connection?</p>}
       <div className="flex w-full max-w-xs flex-col gap-3" aria-hidden="true">
         <Skeleton className="h-6 w-2/3 self-center" />
         <Skeleton className="h-40 w-full" />
@@ -24,8 +30,10 @@ export function ViewerLoading(): React.ReactElement {
 
 export function ViewerError({
   kind,
+  onRetry,
 }: {
   kind: "notFound" | "expired" | "error";
+  onRetry?: () => void;
 }): React.ReactElement {
   const notFound = kind === "notFound";
   if (kind === "expired") {
@@ -51,7 +59,16 @@ export function ViewerError({
           ? "The link may be mistyped, or the wish was deleted."
           : "We couldn't load this wish. Please try again in a moment."}
       </p>
-      <Button href="/build" size="lg">
+      {kind === "error" && onRetry && (
+        <Button size="lg" onClick={onRetry}>
+          Try again
+        </Button>
+      )}
+      <Button
+        href="/build"
+        size="lg"
+        variant={kind === "error" && onRetry ? "secondary" : "primary"}
+      >
         Make your own wish
       </Button>
     </div>
