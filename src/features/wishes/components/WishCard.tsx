@@ -5,7 +5,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, Trash2 } from "lucide-react";
 import { Button, Card, useToast } from "@/components/ui";
 import { getWishStats } from "@/lib/api";
-import { removeWishToken, type OwnedWish } from "@/lib/wish-tokens";
+import { removeWishToken } from "@/lib/wish-tokens";
+import type { ListedWish } from "../types";
 import { occasionLabel, OCCASIONS } from "@/features/builder/lib/occasions";
 import { timeLeft } from "@/lib/expiry";
 import { ExpiryChip } from "./ExpiryChip";
@@ -14,10 +15,10 @@ import { ReactionsSwitch } from "./ReactionsSwitch";
 import { WishThumb } from "./WishThumb";
 
 interface WishCardProps {
-  wish: OwnedWish;
+  wish: ListedWish;
   compact?: boolean;
   onGone: (slug: string) => void;
-  onMore: (wish: OwnedWish) => void;
+  onMore: (wish: ListedWish) => void;
 }
 
 function formatDate(iso: string | undefined): string {
@@ -37,11 +38,14 @@ export function WishCard({
   const toast = useToast();
   const queryClient = useQueryClient();
   const { slug, token } = wish;
-  const { data, isError, error } = useQuery({
+  const stats = useQuery({
     queryKey: ["wish-stats", slug],
     queryFn: () => getWishStats(slug, token),
+    enabled: !wish.summary,
     retry: false,
   });
+  const { isError, error } = stats;
+  const data = wish.summary ?? stats.data;
 
   useEffect(() => {
     if (isError && ["FORBIDDEN", "NOT_FOUND", "EXPIRED"].includes(error.message)) {

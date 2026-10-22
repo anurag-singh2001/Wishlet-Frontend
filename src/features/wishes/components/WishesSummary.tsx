@@ -3,18 +3,22 @@
 import React from "react";
 import { useQueries } from "@tanstack/react-query";
 import { getWishStats } from "@/lib/api";
-import type { OwnedWish } from "@/lib/wish-tokens";
+import type { ListedWish } from "../types";
 
-export function WishesSummary({ wishes }: { wishes: OwnedWish[] }): React.ReactElement {
+export function WishesSummary({ wishes }: { wishes: ListedWish[] }): React.ReactElement {
   const results = useQueries({
     queries: wishes.map((w) => ({
       queryKey: ["wish-stats", w.slug],
       queryFn: () => getWishStats(w.slug, w.token),
+      enabled: !w.summary,
       retry: false,
     })),
   });
-  const opens = results.reduce((sum, r) => sum + (r.data?.viewCount ?? 0), 0);
-  const loaded = results.some((r) => r.data);
+  const opens = wishes.reduce(
+    (sum, w, i) => sum + (w.summary?.viewCount ?? results[i]?.data?.viewCount ?? 0),
+    0,
+  );
+  const loaded = wishes.some((w, i) => w.summary || results[i]?.data);
   const n = wishes.length;
   return (
     <p className="text-[15px] text-[#4B4766]">

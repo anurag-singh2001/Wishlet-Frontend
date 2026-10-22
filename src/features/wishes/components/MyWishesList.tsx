@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui";
 import { DeleteWishSheet } from "@/features/builder/components/DeleteWishSheet";
 import { useDeleteWish } from "@/features/builder/hooks/use-delete-wish";
-import { listOwnedWishes, type OwnedWish } from "@/lib/wish-tokens";
+import { useListedWishes } from "../hooks/use-listed-wishes";
+import type { ListedWish } from "../types";
 import { OccasionChips } from "./OccasionChips";
 import { WishCard } from "./WishCard";
 import { WishesEmpty } from "./WishesEmpty";
@@ -21,22 +22,14 @@ interface MyWishesListProps {
 export function MyWishesList({ limit, compact = false }: MyWishesListProps): React.ReactElement {
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [wishes, setWishes] = useState<OwnedWish[] | null>(null);
+  const { wishes, drop } = useListedWishes();
   const [filter, setFilter] = useState("all");
-  const [target, setTarget] = useState<OwnedWish | null>(null);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setWishes(listOwnedWishes());
-  }, []);
-
-  const drop = useCallback((slug: string): void => {
-    setWishes((prev) => (prev ? prev.filter((w) => w.slug !== slug) : prev));
-  }, []);
+  const [target, setTarget] = useState<ListedWish | null>(null);
 
   const { remove, deleting, error, clearError } = useDeleteWish((slug) => {
     drop(slug);
     queryClient.removeQueries({ queryKey: ["wish-stats", slug] });
+    void queryClient.invalidateQueries({ queryKey: ["my-wishes"] });
     setTarget(null);
     toast("Wish deleted");
   });

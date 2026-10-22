@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui";
 import { updateWishSettings } from "@/lib/api";
+import { getSession } from "@/lib/auth-token";
 
 export function useReactionsSetting(
   slug: string,
@@ -15,8 +16,9 @@ export function useReactionsSetting(
   const [busy, setBusy] = useState(false);
 
   const toggle = async (): Promise<void> => {
-    if (!token || busy) {
-      if (!token) toast("Couldn't update reactions");
+    const canEdit = Boolean(token) || getSession() !== null;
+    if (!canEdit || busy) {
+      if (!canEdit) toast("Couldn't update reactions");
       return;
     }
     const next = !enabled;

@@ -10,6 +10,7 @@ import { getWishToken } from "@/lib/wish-tokens";
 import { msLeft, timeLeft, useNow } from "@/lib/expiry";
 import { useDeleteWish } from "../hooks/use-delete-wish";
 import { DeleteWishSheet } from "./DeleteWishSheet";
+import { SaveToAccount } from "./SaveToAccount";
 import { ShareActions } from "./ShareActions";
 import type { BuilderState } from "../types";
 
@@ -96,6 +97,8 @@ export function SuccessScreen({
           </button>
         </p>
       </div>
+
+      <SaveToAccount />
 
       <div className="mt-6">
         <ShareActions url={url} slug={slug} senderName={state.senderName} recipientName={name} />

@@ -1,0 +1,28 @@
+"use client";
+
+import { createContext, useContext } from "react";
+import type { AuthUser } from "@/lib/auth-token";
+
+export type AuthStatus = "loading" | "signedOut" | "signedIn";
+
+export interface AuthContextValue {
+  user: AuthUser | null;
+  status: AuthStatus;
+  /** True inside the Android app, where Google blocks sign-in. */
+  native: boolean;
+  /** True once the Google script has loaded and been initialised. */
+  gisReady: boolean;
+  signOut: () => void;
+}
+
+export const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  status: "loading",
+  native: false,
+  gisReady: false,
+  signOut: () => undefined,
+});
+
+export function useAuth(): AuthContextValue {
+  return useContext(AuthContext);
+}

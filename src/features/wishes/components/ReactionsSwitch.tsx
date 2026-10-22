@@ -5,7 +5,7 @@ import { useReactionsSetting } from "../hooks/use-reactions-setting";
 
 interface ReactionsSwitchProps {
   slug: string;
-  token: string;
+  token: string | null;
   initial: boolean;
   onSaved: () => void;
 }

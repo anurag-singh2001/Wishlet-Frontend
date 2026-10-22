@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui";
 import { MyWishesList } from "./MyWishesList";
+import { SignInCard } from "./SignInCard";
 
 export function WishesPage(): React.ReactElement {
   return (
@@ -21,6 +22,7 @@ export function WishesPage(): React.ReactElement {
         </Button>
       </header>
       <main className="flex flex-col gap-3.5 p-5">
+        <SignInCard />
         <MyWishesList />
       </main>
     </div>

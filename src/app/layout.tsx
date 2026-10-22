@@ -13,6 +13,7 @@ import { QueryProvider } from "@/components/providers/QueryProvider";
 import { NativeBackButton } from "@/components/providers/NativeBackButton";
 import { AppIntro } from "@/components/providers/AppIntro";
 import { NativeHomeRedirect } from "@/components/providers/NativeHomeRedirect";
+import { AuthProvider } from "@/features/auth/AuthProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const geistSans = Geist({
@@ -81,7 +82,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GoogleAnalytics />
         </Suspense>
         <QueryProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ToastProvider>
         </QueryProvider>
         <NativeBackButton />
         <AppIntro />

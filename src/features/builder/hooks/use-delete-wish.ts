@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { deleteWish } from "@/lib/api";
 import { trackWishDeleted } from "@/lib/analytics";
+import { getSession } from "@/lib/auth-token";
 import { getWishToken, removeWishToken } from "@/lib/wish-tokens";
 
 export function useDeleteWish(onDeleted: (slug: string) => void): {
@@ -14,7 +15,7 @@ export function useDeleteWish(onDeleted: (slug: string) => void): {
 
   const remove = async (slug: string): Promise<void> => {
     const token = getWishToken(slug);
-    if (!token) {
+    if (!token && !getSession()) {
       setError("Delete key not found on this device.");
       return;
     }

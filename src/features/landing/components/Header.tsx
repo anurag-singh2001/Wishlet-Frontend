@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button, Logo, Sheet } from "@/components/ui";
+import { HeaderAuth, MenuAuth } from "@/features/auth/HeaderAuth";
 
 const LINKS = [
   { href: "/#occasions", label: "Occasions" },
@@ -28,6 +29,7 @@ export function Header(): React.JSX.Element {
               {l.label}
             </Link>
           ))}
+          <HeaderAuth />
           <Button href="/build" size="sm">
             Create a wish
           </Button>
@@ -68,6 +70,7 @@ export function Header(): React.JSX.Element {
               Create a wish
             </Button>
           </div>
+          <MenuAuth onDone={() => setOpen(false)} />
         </nav>
       </Sheet>
     </header>
