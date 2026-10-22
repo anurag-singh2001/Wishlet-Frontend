@@ -17,7 +17,13 @@ export async function nativeGoogleSignIn(): Promise<string> {
       await SocialLogin.initialize({ google: { webClientId: GOOGLE_CLIENT_ID } });
       initialized = true;
     }
-    const res = await SocialLogin.login({ provider: "google", options: {} });
+    // Account bottom sheet (Credential Manager's Google ID option). The default "Sign in with
+    // Google" flow fails on some phones with "[16] Account reauth failed"; the plugin still
+    // falls back to it on its own if this fails that way.
+    const res = await SocialLogin.login({
+      provider: "google",
+      options: { style: "bottom", filterByAuthorizedAccounts: false, forcePrompt: true },
+    });
     const result = res.result;
     if (result.responseType === "online" && result.idToken) return result.idToken;
     throw new Error("NO_ID_TOKEN");

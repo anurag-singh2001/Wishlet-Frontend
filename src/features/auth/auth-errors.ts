@@ -13,6 +13,9 @@ export function describeSignInError(err: unknown): string | null {
   if (/28444|developer console/i.test(text)) {
     return "Google sign-in isn't set up for this app yet (developer config). Please try again later.";
   }
+  if (/reauth failed/i.test(text)) {
+    return "Google couldn't confirm your account on this phone. Open Settings › Google, make sure you're signed in, then try again.";
+  }
   if (/no credentials?/i.test(text)) {
     return "No Google account found on this phone. Add one in Settings, then try again.";
   }
