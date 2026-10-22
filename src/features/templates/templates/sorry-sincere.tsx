@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
+import { useReveal } from "../components/use-reveal";
+import { WishPhoto } from "../components/WishPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 import { greatVibes, playfair } from "../kit/fonts";
 import { Breathing } from "./sorry-sincere-parts/Breathing";
@@ -29,8 +31,12 @@ export default function SorrySincere({
   autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
+  const { isOpen, headingRef, announce, coverProps, transition } = useReveal({
+    autoOpen,
+    reduced,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#5b6aa8] focus-visible:ring-offset-2",
+  });
   const lines = toLines(message ?? "");
   const step = autoOpen ? QUICK_STEP : STEP;
   const base = autoOpen ? 0.3 : 1.4;
@@ -63,13 +69,14 @@ export default function SorrySincere({
           <motion.button
             key="gate"
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={coverProps.onClick}
+            aria-expanded={coverProps["aria-expanded"]}
             aria-label="Open your message"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="relative z-10 flex flex-col items-center text-center"
+            transition={{ ...transition, duration: reduced ? 0 : 0.9 }}
+            className={`relative z-10 flex flex-col items-center rounded-lg px-4 py-2 text-center ${coverProps.className}`}
           >
             <span className="mb-6 h-3 w-3 rounded-full bg-[#9aa6d6]/70" />
             <span className="mb-2 text-lg italic tracking-wide text-[#5b6aa8]">A quiet note</span>
@@ -87,7 +94,9 @@ export default function SorrySincere({
           >
             <motion.h1
               {...fade(autoOpen ? 0.1 : 0.3)}
-              className="mb-8 w-full break-words text-2xl sm:text-3xl"
+              ref={headingRef}
+              tabIndex={-1}
+              className="mb-8 w-full break-words text-2xl focus:outline-none sm:text-3xl"
             >
               Dear <span className="font-semibold">{recipientName}</span>,
             </motion.h1>
@@ -96,12 +105,7 @@ export default function SorrySincere({
                 {...fade(autoOpen ? 0.2 : 0.8)}
                 className="mb-8 w-48 overflow-hidden rounded-full border-4 border-white/70 shadow-lg shadow-indigo-200/50 sm:w-56"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={photoUrl}
-                  alt="A shared memory"
-                  className="aspect-square w-full object-cover"
-                />
+                <WishPhoto src={photoUrl} alt="A shared memory" className="aspect-square w-full" />
               </motion.div>
             )}
             <div className="mb-10 w-full space-y-3 px-2 text-base leading-relaxed text-[#46517a] sm:text-lg">
@@ -125,6 +129,7 @@ export default function SorrySincere({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

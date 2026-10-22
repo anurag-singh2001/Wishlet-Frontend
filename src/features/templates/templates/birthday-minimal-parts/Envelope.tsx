@@ -18,7 +18,8 @@ export function Envelope({ opening, onOpen }: EnvelopeProps): React.JSX.Element 
       onClick={onOpen}
       disabled={opening}
       aria-label="Open your birthday wish"
-      className="relative block w-full max-w-[320px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 rounded-md"
+      aria-expanded={opening}
+      className="relative block w-full max-w-[320px] cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-400 focus-visible:ring-offset-2"
     >
       <motion.svg
         viewBox="-10 -10 340 250"

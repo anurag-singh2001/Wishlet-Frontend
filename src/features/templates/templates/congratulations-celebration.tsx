@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
@@ -7,6 +7,8 @@ import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { WishletBranding } from "../components/WishletBranding";
 import { LightRays, Star, Trophy } from "../kit/decor";
 import { bricolage } from "../kit/fonts";
+import { useReveal } from "../components/use-reveal";
+import { WishPhoto } from "../components/WishPhoto";
 import { Cover } from "../congratulations-celebration-parts/Cover";
 
 const COLORS = ["#f472b6", "#fbbf24", "#22d3ee", "#a78bfa", "#34d399", "#fb7185"];
@@ -19,8 +21,12 @@ export default function CongratulationsCelebration({
   autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
+  const { isOpen, headingRef, announce, coverProps, transition } = useReveal({
+    autoOpen,
+    reduced,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-500 focus-visible:ring-offset-2",
+  });
 
   const container = {
     hidden: { opacity: 0 },
@@ -56,7 +62,7 @@ export default function CongratulationsCelebration({
       )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <Cover key="cover" onOpen={() => setIsOpen(true)} />
+          <Cover key="cover" reduced={!!reduced} transition={transition} {...coverProps} />
         ) : (
           <motion.div
             key="card"
@@ -86,10 +92,12 @@ export default function CongratulationsCelebration({
             </motion.div>
 
             <motion.h1
+              ref={headingRef}
+              tabIndex={-1}
               initial={reduced ? false : { scale: 0.3, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 140, damping: 10, delay: 0.5 }}
-              className="mb-6 w-full max-w-full break-words px-2 text-4xl font-extrabold leading-tight tracking-tight text-violet-950 sm:text-5xl md:text-6xl"
+              className="mb-6 w-full max-w-full break-words px-2 focus:outline-none text-4xl font-extrabold leading-tight tracking-tight text-violet-950 sm:text-5xl md:text-6xl"
             >
               Congratulations,
               <br />
@@ -104,12 +112,7 @@ export default function CongratulationsCelebration({
                 className="mx-auto mb-8 w-full max-w-sm -rotate-2 rounded-2xl border-4 border-white bg-white p-2 shadow-xl shadow-violet-300/40"
               >
                 <div className="aspect-video w-full overflow-hidden rounded-xl bg-violet-50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photoUrl}
-                    alt="Celebration memory"
-                    className="h-full w-full object-cover"
-                  />
+                  <WishPhoto src={photoUrl} alt="Celebration memory" className="h-full w-full" />
                 </div>
               </motion.div>
             )}
@@ -139,6 +142,7 @@ export default function CongratulationsCelebration({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

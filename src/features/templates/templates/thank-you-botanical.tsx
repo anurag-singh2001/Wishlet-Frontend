@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { caveat } from "../kit/fonts";
 import { Flower, HandDrawnUnderline, Petal } from "../kit/decor";
+import { WishPhoto } from "../components/WishPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 import { Vine } from "./thank-you-botanical-vines";
 
@@ -44,8 +45,7 @@ export default function ThankYouBotanical({
             {...rise(0.4)}
             className="mb-6 h-56 w-44 overflow-hidden rounded-t-full border-4 border-[#d9e4d2] bg-[#e7eedf] shadow-lg shadow-[#7c9a82]/20"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photoUrl} alt="A memory" className="h-full w-full object-cover" />
+            <WishPhoto src={photoUrl} alt="A memory" className="h-full w-full" />
           </motion.div>
         ) : (
           <Flower size={96} animate colors={["#f6d5c8", "#e9b96e"]} className="mb-4" />

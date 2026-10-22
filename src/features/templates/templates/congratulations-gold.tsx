@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { playfair } from "../kit/fonts";
@@ -8,6 +8,8 @@ import { Star } from "../kit/decor/Star";
 import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
+import { useReveal } from "../components/use-reveal";
+import { WishPhoto } from "../components/WishPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 
 const GOLDS = ["#f5d77a", "#d4af37", "#b8860b", "#fff1b8", "#c9a227"];
@@ -27,8 +29,12 @@ export default function CongratulationsGold({
   autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
   const reduced = useReducedMotion();
+  const { isOpen, headingRef, announce, coverProps, transition } = useReveal({
+    autoOpen,
+    reduced,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#d4af37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0907]",
+  });
 
   const container = {
     hidden: { opacity: 0 },
@@ -75,11 +81,12 @@ export default function CongratulationsGold({
           <motion.button
             key="cover"
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={coverProps.onClick}
+            aria-expanded={coverProps["aria-expanded"]}
             aria-label="Open your congratulations"
-            exit={{ opacity: 0, scale: 1.08, filter: "blur(6px)" }}
-            transition={{ duration: 0.5 }}
-            className="relative z-10 flex flex-col items-center text-center cursor-pointer"
+            exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.08, filter: "blur(6px)" }}
+            transition={transition}
+            className={`relative z-10 flex cursor-pointer flex-col items-center rounded-lg text-center ${coverProps.className}`}
           >
             <motion.div
               animate={reduced ? {} : { scale: [1, 1.08, 1] }}
@@ -109,7 +116,9 @@ export default function CongratulationsGold({
             </motion.p>
             <motion.h1
               variants={item}
-              className="mb-6 w-full break-words text-4xl sm:text-6xl font-bold leading-tight"
+              ref={headingRef}
+              tabIndex={-1}
+              className="focus:outline-none mb-6 w-full break-words text-4xl sm:text-6xl font-bold leading-tight"
               style={{ ...SERIF, ...GOLD_TEXT }}
             >
               {recipientName}
@@ -125,11 +134,10 @@ export default function CongratulationsGold({
                 variants={item}
                 className="mb-8 w-full max-w-xs rounded-t-full border border-[#d4af37]/70 p-2 shadow-[0_0_40px_rgba(212,175,55,0.25)]"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <WishPhoto
                   src={photoUrl}
                   alt="Celebration memory"
-                  className="aspect-[4/5] w-full rounded-t-full object-cover"
+                  className="aspect-[4/5] w-full rounded-t-full"
                 />
               </motion.div>
             )}
@@ -157,6 +165,7 @@ export default function CongratulationsGold({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

@@ -13,6 +13,7 @@ const DROPS = Array.from({ length: DROP_COUNT }, (_, i) => ({
 
 /** Grey-blue rainy sky that fades to a warm sunrise when `sunny` is true. */
 export function SkyBackdrop({ sunny }: { sunny: boolean }): React.JSX.Element {
+  const reduced = useReducedMotion();
   return (
     <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
       <div className="absolute inset-0 bg-gradient-to-b from-[#64748b] via-[#94a3b8] to-[#cbd5e1]" />
@@ -20,7 +21,7 @@ export function SkyBackdrop({ sunny }: { sunny: boolean }): React.JSX.Element {
         className="absolute inset-0 bg-gradient-to-b from-[#fde4c8] via-[#fcd5b0] to-[#fbbf8e]"
         initial={false}
         animate={{ opacity: sunny ? 1 : 0 }}
-        transition={{ duration: 3, ease: "easeInOut" }}
+        transition={{ duration: reduced ? 0 : 3, ease: "easeInOut" }}
       />
     </div>
   );

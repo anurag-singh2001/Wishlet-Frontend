@@ -24,7 +24,7 @@ export function TemplateRenderer({ templateId, props }: TemplateRendererProps) {
   const TemplateComponent = templateConfig.component;
 
   return (
-    <Suspense 
+    <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400 font-sans">
           <div className="animate-pulse">Loading template...</div>
