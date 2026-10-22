@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, useReducedMotion, AnimatePresence, type Variants } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { playfair, greatVibes } from "../kit/fonts";
@@ -7,6 +7,7 @@ import { FloatingParticles } from "../components/animations/FloatingParticles";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
 import { ConfettiBurst } from "../components/animations/ConfettiBurst";
 import { WishletBranding } from "../components/WishletBranding";
+import { useReveal } from "../components/use-reveal";
 import { Envelope, PhotoFrame, GOLD_TEXT } from "./anniversary-elegant-parts/shared";
 
 const EDGE_MASK: React.CSSProperties = {
@@ -23,8 +24,12 @@ export default function AnniversaryElegant({
   autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(!!autoOpen);
   const reduce = useReducedMotion();
+  const { isOpen, headingRef, announce, coverProps } = useReveal({
+    autoOpen,
+    reduced: reduce,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-400 focus-visible:ring-offset-2",
+  });
 
   const container: Variants = {
     hidden: { opacity: 0 },
@@ -78,7 +83,7 @@ export default function AnniversaryElegant({
       )}
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <Envelope key="envelope" onOpen={() => setIsOpen(true)} />
+          <Envelope key="envelope" reduced={!!reduce} {...coverProps} />
         ) : (
           <motion.div
             key="card"
@@ -98,7 +103,9 @@ export default function AnniversaryElegant({
             </motion.p>
             <motion.h1
               variants={item}
-              className="mb-8 w-full break-words px-2 text-5xl leading-tight sm:text-6xl"
+              ref={headingRef}
+              tabIndex={-1}
+              className="mb-8 focus:outline-none w-full break-words px-2 text-5xl leading-tight sm:text-6xl"
               style={{ fontFamily: "var(--font-great-vibes), cursive", ...GOLD_TEXT }}
             >
               {recipientName}
@@ -135,6 +142,7 @@ export default function AnniversaryElegant({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

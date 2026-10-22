@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Rings } from "../../kit/decor";
 import { KenBurnsPhoto } from "../../components/animations/KenBurnsPhoto";
 
@@ -12,19 +12,29 @@ export const GOLD_TEXT: React.CSSProperties = {
   WebkitTextFillColor: "transparent",
 };
 
-export function Envelope({ onOpen }: { onOpen: () => void }): React.JSX.Element {
-  const reduce = useReducedMotion();
+interface EnvelopeProps {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  "aria-expanded"?: boolean;
+  className: string;
+  reduced: boolean;
+}
+
+export function Envelope({
+  reduced: reduce,
+  className,
+  ...rest
+}: EnvelopeProps): React.JSX.Element {
   return (
     <motion.button
       type="button"
       key="envelope"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.05, filter: "blur(8px)" }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
-      onClick={onOpen}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.05, filter: "blur(8px)" }}
+      transition={{ duration: reduce ? 0 : 0.8, ease: "easeOut" }}
+      {...rest}
       aria-label="Open your anniversary wish"
-      className="z-50 flex max-w-sm cursor-pointer flex-col items-center text-center"
+      className={`z-50 flex max-w-sm cursor-pointer flex-col items-center rounded-lg text-center ${className}`}
     >
       <motion.div
         animate={reduce ? undefined : { y: [0, -8, 0] }}

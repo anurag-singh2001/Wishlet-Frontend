@@ -9,6 +9,7 @@ import { KenBurnsPhoto } from "../components/animations/KenBurnsPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 import { Heart, HandDrawnUnderline } from "../kit/decor";
 import { caveat, playfair } from "../kit/fonts";
+import { useReveal } from "../components/use-reveal";
 import { Envelope } from "./birthday-minimal-parts/Envelope";
 
 const CONFETTI = ["#f43f5e", "#fb923c", "#facc15", "#34d399", "#60a5fa", "#a78bfa"];
@@ -30,13 +31,16 @@ export default function BirthdayMinimalTemplate({
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const reduce = useReducedMotion();
   const [opening, setOpening] = useState(false);
-  const [isOpen, setIsOpen] = useState(!!autoOpen);
+  const { isOpen, open, headingRef, announce, transition } = useReveal({
+    autoOpen,
+    reduced: reduce,
+  });
 
   useEffect(() => {
     if (!opening) return;
-    const t = setTimeout(() => setIsOpen(true), reduce ? 0 : 1000);
+    const t = setTimeout(() => open(), reduce ? 0 : 1000);
     return () => clearTimeout(t);
-  }, [opening, reduce]);
+  }, [opening, reduce, open]);
 
   const item = {
     hidden: { opacity: 0, y: reduce ? 0 : 20 },
@@ -67,10 +71,10 @@ export default function BirthdayMinimalTemplate({
         {!isOpen ? (
           <motion.div
             key="envelope"
-            initial={{ opacity: 0, scale: 0.92 }}
+            initial={{ opacity: 0, scale: reduce ? 1 : 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.08, filter: "blur(8px)" }}
-            transition={{ duration: 0.6 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.08, filter: "blur(8px)" }}
+            transition={transition}
             className="z-10 flex w-full max-w-sm flex-col items-center text-center"
           >
             <Envelope opening={opening} onOpen={() => setOpening(true)} />
@@ -97,7 +101,9 @@ export default function BirthdayMinimalTemplate({
             </motion.p>
             <motion.h1
               variants={item}
-              className="w-full max-w-full break-words px-2 text-5xl italic leading-tight text-rose-500 sm:text-6xl"
+              ref={headingRef}
+              tabIndex={-1}
+              className="focus:outline-none w-full max-w-full break-words px-2 text-5xl italic leading-tight text-rose-500 sm:text-6xl"
               style={DISPLAY}
             >
               {recipientName}
@@ -150,6 +156,7 @@ export default function BirthdayMinimalTemplate({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

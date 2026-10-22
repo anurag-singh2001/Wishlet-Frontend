@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
 import { FloatingParticles } from "../components/animations/FloatingParticles";
+import { WishPhoto } from "../components/WishPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 import { Star } from "../kit/decor";
 import { spaceGrotesk } from "../kit/fonts";
@@ -79,8 +80,7 @@ export default function BirthdayNeonTemplate({
             className="mb-8 aspect-square w-56 overflow-hidden rounded-full border-2 border-[#22d3ee] sm:w-64"
             style={{ boxShadow: "0 0 14px #22d3ee, 0 0 40px #22d3ee66, inset 0 0 14px #22d3ee55" }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photoUrl} alt="A special memory" className="h-full w-full object-cover" />
+            <WishPhoto src={photoUrl} alt="A special memory" className="h-full w-full" />
           </motion.div>
         )}
 

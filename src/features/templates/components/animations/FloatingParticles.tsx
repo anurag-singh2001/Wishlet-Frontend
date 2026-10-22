@@ -24,15 +24,17 @@ export function FloatingParticles({
   opacity = 0.5,
 }: FloatingParticlesProps) {
   const prefersReducedMotion = useReducedMotion();
-  const [particles, setParticles] = useState<Array<{
-    id: number;
-    color: string;
-    left: string;
-    size: number;
-    duration: number;
-    delay: number;
-    xTarget: string;
-  }>>([]);
+  const [particles, setParticles] = useState<
+    Array<{
+      id: number;
+      color: string;
+      left: string;
+      size: number;
+      duration: number;
+      delay: number;
+      xTarget: string;
+    }>
+  >([]);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -79,25 +81,22 @@ export function FloatingParticles({
           }}
         >
           {shape === "circle" && (
-            <div
-              style={{ backgroundColor: p.color }}
-              className="w-full h-full rounded-full"
-            />
+            <div style={{ backgroundColor: p.color }} className="w-full h-full rounded-full" />
           )}
           {shape === "heart" && (
-            <Heart 
-              style={{ color: p.color, fill: p.color }} 
-              width={p.size} 
-              height={p.size} 
-              strokeWidth={0} 
+            <Heart
+              style={{ color: p.color, fill: p.color }}
+              width={p.size}
+              height={p.size}
+              strokeWidth={0}
             />
           )}
           {shape === "star" && (
-            <Star 
-              style={{ color: p.color, fill: p.color }} 
-              width={p.size} 
-              height={p.size} 
-              strokeWidth={0} 
+            <Star
+              style={{ color: p.color, fill: p.color }}
+              width={p.size}
+              height={p.size}
+              strokeWidth={0}
             />
           )}
         </motion.div>

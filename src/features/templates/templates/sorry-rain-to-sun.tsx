@@ -1,8 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { AmbientGlow } from "../components/animations/AmbientGlow";
+import { useReveal } from "../components/use-reveal";
+import { WishPhoto } from "../components/WishPhoto";
 import { WishletBranding } from "../components/WishletBranding";
 import { LightRays } from "../kit/decor";
 import { playfair } from "../kit/fonts";
@@ -17,8 +19,12 @@ export default function SorryRainToSun({
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
   const reduced = useReducedMotion();
-  const [isOpen, setIsOpen] = useState(Boolean(autoOpen));
-  const sunny = isOpen || !!reduced;
+  const { isOpen, headingRef, announce, coverProps, transition } = useReveal({
+    autoOpen,
+    reduced,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-500",
+  });
+  const sunny = isOpen;
 
   const container = {
     hidden: { opacity: 0 },
@@ -60,14 +66,15 @@ export default function SorryRainToSun({
           <motion.button
             key="closed"
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={coverProps.onClick}
+            aria-expanded={coverProps["aria-expanded"]}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-10 text-center max-w-sm cursor-pointer"
+            transition={transition}
+            className={`relative z-10 max-w-sm cursor-pointer rounded-lg p-2 text-center ${coverProps.className}`}
             aria-label="Open your message"
           >
             <h2 className="text-2xl italic text-slate-50 mb-3">It has been a rainy while</h2>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-200 animate-pulse">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-200 motion-safe:animate-pulse">
               Tap to read
             </p>
           </motion.button>
@@ -81,7 +88,9 @@ export default function SorryRainToSun({
           >
             <motion.h1
               variants={item}
-              className="text-3xl sm:text-4xl text-amber-950 mb-8 break-words max-w-full px-2"
+              ref={headingRef}
+              tabIndex={-1}
+              className="focus:outline-none text-3xl sm:text-4xl text-amber-950 mb-8 break-words max-w-full px-2"
             >
               Dear <span className="font-semibold">{recipientName}</span>,
             </motion.h1>
@@ -90,8 +99,7 @@ export default function SorryRainToSun({
                 variants={item}
                 className="w-full max-w-[16rem] aspect-square mb-8 rounded-full overflow-hidden border-4 border-white/70 shadow-lg"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photoUrl} alt="A shared memory" className="w-full h-full object-cover" />
+                <WishPhoto src={photoUrl} alt="A shared memory" className="h-full w-full" />
               </motion.div>
             )}
             <motion.p
@@ -112,6 +120,7 @@ export default function SorryRainToSun({
           </motion.div>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }

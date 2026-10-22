@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { TemplateProps } from "../types";
 import { caveat, playfair } from "../kit/fonts";
 import { Flower, Heart } from "../kit/decor";
 import { WishletBranding } from "../components/WishletBranding";
+import { useReveal } from "../components/use-reveal";
+import { WishPhoto } from "../components/WishPhoto";
 import { Paper } from "../thank-you-simple-parts/paper";
 import { DrawHeart, DrawUnderline } from "../thank-you-simple-parts/draw";
 
@@ -19,8 +21,12 @@ export default function ThankYouSimple({
   autoOpen,
 }: TemplateProps): React.JSX.Element {
   const photoUrl = photos && photos.length > 0 ? photos[0] : null;
-  const [isOpen, setIsOpen] = useState(!!autoOpen);
   const reduced = useReducedMotion();
+  const { isOpen, headingRef, announce, coverProps, transition } = useReveal({
+    autoOpen,
+    reduced,
+    ring: "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-500 focus-visible:ring-offset-2",
+  });
 
   const container = {
     hidden: {},
@@ -51,13 +57,14 @@ export default function ThankYouSimple({
           <motion.button
             key="cover"
             type="button"
-            onClick={() => setIsOpen(true)}
+            onClick={coverProps.onClick}
+            aria-expanded={coverProps["aria-expanded"]}
             aria-label="Open your thank you note"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: reduced ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.5 }}
-            className="relative z-10 flex cursor-pointer flex-col items-center text-center"
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            transition={transition}
+            className={`relative z-10 flex cursor-pointer flex-col items-center rounded-lg p-2 text-center ${coverProps.className}`}
           >
             <DrawHeart className="mb-4 h-20 w-24" />
             <span className="text-4xl text-rose-700" style={HAND}>
@@ -80,11 +87,10 @@ export default function ThankYouSimple({
                 variants={item}
                 className="mb-8 -rotate-2 bg-white p-2 pb-6 shadow-md ring-1 ring-stone-200"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <WishPhoto
                   src={photoUrl}
                   alt="Thank you memory"
-                  className="h-56 w-56 object-cover sm:h-64 sm:w-64"
+                  className="h-56 w-56 sm:h-64 sm:w-64"
                 />
               </motion.div>
             )}
@@ -93,7 +99,9 @@ export default function ThankYouSimple({
             </motion.p>
             <motion.h1
               variants={item}
-              className="mt-1 max-w-full break-words text-4xl font-semibold text-rose-800 sm:text-5xl"
+              ref={headingRef}
+              tabIndex={-1}
+              className="mt-1 focus:outline-none max-w-full break-words text-4xl font-semibold text-rose-800 sm:text-5xl"
               style={SERIF}
             >
               {recipientName}
@@ -121,6 +129,7 @@ export default function ThankYouSimple({
           </motion.main>
         )}
       </AnimatePresence>
+      {announce}
     </div>
   );
 }
