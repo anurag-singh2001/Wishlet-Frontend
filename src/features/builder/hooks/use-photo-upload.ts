@@ -70,7 +70,7 @@ export function usePhotoUpload(updateState: (updates: Partial<BuilderState>) => 
   };
 
   const removePhoto = () => {
-    updateState({ photos: [] });
+    updateState({ photos: [], photoPublicId: undefined });
     setUploadError("");
   };
 

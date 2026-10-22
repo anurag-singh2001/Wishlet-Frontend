@@ -2,7 +2,11 @@ import React from "react";
 import { Field, Input, Textarea } from "@/components/ui";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
 import { MESSAGE_MAX, type DetailErrors } from "../lib/validation";
+import { useVoiceRecorder } from "../hooks/use-voice-recorder";
+import { MessageSuggestions } from "./MessageSuggestions";
 import { PhotoField } from "./PhotoField";
+import { ReactionsToggle } from "./ReactionsToggle";
+import { VoiceField } from "./VoiceField";
 import type { BuilderState } from "../types";
 
 interface StepDetailsProps {
@@ -19,7 +23,9 @@ export function StepDetails({
   onUploadingChange,
 }: StepDetailsProps): React.ReactElement {
   const { isUploading, uploadError, handleUpload, removePhoto } = usePhotoUpload(update);
-  React.useEffect(() => onUploadingChange(isUploading), [isUploading, onUploadingChange]);
+  const voice = useVoiceRecorder(update);
+  const busy = isUploading || voice.busy;
+  React.useEffect(() => onUploadingChange(busy), [busy, onUploadingChange]);
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -48,6 +54,11 @@ export function StepDetails({
           {state.message.length} / {MESSAGE_MAX}
         </span>
       </Field>
+      <MessageSuggestions
+        occasion={state.occasion}
+        message={state.message}
+        onPick={(text) => update({ message: text })}
+      />
       <Field id="b-from" label="From" error={errors.senderName}>
         <Input
           id="b-from"
@@ -65,6 +76,11 @@ export function StepDetails({
         error={uploadError}
         onUpload={handleUpload}
         onRemove={removePhoto}
+      />
+      <VoiceField recorder={voice} />
+      <ReactionsToggle
+        enabled={state.reactionsEnabled ?? true}
+        onChange={(reactionsEnabled) => update({ reactionsEnabled })}
       />
       <p className="text-center text-[13px] text-[#4B4766]">Your link works for 24 hours.</p>
     </div>

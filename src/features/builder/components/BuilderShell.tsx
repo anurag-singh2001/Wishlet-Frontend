@@ -23,6 +23,7 @@ const INITIAL_STATE: BuilderState = {
   senderName: "",
   message: "",
   photos: [],
+  reactionsEnabled: true,
 };
 
 const NEXT_LABEL: Record<BuilderStep, string> = {
@@ -147,7 +148,7 @@ export function BuilderShell(): React.ReactElement {
             </p>
           )}
           <Button size="lg" fullWidth loading={isPending} disabled={uploading} onClick={goNext}>
-            {uploading ? "Uploading photo..." : NEXT_LABEL[step]}
+            {uploading ? "Uploading..." : NEXT_LABEL[step]}
           </Button>
         </footer>
       </div>
