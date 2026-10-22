@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Clock, X } from "lucide-react";
 import { useToast } from "@/components/ui";
 import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
+import { useReactionsSetting } from "@/features/wishes/hooks/use-reactions-setting";
+import { getWishToken } from "@/lib/wish-tokens";
 import { msLeft, timeLeft, useNow } from "@/lib/expiry";
 import { useDeleteWish } from "../hooks/use-delete-wish";
 import { DeleteWishSheet } from "./DeleteWishSheet";
@@ -45,6 +47,7 @@ export function SuccessScreen({
     onDeleted();
   });
   const now = useNow();
+  const reactions = useReactionsSetting(slug, getWishToken(slug), state.reactionsEnabled !== false);
   const name = state.recipientName.trim();
 
   return (
@@ -81,6 +84,17 @@ export function SuccessScreen({
             {expiryClock(expiresAt, now)}
           </p>
         )}
+        <p className="flex items-center justify-center text-[13px] text-[#4B4766]">
+          {reactions.enabled ? "Recipients can react" : "Reactions are off"} ·
+          <button
+            type="button"
+            disabled={reactions.busy}
+            onClick={() => void reactions.toggle()}
+            className="ml-1 flex min-h-11 items-center px-1 font-bold text-brand focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-60"
+          >
+            {reactions.enabled ? "Turn off" : "Turn on"}
+          </button>
+        </p>
       </div>
 
       <div className="mt-6">

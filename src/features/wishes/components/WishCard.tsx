@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, Trash2 } from "lucide-react";
 import { Button, Card, useToast } from "@/components/ui";
 import { getWishStats } from "@/lib/api";
@@ -9,6 +9,8 @@ import { removeWishToken, type OwnedWish } from "@/lib/wish-tokens";
 import { occasionLabel, OCCASIONS } from "@/features/builder/lib/occasions";
 import { timeLeft } from "@/lib/expiry";
 import { ExpiryChip } from "./ExpiryChip";
+import { ReactionsSummary } from "./ReactionsSummary";
+import { ReactionsSwitch } from "./ReactionsSwitch";
 import { WishThumb } from "./WishThumb";
 
 interface WishCardProps {
@@ -33,6 +35,7 @@ export function WishCard({
   onMore,
 }: WishCardProps): React.ReactElement {
   const toast = useToast();
+  const queryClient = useQueryClient();
   const { slug, token } = wish;
   const { data, isError, error } = useQuery({
     queryKey: ["wish-stats", slug],
@@ -100,6 +103,16 @@ export function WishCard({
             <Eye size={15} aria-hidden="true" />
             {opens > 0 ? `Opened ${opens} ${opens === 1 ? "time" : "times"}` : "Not opened yet"}
           </span>
+        )}
+        {data && <ReactionsSummary reactions={data.reactions} />}
+        {data && (
+          <ReactionsSwitch
+            key={String(data.reactionsEnabled)}
+            slug={slug}
+            token={token}
+            initial={data.reactionsEnabled !== false}
+            onSaved={() => void queryClient.invalidateQueries({ queryKey: ["wish-stats", slug] })}
+          />
         )}
         <div className="mt-auto flex gap-2 pt-2">
           <Button size="sm" className="flex-1" onClick={() => void handleShare()}>
