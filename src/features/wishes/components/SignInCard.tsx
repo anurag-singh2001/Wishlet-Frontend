@@ -5,10 +5,7 @@ import { GoogleSignInButton } from "@/features/auth/GoogleSignInButton";
 import { useAuth } from "@/features/auth/use-auth";
 
 export function SignInCard(): React.ReactElement | null {
-  const { status, native } = useAuth();
-  if (native) {
-    return <p className="text-[13px] text-muted">Sign-in is coming to the app soon</p>;
-  }
+  const { status } = useAuth();
   if (status !== "signedOut") return null;
   return (
     <section

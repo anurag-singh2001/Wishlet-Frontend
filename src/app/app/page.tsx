@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { AppAccountRow } from "./AppAccountRow";
 import { AppRecentWishes } from "./AppRecentWishes";
 
 const OCCASIONS = [
@@ -59,6 +60,7 @@ export default function AppHomePage(): React.JSX.Element {
         <Button href="/build" variant="secondary" fullWidth>
           Make another
         </Button>
+        <AppAccountRow />
       </div>
     </main>
   );

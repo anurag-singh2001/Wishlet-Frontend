@@ -13,6 +13,8 @@ export interface AuthContextValue {
   /** True once the Google script has loaded and been initialised. */
   gisReady: boolean;
   signOut: () => void;
+  /** Android app only: native Google sign-in. */
+  signIn: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -21,6 +23,7 @@ export const AuthContext = createContext<AuthContextValue>({
   native: false,
   gisReady: false,
   signOut: () => undefined,
+  signIn: () => Promise.resolve(),
 });
 
 export function useAuth(): AuthContextValue {

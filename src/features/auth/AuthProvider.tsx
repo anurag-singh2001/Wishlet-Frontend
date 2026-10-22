@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui";
 import { claimWishes, getMe, GOOGLE_CLIENT_ID, signInWithGoogle } from "@/lib/auth-api";
 import { clearSession, getSession, saveSession, type AuthUser } from "@/lib/auth-token";
+import { nativeGoogleSignIn, nativeGoogleSignOut } from "@/lib/native/google-signin";
 import { listOwnedWishes } from "@/lib/wish-tokens";
 import { AuthContext, type AuthContextValue, type AuthStatus } from "./use-auth";
 
@@ -89,15 +90,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const signOut = useCallback((): void => {
     clearSession();
     window.google?.accounts.id.disableAutoSelect();
+    if (Capacitor.isNativePlatform()) void nativeGoogleSignOut();
     setUser(null);
     setStatus("signedOut");
     void queryClient.invalidateQueries({ queryKey: ["my-wishes"] });
     toast("Signed out");
   }, [queryClient, toast]);
 
+  const signIn = useCallback(async (): Promise<void> => {
+    let idToken: string;
+    try {
+      idToken = await nativeGoogleSignIn();
+    } catch (err) {
+      if (!(err instanceof Error && err.message === "CANCELLED")) {
+        toast("Couldn't sign in with Google. Please try again.");
+      }
+      return;
+    }
+    await handler.current(idToken);
+  }, [toast]);
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, status, native, gisReady, signOut }),
-    [user, status, native, gisReady, signOut],
+    () => ({ user, status, native, gisReady, signOut, signIn }),
+    [user, status, native, gisReady, signOut, signIn],
   );
 
   return (
