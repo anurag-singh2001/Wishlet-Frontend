@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui";
 import { claimWishes, getMe, GOOGLE_CLIENT_ID, signInWithGoogle } from "@/lib/auth-api";
 import { clearSession, getSession, saveSession, type AuthUser } from "@/lib/auth-token";
+import { describeSignInError } from "./auth-errors";
 import { nativeGoogleSignIn, nativeGoogleSignOut } from "@/lib/native/google-signin";
 import { listOwnedWishes } from "@/lib/wish-tokens";
 import { AuthContext, type AuthContextValue, type AuthStatus } from "./use-auth";
@@ -18,6 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [native, setNative] = useState(false);
   const [gisReady, setGisReady] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -43,6 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const onCredential = useCallback(
     async (credential: string): Promise<void> => {
+      setSigningIn(true);
+      setError(null);
       try {
         const session = await signInWithGoogle(credential);
         saveSession(session);
@@ -63,8 +68,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
             ? `Signed in. ${claimed} ${claimed === 1 ? "wish" : "wishes"} saved to your account`
             : `Signed in as ${session.user.name || session.user.email}`,
         );
-      } catch {
-        toast("Couldn't sign in. Please try again");
+      } catch (err) {
+        const message = describeSignInError(err);
+        if (message) {
+          setError(message);
+          toast(message);
+        }
+      } finally {
+        setSigningIn(false);
       }
     },
     [queryClient, toast],
@@ -99,20 +110,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
 
   const signIn = useCallback(async (): Promise<void> => {
     let idToken: string;
+    setError(null);
+    setSigningIn(true);
     try {
       idToken = await nativeGoogleSignIn();
     } catch (err) {
-      if (!(err instanceof Error && err.message === "CANCELLED")) {
-        toast("Couldn't sign in with Google. Please try again.");
+      setSigningIn(false);
+      const message = describeSignInError(err);
+      if (message) {
+        setError(message);
+        toast(message);
       }
       return;
     }
     await handler.current(idToken);
   }, [toast]);
 
+  /** The server rejected our session: drop it; the caller sends the user to sign in. */
+  const expireSession = useCallback((): void => {
+    clearSession();
+    setUser(null);
+    setStatus("signedOut");
+    toast("Please sign in again");
+  }, [toast]);
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, status, native, gisReady, signOut, signIn }),
-    [user, status, native, gisReady, signOut, signIn],
+    () => ({ user, status, native, gisReady, signingIn, error, signOut, signIn, expireSession }),
+    [user, status, native, gisReady, signingIn, error, signOut, signIn, expireSession],
   );
 
   return (

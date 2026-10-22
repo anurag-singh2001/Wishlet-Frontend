@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getUploadSignature, uploadImageFallback } from "@/lib/api";
+import { isUnauthorized, useSessionExpired } from "@/features/auth/use-session-expired";
 import { compressImage } from "../lib/compress-image";
 import type { BuilderState } from "../types";
 
@@ -23,7 +24,8 @@ async function uploadDirect(
     if (!res.ok) return null;
     const data = (await res.json()) as { secure_url?: string; public_id?: string };
     return data.secure_url ? { url: data.secure_url, publicId: data.public_id ?? null } : null;
-  } catch {
+  } catch (err) {
+    if (isUnauthorized(err)) throw err;
     return null; // fall back to server-assisted upload
   }
 }
@@ -31,6 +33,7 @@ async function uploadDirect(
 export function usePhotoUpload(updateState: (updates: Partial<BuilderState>) => void) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const onExpired = useSessionExpired();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -59,6 +62,10 @@ export function usePhotoUpload(updateState: (updates: Partial<BuilderState>) => 
         ...(result.publicId ? { photoPublicId: result.publicId } : {}),
       });
     } catch (err: unknown) {
+      if (isUnauthorized(err)) {
+        onExpired();
+        return;
+      }
       setUploadError(
         err instanceof Error ? err.message : "Network error uploading file. Please try again.",
       );

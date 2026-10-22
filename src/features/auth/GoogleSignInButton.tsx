@@ -6,17 +6,20 @@ import { useAuth } from "./use-auth";
 
 function NativeButton({
   className,
+  disabled,
   onClick,
 }: {
   className?: string;
+  disabled: boolean;
   onClick: () => void;
 }): React.ReactElement {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label="Continue with Google"
-      className={`flex h-12 items-center justify-center gap-3 rounded-full border border-hairline bg-white px-6 text-[15px] font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${className ?? ""}`}
+      className={`flex h-[52px] w-full items-center justify-center gap-3 rounded-full border border-hairline bg-white px-6 text-[16px] font-semibold text-ink disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${className ?? ""}`}
     >
       <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
         <path
@@ -47,7 +50,7 @@ export function GoogleSignInButton({
 }: {
   className?: string;
 }): React.ReactElement | null {
-  const { gisReady, native, status, signIn } = useAuth();
+  const { gisReady, native, status, signIn, signingIn } = useAuth();
   const toast = useToast();
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -58,8 +61,10 @@ export function GoogleSignInButton({
       window.google.accounts.id.renderButton(ref.current, {
         theme: "outline",
         size: "large",
+        width: 320,
         shape: "pill",
-        text: "signin_with",
+        text: "continue_with",
+        logo_alignment: "left",
       });
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFailed(false);
@@ -69,22 +74,27 @@ export function GoogleSignInButton({
   }, [gisReady]);
 
   if (status === "signedIn") return null;
-  if (native) return <NativeButton className={className} onClick={() => void signIn()} />;
+  if (native)
+    return (
+      <NativeButton className={className} disabled={signingIn} onClick={() => void signIn()} />
+    );
 
   const fallback = !gisReady || failed;
   return (
-    <div className={className}>
+    <div className={`${signingIn ? "pointer-events-none opacity-50" : ""} ${className ?? ""}`}>
       <div ref={ref} className={fallback ? "hidden" : "flex min-h-11 justify-center"} />
       {fallback && (
         <Button
           variant="secondary"
-          size="sm"
+          size="lg"
+          fullWidth
+          disabled={signingIn}
           onClick={() => {
             if (window.google) window.google.accounts.id.prompt();
             else toast("Google sign-in is still loading. Try again in a moment");
           }}
         >
-          Sign in with Google
+          Continue with Google
         </Button>
       )}
     </div>

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/features/auth/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { createWish } from "@/lib/api";
 import { saveWishToken } from "@/lib/wish-tokens";
@@ -13,6 +15,8 @@ interface Created {
 
 export function useGenerateWish(onCreated: (created: Created) => void) {
   const [error, setError] = useState("");
+  const router = useRouter();
+  const { expireSession } = useAuth();
 
   const mutation = useMutation({
     mutationFn: (payload: BuilderState) => {
@@ -30,6 +34,11 @@ export function useGenerateWish(onCreated: (created: Created) => void) {
       trackWishCreated({ occasion: variables.occasion, template: variables.templateId });
     },
     onError: (err) => {
+      if (err.message === "UNAUTHORIZED") {
+        expireSession();
+        router.replace("/signin?next=%2Fbuild");
+        return;
+      }
       setError(err.message || "An error occurred while creating your Wishlet.");
     },
   });

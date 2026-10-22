@@ -1,13 +1,10 @@
-import { Badge, Button } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { PhoneDemo } from "./PhoneDemo";
 
 export function Hero(): React.JSX.Element {
   return (
     <section className="mx-auto flex max-w-[1200px] flex-col gap-6 px-5 pb-6 pt-7 md:flex-row md:items-center md:gap-14 md:px-8 md:pb-20 md:pt-14">
       <div className="flex flex-col gap-4 md:flex-1 md:gap-6">
-        <Badge tone="party" className="self-start">
-          Free · no app or sign-up needed
-        </Badge>
         <h1 className="font-display text-[40px] font-extrabold leading-[1.05] tracking-[-0.03em] md:text-[68px] md:leading-[1.02]">
           Turn a wish into a moment they&apos;ll open again and again.
         </h1>

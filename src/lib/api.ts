@@ -103,6 +103,7 @@ export async function createWish(payload: BuilderState): Promise<CreatedWish> {
       },
     }),
   });
+  if (res.status === 401) throw new Error("UNAUTHORIZED");
   if (!res.ok) throw new Error(await errorMessage(res, "Failed to generate wish"));
   return res.json() as Promise<CreatedWish>;
 }
@@ -163,9 +164,10 @@ export async function getUploadSignature(
 ): Promise<UploadSignature | null> {
   const res = await fetch(`${API_URL}/api/v1/uploads/signature`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     body: JSON.stringify({ kind }),
   });
+  if (res.status === 401) throw new Error("UNAUTHORIZED");
   if (!res.ok) return null;
   return res.json() as Promise<UploadSignature>;
 }
@@ -233,7 +235,12 @@ export async function uploadImageFallback(
 ): Promise<{ url: string; publicId: string | null }> {
   const formData = new FormData();
   formData.append("file", file, filename);
-  const res = await fetch(`${API_URL}/api/v1/uploads/image`, { method: "POST", body: formData });
+  const res = await fetch(`${API_URL}/api/v1/uploads/image`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: formData,
+  });
+  if (res.status === 401) throw new Error("UNAUTHORIZED");
   if (!res.ok) {
     throw new Error(await errorMessage(res, "Failed to upload image. Please try again."));
   }

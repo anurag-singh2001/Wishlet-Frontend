@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GoogleSignInButton } from "@/features/auth/GoogleSignInButton";
+import { Button } from "@/components/ui";
 import { useAuth } from "@/features/auth/use-auth";
 
 export function SignInCard(): React.ReactElement | null {
@@ -20,7 +20,9 @@ export function SignInCard(): React.ReactElement | null {
           Sign in with Google to see them anywhere. Wishes on this device are added automatically.
         </p>
       </div>
-      <GoogleSignInButton />
+      <Button href="/signin?next=%2Fwishes" size="sm">
+        Sign in with Google
+      </Button>
     </section>
   );
 }

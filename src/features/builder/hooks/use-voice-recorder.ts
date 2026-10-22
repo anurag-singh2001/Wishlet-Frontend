@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { uploadToCloudinary } from "@/lib/api";
+import { isUnauthorized, useSessionExpired } from "@/features/auth/use-session-expired";
 import type { BuilderState } from "../types";
 
 export const VOICE_MAX_SECONDS = 60;
@@ -34,6 +35,7 @@ function extFor(mime: string): string {
 
 export function useVoiceRecorder(update: (updates: Partial<BuilderState>) => void) {
   const [status, setStatus] = useState<VoiceStatus>("idle");
+  const onExpired = useSessionExpired();
   const [errorKind, setErrorKind] = useState<VoiceErrorKind | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -85,10 +87,11 @@ export function useVoiceRecorder(update: (updates: Partial<BuilderState>) => voi
       setDuration(secs);
       update({ voice: { url: res.url, publicId: res.publicId, duration: secs } });
       setStatus("uploaded");
-    } catch {
-      if (aliveRef.current) fail("upload");
+    } catch (err) {
+      if (isUnauthorized(err)) onExpired();
+      else if (aliveRef.current) fail("upload");
     }
-  }, [update]);
+  }, [update, onExpired]);
 
   const stop = useCallback((): void => {
     if (recorderRef.current?.state === "recording") recorderRef.current.stop();

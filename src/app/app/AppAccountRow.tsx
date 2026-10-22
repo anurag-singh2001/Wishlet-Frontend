@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GoogleSignInButton } from "@/features/auth/GoogleSignInButton";
+import { Button } from "@/components/ui";
 import { useAuth } from "@/features/auth/use-auth";
 
 export function AppAccountRow(): React.ReactElement | null {
@@ -43,7 +43,9 @@ export function AppAccountRow(): React.ReactElement | null {
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-hairline bg-surface p-4">
       <p className="text-sm font-semibold text-ink">Save your wishes to your Google account</p>
-      <GoogleSignInButton />
+      <Button href="/signin?next=%2Fapp" variant="secondary" fullWidth>
+        Continue with Google
+      </Button>
     </div>
   );
 }
