@@ -13,6 +13,18 @@ interface Occasion {
 
 const OCCASIONS: Occasion[] = [
   {
+    id: "diwali",
+    label: "Diwali",
+    bg: "#FFF0D6",
+    stroke: "#A04A00",
+    icon: (
+      <>
+        <path d="M12 3c2 2.5 3 4 3 5.5a3 3 0 0 1-6 0C9 7 10 5.5 12 3z" />
+        <path d="M3 13h18c-1 4.5-4.5 7-9 7s-8-2.5-9-7z" />
+      </>
+    ),
+  },
+  {
     id: "birthday",
     label: "Birthday",
     bg: "#FFF1EC",

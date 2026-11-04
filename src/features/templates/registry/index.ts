@@ -73,4 +73,11 @@ export const templateRegistry: Record<string, TemplateConfig> = {
     description: "Soft rain clears into a warm sunrise as your apology appears.",
     component: lazy(() => import("../templates/sorry-rain-to-sun")),
   },
+  "diwali-diyas": {
+    id: "diwali-diyas",
+    name: "Festival of Lights",
+    occasion: "diwali",
+    description: "Glowing diyas, a blooming rangoli and soft fireworks in a night sky.",
+    component: lazy(() => import("../templates/diwali-diyas")),
+  },
 };

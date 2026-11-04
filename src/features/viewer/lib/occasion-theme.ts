@@ -11,6 +11,7 @@ export const OCCASION_THEMES: Record<string, OccasionTheme> = {
   "thank-you": { bg: "#ecfdf5", text: "#10b981", icon: "🙏", title: "Thank You" },
   congratulations: { bg: "#f0f9ff", text: "#0ea5e9", icon: "🎉", title: "Congratulations" },
   sorry: { bg: "#f8fafc", text: "#64748b", icon: "🤍", title: "I'm Sorry" },
+  diwali: { bg: "#fff7ed", text: "#c2410c", icon: "🪔", title: "Happy Diwali" },
 };
 
 const DEFAULT_THEME: OccasionTheme = {

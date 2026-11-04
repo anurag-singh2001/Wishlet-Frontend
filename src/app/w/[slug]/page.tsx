@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: PageProps) {
         "thank-you": "🙏 A thank you for",
         congratulations: "🎉 Congratulations to",
         sorry: "🤍 An apology for",
+        diwali: "🪔 A Diwali wish for",
       };
 
       const prefix = occasionMap[occasion] || "A special wish for";

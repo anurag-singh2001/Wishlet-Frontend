@@ -40,6 +40,7 @@ const STORY_FONTS: Record<string, StoryFontFamily[]> = {
   "congratulations-gold": [playfair],
   "sorry-sincere": [playfair, greatVibes],
   "sorry-rain-to-sun": [playfair],
+  "diwali-diyas": [playfair, greatVibes],
 };
 
 /** Unknown templates get no custom fonts, so `next/og` uses its built-in default. */

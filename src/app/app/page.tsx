@@ -4,6 +4,7 @@ import { AppAccountRow } from "./AppAccountRow";
 import { AppRecentWishes } from "./AppRecentWishes";
 
 const OCCASIONS = [
+  { id: "diwali", label: "Diwali" },
   { id: "birthday", label: "Birthday" },
   { id: "anniversary", label: "Anniversary" },
   { id: "thank-you", label: "Thank you" },

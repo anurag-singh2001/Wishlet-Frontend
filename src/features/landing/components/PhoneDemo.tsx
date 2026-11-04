@@ -15,6 +15,14 @@ interface Demo {
 
 const DEMOS: Demo[] = [
   {
+    id: "diwali-diyas",
+    label: "Diwali · Festival of Lights",
+    occasion: "diwali",
+    recipientName: "Meera",
+    senderName: "Arjun",
+    message: "May every diya you light bring joy, health and a year full of sweet surprises.",
+  },
+  {
     id: "birthday-minimal",
     label: "Birthday · Minimal",
     occasion: "birthday",

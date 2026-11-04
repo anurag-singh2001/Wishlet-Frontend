@@ -5,6 +5,7 @@ import { BirthdayMinimalStory } from "./birthday-minimal";
 import { BirthdayNeonStory } from "./birthday-neon";
 import { CongratulationsCelebrationStory } from "./congratulations-celebration";
 import { CongratulationsGoldStory } from "./congratulations-gold";
+import { DiwaliDiyasStory } from "./diwali-diyas";
 import { OccasionStory } from "./OccasionStory";
 import { SorryRainToSunStory } from "./sorry-rain-to-sun";
 import { SorrySincereStory } from "./sorry-sincere";
@@ -27,6 +28,7 @@ export const storyCards: Record<string, StoryCard> = {
   "thank-you-botanical": ThankYouBotanicalStory,
   "congratulations-gold": CongratulationsGoldStory,
   "sorry-rain-to-sun": SorryRainToSunStory,
+  "diwali-diyas": DiwaliDiyasStory,
 };
 
 export function getStoryCard(templateId: string): StoryCard {

@@ -21,7 +21,9 @@ const COLORS: Record<ParticleKind, string[]> = {
 export function kindForOccasion(occasion: string): ParticleKind {
   if (occasion === "birthday" || occasion === "congratulations") return "confetti";
   if (occasion === "anniversary") return "petals";
-  if (occasion === "thank-you" || occasion === "thankyou") return "sparkles";
+  if (occasion === "thank-you" || occasion === "thankyou" || occasion === "diwali") {
+    return "sparkles";
+  }
   return "motes";
 }
 
