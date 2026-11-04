@@ -94,7 +94,9 @@ export function DiwaliDiyasStory({
         style={{
           display: "flex",
           fontFamily: GREAT_VIBES,
-          fontSize: 170,
+          fontSize: 140,
+          whiteSpace: "nowrap",
+          justifyContent: "center",
           color: GLOW,
           marginBottom: 20,
           ...stage(reveal, 1),

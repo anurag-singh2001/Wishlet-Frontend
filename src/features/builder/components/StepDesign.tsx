@@ -1,6 +1,6 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { occasionLabel, templatesFor } from "../lib/occasions";
+import { OCCASIONS, occasionLabel, templatesFor } from "../lib/occasions";
 import { TemplateThumb } from "./TemplateThumb";
 import type { ApiTemplate } from "../types";
 
@@ -20,7 +20,8 @@ export function StepDesign({
   onSelect,
 }: StepDesignProps): React.ReactElement {
   const options = templatesFor(templates, occasion);
-  const label = occasionLabel(occasion).toLowerCase();
+  const info = OCCASIONS.find((o) => o.id === occasion);
+  const label = info?.properNoun ? info.label : occasionLabel(occasion).toLowerCase();
   const article = /^[aeiou]/.test(label) ? "an" : "a";
   return (
     <div className="flex flex-col gap-4">

@@ -5,10 +5,12 @@ export interface OccasionInfo {
   id: string;
   label: string;
   tint: string;
+  /** Festivals keep their capital in sentences ("Pick a Diwali design"). */
+  properNoun?: boolean;
 }
 
 export const OCCASIONS: OccasionInfo[] = [
-  { id: "diwali", label: "Diwali", tint: "#FFF0D6" },
+  { id: "diwali", label: "Diwali", tint: "#FFF0D6", properNoun: true },
   { id: "birthday", label: "Birthday", tint: "#FFF1EC" },
   { id: "anniversary", label: "Anniversary", tint: "#FDEBF3" },
   { id: "thank-you", label: "Thank you", tint: "#EAF7EF" },
