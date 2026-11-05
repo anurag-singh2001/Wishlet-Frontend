@@ -38,7 +38,8 @@ export async function signInWithGoogle(credential: string): Promise<AuthSession>
 export async function getMe(): Promise<AuthUser> {
   const res = await fetch(`${API_URL}/api/v1/me`, { headers: authHeaders() });
   if (!res.ok) throw await failure(res);
-  return ((await res.json()) as { user: AuthUser }).user;
+  const body = (await res.json()) as { user: AuthUser; isAdmin?: boolean };
+  return { ...body.user, isAdmin: body.isAdmin === true };
 }
 
 export async function getMyWishes(): Promise<OwnedWishSummary[]> {

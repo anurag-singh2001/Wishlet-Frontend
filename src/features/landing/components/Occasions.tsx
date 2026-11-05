@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { templateRegistry } from "@/features/templates/registry";
+import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
 
 interface Occasion {
   id: string;
@@ -82,11 +83,18 @@ const OCCASIONS: Occasion[] = [
   },
 ];
 
-function designCount(id: string): number {
-  return Object.values(templateRegistry).filter((t) => t.occasion === id).length;
-}
-
 export function Occasions(): React.JSX.Element {
+  const config = useSiteConfig();
+  // Config decides which occasions show and in what order; icons stay local.
+  const visible = config.occasions
+    .map((c) => {
+      const local = OCCASIONS.find((o) => o.id === c.id);
+      return local ? { ...local, label: c.label || local.label } : null;
+    })
+    .filter((o): o is Occasion => o !== null);
+  const designCount = (id: string): number =>
+    config.templates.filter((t) => t.occasion === id && templateRegistry[t.id]).length;
+  const lastWide = visible.length % 2 === 1 ? visible.length - 1 : -1;
   return (
     <section
       id="occasions"
@@ -95,9 +103,9 @@ export function Occasions(): React.JSX.Element {
       <h2 className="font-display text-[28px] font-extrabold md:text-[40px] md:tracking-[-0.02em]">
         What&apos;s the occasion?
       </h2>
-      <ul className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4">
-        {OCCASIONS.map((o, i) => (
-          <li key={o.id} className={i === 4 ? "col-span-2 md:col-span-1" : undefined}>
+      <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
+        {visible.map((o, i) => (
+          <li key={o.id} className={i === lastWide ? "col-span-2 md:col-span-1" : undefined}>
             <Link
               href={`/build?occasion=${o.id}`}
               className="flex h-full flex-col gap-2.5 rounded-[20px] border border-hairline bg-surface p-4 transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:gap-3.5 md:rounded-card md:p-6"

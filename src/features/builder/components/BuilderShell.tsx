@@ -4,9 +4,10 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button, Sheet } from "@/components/ui";
 import { trackCreateWishStarted } from "@/lib/analytics";
-import { useTemplates } from "../hooks/use-templates";
+import { AnnouncementBanner } from "@/features/site-config/components/AnnouncementBanner";
+import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
 import { useGenerateWish } from "../hooks/use-generate-wish";
-import { DEFAULT_TEMPLATES, OCCASIONS, templatesFor } from "../lib/occasions";
+import { DEFAULT_TEMPLATES, templatesFor } from "../lib/occasions";
 import { validateDetails } from "../lib/validation";
 import type { ApiTemplate, BuilderState, BuilderStep } from "../types";
 import { BuilderHeader } from "./BuilderHeader";
@@ -35,17 +36,16 @@ const NEXT_LABEL: Record<BuilderStep, string> = {
 export function BuilderShell(): React.ReactElement {
   const searchParams = useSearchParams();
   const occasionParam = searchParams.get("occasion") ?? "";
-  const deepLinked = OCCASIONS.some((o) => o.id === occasionParam);
-
-  // The bundled list renders immediately; the API (which may be waking from sleep) only refines it.
-  const { data } = useTemplates();
-  const templates: ApiTemplate[] = data?.templates?.length ? data.templates : DEFAULT_TEMPLATES;
+  // Bundled defaults render immediately; the API (which may be waking from sleep) refines them.
+  const config = useSiteConfig();
+  const templates: ApiTemplate[] = config.templates.length ? config.templates : DEFAULT_TEMPLATES;
+  const deepLinked = config.occasions.some((o) => o.id === occasionParam);
 
   const [step, setStep] = useState<BuilderStep>(deepLinked ? 2 : 1);
   const [state, setState] = useState<BuilderState>(() => {
     if (!deepLinked) return INITIAL_STATE;
     const wanted = searchParams.get("template");
-    const options = templatesFor(DEFAULT_TEMPLATES, occasionParam);
+    const options = templatesFor(templates, occasionParam);
     const chosen = options.find((t) => t.id === wanted) ?? options[0];
     return { ...INITIAL_STATE, occasion: occasionParam, templateId: chosen?.id ?? "" };
   });
@@ -116,6 +116,7 @@ export function BuilderShell(): React.ReactElement {
   return (
     <div className="mx-auto flex h-dvh max-w-[1200px] bg-ground">
       <div className="flex h-full w-full flex-col lg:max-w-[560px] lg:border-r lg:border-hairline">
+        <AnnouncementBanner />
         <BuilderHeader
           step={step}
           onBack={() => setStep((s) => (s > 1 ? ((s - 1) as BuilderStep) : s))}

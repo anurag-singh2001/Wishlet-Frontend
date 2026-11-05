@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button, Logo, Sheet } from "@/components/ui";
+import { Button, Sheet } from "@/components/ui";
+import { BrandLogo } from "@/features/site-config/components/BrandLogo";
 import { HeaderAuth, MenuAuth } from "@/features/auth/HeaderAuth";
 
 const LINKS = [
@@ -20,8 +21,8 @@ export function Header(): React.JSX.Element {
   return (
     <header className="border-b border-hairline bg-ground md:border-b-0">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4 md:px-8 md:py-5">
-        <Link href="/" aria-label="Wishlet home" className="rounded-control">
-          <Logo size={34} className="font-display text-[20px] font-extrabold md:text-[22px]" />
+        <Link href="/" aria-label="Home" className="rounded-control">
+          <BrandLogo size={34} className="font-display text-[20px] font-extrabold md:text-[22px]" />
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (

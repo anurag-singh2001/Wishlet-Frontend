@@ -9,6 +9,8 @@ export interface AuthUser {
   name: string | null;
   email: string;
   avatarUrl: string | null;
+  /** Set by `GET /me`; absent on a fresh sign-in until the next refresh. */
+  isAdmin?: boolean;
 }
 
 export interface AuthSession {

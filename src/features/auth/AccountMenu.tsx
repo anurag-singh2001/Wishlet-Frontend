@@ -33,9 +33,14 @@ function Avatar({ url, label }: { url: string | null; label: string }): React.Re
 }
 
 function Items({ onDone }: { onDone: () => void }): React.ReactElement {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   return (
     <div className="flex flex-col gap-1">
+      {user?.isAdmin && (
+        <Link href="/admin" onClick={onDone} className={ITEM}>
+          Admin
+        </Link>
+      )}
       <Link href="/wishes" onClick={onDone} className={ITEM}>
         My wishes
       </Link>

@@ -15,6 +15,8 @@ import { AppIntro } from "@/components/providers/AppIntro";
 import { NativeHomeRedirect } from "@/components/providers/NativeHomeRedirect";
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { getServerBranding } from "@/features/site-config/lib/server";
+import { themeVars } from "@/features/site-config/lib/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,23 +47,26 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
-  title: {
-    default: "Wishlet — Send an experience",
-    template: "%s | Wishlet",
-  },
-  description:
-    "Create beautiful, personalized, animated web pages for special occasions. Ready in seconds, remembered forever.",
-  keywords: ["wishlet", "birthday wish", "anniversary", "personalized greeting", "digital card"],
-  openGraph: {
-    siteName: "Wishlet",
-    type: "website",
-  },
-  icons: {
-    icon: "/icon.svg",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { faviconUrl, appName } = await getServerBranding();
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+    title: {
+      default: `${appName} — Send an experience`,
+      template: `%s | ${appName}`,
+    },
+    description:
+      "Create beautiful, personalized, animated web pages for special occasions. Ready in seconds, remembered forever.",
+    keywords: ["wishlet", "birthday wish", "anniversary", "personalized greeting", "digital card"],
+    openGraph: {
+      siteName: appName,
+      type: "website",
+    },
+    icons: {
+      icon: faviconUrl || "/icon.svg",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -70,11 +75,17 @@ export const viewport: Viewport = {
   themeColor: "#4F46E5",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}): Promise<React.ReactElement> {
+  const branding = await getServerBranding();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} ${manrope.variable} ${playfairDisplay.variable} h-full antialiased`}
+      style={themeVars(branding)}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>

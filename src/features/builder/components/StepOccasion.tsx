@@ -1,6 +1,8 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { OCCASIONS, templatesFor } from "../lib/occasions";
+import { Badge } from "@/components/ui";
+import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
+import { templatesFor } from "../lib/occasions";
 import type { ApiTemplate } from "../types";
 
 interface StepOccasionProps {
@@ -14,13 +16,14 @@ export function StepOccasion({
   templates,
   onSelect,
 }: StepOccasionProps): React.ReactElement {
+  const { occasions } = useSiteConfig();
   return (
     <div className="flex flex-col gap-4">
       <h1 className="font-display text-[30px] font-extrabold text-ink">
         What&apos;s the occasion?
       </h1>
       <div role="radiogroup" aria-label="Occasion" className="flex flex-col gap-4">
-        {OCCASIONS.map((o) => {
+        {occasions.map((o) => {
           const selected = value === o.id;
           const count = templatesFor(templates, o.id).length;
           return (
@@ -40,7 +43,10 @@ export function StepOccasion({
                 aria-hidden="true"
               />
               <span className="flex flex-col">
-                <strong className="text-[17px] text-ink">{o.label}</strong>
+                <strong className="flex items-center gap-2 text-[17px] text-ink">
+                  {o.label}
+                  {o.badge && <Badge>{o.badge}</Badge>}
+                </strong>
                 <span className="text-sm text-[#4B4766]">
                   {count} {count === 1 ? "design" : "designs"}
                 </span>

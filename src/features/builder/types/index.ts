@@ -24,6 +24,8 @@ export interface ApiTemplate {
   name: string;
   occasion: string;
   description: string;
+  featured?: boolean;
+  badge?: string | null;
 }
 
 export type BuilderStep = 1 | 2 | 3;

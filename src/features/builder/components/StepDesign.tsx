@@ -1,6 +1,8 @@
 import React from "react";
 import { Check } from "lucide-react";
-import { OCCASIONS, occasionLabel, templatesFor } from "../lib/occasions";
+import { Badge } from "@/components/ui";
+import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
+import { occasionLabel, templatesFor } from "../lib/occasions";
 import { TemplateThumb } from "./TemplateThumb";
 import type { ApiTemplate } from "../types";
 
@@ -19,9 +21,11 @@ export function StepDesign({
   templates,
   onSelect,
 }: StepDesignProps): React.ReactElement {
+  const { occasions } = useSiteConfig();
   const options = templatesFor(templates, occasion);
-  const info = OCCASIONS.find((o) => o.id === occasion);
-  const label = info?.properNoun ? info.label : occasionLabel(occasion).toLowerCase();
+  const info = occasions.find((o) => o.id === occasion);
+  const name = info?.label || occasionLabel(occasion);
+  const label = info?.properNoun ? name : name.toLowerCase();
   const article = /^[aeiou]/.test(label) ? "an" : "a";
   return (
     <div className="flex flex-col gap-4">
@@ -45,6 +49,11 @@ export function StepDesign({
               <TemplateThumb templateId={t.id} occasion={occasion} recipientName={recipientName} />
               <span className="flex min-h-11 items-center justify-between gap-2 p-3">
                 <strong className="text-[15px] text-ink">{t.name}</strong>
+                {(t.badge || t.featured) && (
+                  <Badge tone="party" className="px-2 py-0.5 text-[12px]">
+                    {t.badge || "Featured"}
+                  </Badge>
+                )}
                 {selected && (
                   <Check className="text-brand" size={20} strokeWidth={2.5} aria-hidden="true" />
                 )}

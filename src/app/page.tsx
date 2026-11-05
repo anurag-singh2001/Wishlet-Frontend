@@ -3,6 +3,7 @@ import { Hero } from "@/features/landing/components/Hero";
 import { Occasions } from "@/features/landing/components/Occasions";
 import { HowItWorks } from "@/features/landing/components/HowItWorks";
 import { CtaBand } from "@/features/landing/components/CtaBand";
+import { AnnouncementBanner } from "@/features/site-config/components/AnnouncementBanner";
 import { Footer } from "@/features/landing/components/Footer";
 
 export const metadata = {
@@ -14,6 +15,7 @@ export const metadata = {
 export default function Home(): React.JSX.Element {
   return (
     <div className="flex min-h-screen flex-col bg-ground">
+      <AnnouncementBanner />
       <Header />
       <main className="flex-1">
         <Hero />
