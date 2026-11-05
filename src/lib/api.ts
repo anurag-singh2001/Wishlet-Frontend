@@ -92,6 +92,7 @@ export async function createWish(payload: BuilderState): Promise<CreatedWish> {
       occasion: payload.occasion,
       content: {
         recipientName: payload.recipientName,
+        audience: payload.audience ?? "one",
         senderName: payload.senderName,
         message: payload.message,
         photos: payload.photos,

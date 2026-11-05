@@ -1,7 +1,10 @@
 export interface BuilderState {
   occasion: string;
   templateId: string;
+  /** Shown on the card: a person's name, or a group label like "Friends & Family". */
   recipientName: string;
+  /** "group" = one link sent to many people (can be personalized with ?to=Name). */
+  audience?: "one" | "group";
   senderName: string;
   message: string;
   photos: string[]; // preview / Cloudinary URLs

@@ -18,9 +18,11 @@ import { VoicePlayer } from "./VoicePlayer";
 
 interface PublicViewerProps {
   slug: string;
+  /** From a personalized group link (`?to=Name`); replaces the group label on the card. */
+  toName?: string | null;
 }
 
-export function PublicViewer({ slug }: PublicViewerProps) {
+export function PublicViewer({ slug, toName }: PublicViewerProps) {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["wish", slug],
     queryFn: () => getWish(slug),
@@ -73,7 +75,7 @@ export function PublicViewer({ slug }: PublicViewerProps) {
 
   // Map API response to TemplateProps
   const templateProps: TemplateProps = {
-    recipientName: data.content.recipientName || "Someone special",
+    recipientName: toName || data.content.recipientName || "Someone special",
     senderName: data.content.senderName || "A friend",
     message: data.content.message || "",
     occasion: data.occasion,

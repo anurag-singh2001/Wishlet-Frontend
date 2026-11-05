@@ -10,7 +10,12 @@ export interface DetailErrors {
 
 export function validateDetails(state: BuilderState): DetailErrors {
   const errors: DetailErrors = {};
-  if (!state.recipientName.trim()) errors.recipientName = "Add who this wish is for";
+  if (!state.recipientName.trim()) {
+    errors.recipientName =
+      state.audience === "group"
+        ? "Add a group name, like Everyone or Friends & Family"
+        : "Add who this wish is for";
+  }
   if (!state.message.trim()) errors.message = "Write a short message for them";
   else if (state.message.length > MESSAGE_MAX) {
     errors.message = `Keep your message under ${MESSAGE_MAX} characters`;
