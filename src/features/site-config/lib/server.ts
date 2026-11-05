@@ -1,5 +1,5 @@
 import { API_URL } from "@/lib/api";
-import { DEFAULT_BRANDING } from "./defaults";
+import { DEFAULT_BRANDING } from "./branding-defaults";
 import type { Branding } from "../types";
 
 /** Branding for the root layout; any failure yields the defaults. */

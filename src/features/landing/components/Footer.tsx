@@ -1,6 +1,6 @@
 "use client";
 
-import { DEFAULT_FEEDBACK_URL } from "@/features/site-config/lib/defaults";
+import { DEFAULT_FEEDBACK_URL } from "@/features/site-config/lib/branding-defaults";
 import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
 
 const LINK =

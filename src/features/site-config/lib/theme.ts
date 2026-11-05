@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { DEFAULT_BRANDING } from "./defaults";
+import { DEFAULT_BRANDING } from "./branding-defaults";
 import type { Branding } from "../types";
 
 const HEX = /^#[0-9a-f]{6}$/i;
