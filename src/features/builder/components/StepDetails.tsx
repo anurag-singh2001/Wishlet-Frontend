@@ -3,6 +3,7 @@ import { Field, Input, Textarea } from "@/components/ui";
 import { usePhotoUpload } from "../hooks/use-photo-upload";
 import { MESSAGE_MAX, type DetailErrors } from "../lib/validation";
 import { useVoiceRecorder } from "../hooks/use-voice-recorder";
+import { AudienceField } from "./AudienceField";
 import { MessageSuggestions } from "./MessageSuggestions";
 import { PhotoField } from "./PhotoField";
 import { ReactionsToggle } from "./ReactionsToggle";
@@ -30,17 +31,7 @@ export function StepDetails({
   return (
     <div className="flex flex-col gap-3.5">
       <h1 className="font-display text-[28px] font-extrabold text-ink">Make it personal</h1>
-      <Field id="b-to" label="Who is it for?" error={errors.recipientName}>
-        <Input
-          id="b-to"
-          value={state.recipientName}
-          error={errors.recipientName}
-          maxLength={60}
-          autoComplete="off"
-          placeholder="e.g. Priya"
-          onChange={(e) => update({ recipientName: e.target.value })}
-        />
-      </Field>
+      <AudienceField state={state} error={errors.recipientName} update={update} />
       <Field id="b-msg" label="Your message" error={errors.message}>
         <Textarea
           id="b-msg"

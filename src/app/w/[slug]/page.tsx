@@ -3,12 +3,15 @@ import { PublicViewer } from "@/features/viewer/components/PublicViewer";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ to?: string | string[] }>;
 }
 
 import { getWish } from "@/lib/api";
+import { personalName } from "@/features/viewer/lib/personal-name";
 
-export async function generateMetadata({ params }: PageProps) {
+export async function generateMetadata({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const toName = personalName((await searchParams).to);
 
   let title = "A special wish for you";
   const description = "Someone made something special for you.";
@@ -17,7 +20,7 @@ export async function generateMetadata({ params }: PageProps) {
     {
       const data = await getWish(slug, { next: { revalidate: 60 } });
       const occasion = data.occasion || "special";
-      const recipientName = data.content?.recipientName || "you";
+      const recipientName = toName || data.content?.recipientName || "you";
 
       const occasionMap: Record<string, string> = {
         birthday: "🎂 A birthday wish for",
@@ -55,12 +58,13 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default async function ViewerPage({ params }: PageProps) {
+export default async function ViewerPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const toName = personalName((await searchParams).to);
 
   return (
     <main>
-      <PublicViewer slug={slug} />
+      <PublicViewer slug={slug} toName={toName} />
     </main>
   );
 }

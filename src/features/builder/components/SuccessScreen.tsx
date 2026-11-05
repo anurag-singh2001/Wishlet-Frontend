@@ -11,6 +11,7 @@ import { msLeft, timeLeft, useNow } from "@/lib/expiry";
 import { useDeleteWish } from "../hooks/use-delete-wish";
 import { DeleteWishSheet } from "./DeleteWishSheet";
 import { SaveToAccount } from "./SaveToAccount";
+import { PersonalLinks } from "./PersonalLinks";
 import { ShareActions } from "./ShareActions";
 import type { BuilderState } from "../types";
 
@@ -50,6 +51,7 @@ export function SuccessScreen({
   const now = useNow();
   const reactions = useReactionsSetting(slug, getWishToken(slug), state.reactionsEnabled !== false);
   const name = state.recipientName.trim();
+  const group = state.audience === "group";
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col p-5 safe-top">
@@ -73,7 +75,7 @@ export function SuccessScreen({
           />
         </div>
         <h1 className="font-display text-[30px] font-extrabold text-ink">
-          {name ? `${name}'s wish is ready` : "Your wish is ready"}
+          {group ? "Your group wish is ready" : name ? `${name}'s wish is ready` : "Your wish is ready"}
         </h1>
         <p className="text-[15px] leading-normal text-[#4B4766]">
           Only people you send the link to can open it.
@@ -101,7 +103,13 @@ export function SuccessScreen({
       <SaveToAccount />
 
       <div className="mt-6">
-        <ShareActions url={url} slug={slug} senderName={state.senderName} recipientName={name} />
+        <ShareActions
+          url={url}
+          slug={slug}
+          senderName={state.senderName}
+          recipientName={group ? "everyone" : name}
+        />
+        {group && <PersonalLinks url={url} senderName={state.senderName} />}
       </div>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-hairline pt-3">
