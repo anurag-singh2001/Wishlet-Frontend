@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#4f46e5"/>
-  <!-- Main 4-point sparkle (✨ shape) -->
-  <path d="M16 5 C16.5 11 21 15.5 27 16 C21 16.5 16.5 21 16 27 C15.5 21 11 16.5 5 16 C11 15.5 15.5 11 16 5Z" fill="white"/>
-  <!-- Small accent sparkle -->
-  <path d="M24 6 C24.2 8 25.5 9.3 27.5 9.5 C25.5 9.7 24.2 11 24 13 C23.8 11 22.5 9.7 20.5 9.5 C22.5 9.3 23.8 8 24 6Z" fill="white" opacity="0.7"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#4f46e5" rx="7"/><path fill="#fff" d="M16 5 C16.5 11 21 15.5 27 16 C21 16.5 16.5 21 16 27 C15.5 21 11 16.5 5 16 C11 15.5 15.5 11 16 5Z"/><path fill="#fff" d="M24 6 C24.2 8 25.5 9.3 27.5 9.5 C25.5 9.7 24.2 11 24 13 C23.8 11 22.5 9.7 20.5 9.5 C22.5 9.3 23.8 8 24 6Z" opacity=".7"/></svg>
