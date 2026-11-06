@@ -16,6 +16,10 @@ import { NativeHomeRedirect } from "@/components/providers/NativeHomeRedirect";
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { getServerBranding } from "@/features/site-config/lib/server";
+import { FestivalProvider } from "@/features/festivals/components/FestivalProvider";
+import { FestivalStatusBar } from "@/features/festivals/components/FestivalStatusBar";
+import { getServerFestival } from "@/features/festivals/lib/server";
+import { festivalStyle, previewScript } from "@/features/festivals/lib/theme";
 import { themeVars } from "@/features/site-config/lib/theme";
 
 const geistSans = Geist({
@@ -48,7 +52,10 @@ const playfairDisplay = Playfair_Display({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { faviconUrl, appName } = await getServerBranding();
+  const [{ faviconUrl, appName }, festival] = await Promise.all([
+    getServerBranding(),
+    getServerFestival(),
+  ]);
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
     title: {
@@ -63,40 +70,50 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
     },
     icons: {
-      icon: faviconUrl || "/icon.svg",
+      icon: festival?.favicon ?? (faviconUrl || "/icon.svg"),
     },
   };
 }
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  themeColor: "#4F46E5",
-};
+export async function generateViewport(): Promise<Viewport> {
+  const festival = await getServerFestival();
+  return {
+    width: "device-width",
+    initialScale: 1,
+    viewportFit: "cover",
+    themeColor: festival?.colors.statusBar ?? "#4F46E5",
+  };
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }): Promise<React.ReactElement> {
-  const branding = await getServerBranding();
+  const [branding, festival] = await Promise.all([getServerBranding(), getServerFestival()]);
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} ${manrope.variable} ${playfairDisplay.variable} h-full antialiased`}
-      style={themeVars(branding)}
+      style={{ ...themeVars(branding), ...festivalStyle(festival) }}
       suppressHydrationWarning
     >
+      <head>
+        {/* ?festival=<id> preview only; the live festival is themed on the server above. */}
+        <script dangerouslySetInnerHTML={{ __html: previewScript() }} />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Suspense fallback={null}>
           <GoogleAnalytics />
         </Suspense>
-        <QueryProvider>
-          <ToastProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </ToastProvider>
-        </QueryProvider>
+        <FestivalProvider festivalId={festival?.id ?? null}>
+          <QueryProvider>
+            <ToastProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </ToastProvider>
+          </QueryProvider>
+          <FestivalStatusBar />
+        </FestivalProvider>
         <NativeBackButton />
         <AppIntro />
         <NativeHomeRedirect />

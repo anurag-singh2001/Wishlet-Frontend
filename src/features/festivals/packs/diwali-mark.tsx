@@ -1,0 +1,26 @@
+const SPARKLE =
+  "M16 5 C16.5 11 21 15.5 27 16 C21 16.5 16.5 21 16 27 C15.5 21 11 16.5 5 16 C11 15.5 15.5 11 16 5Z";
+
+/** The ✨ mark with a small marigold flame. `onDark` drops the tile for use on the brand colour. */
+export function DiwaliMark({
+  size,
+  onDark = false,
+}: {
+  size: number;
+  onDark?: boolean;
+}): React.JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+      {!onDark && <rect width="32" height="32" rx="7" fill="var(--color-brand)" />}
+      <path d={SPARKLE} fill="#fff" />
+      <path
+        d="M25 3c1.6 2 2.6 3.4 2.6 4.8a2.6 2.6 0 0 1-5.2 0C22.4 6.4 23.4 5 25 3z"
+        fill="#F5A524"
+      />
+      <path
+        d="M25 5.6c.7 1 1.1 1.7 1.1 2.3a1.1 1.1 0 0 1-2.2 0c0-.6.4-1.3 1.1-2.3z"
+        fill="#FFE08A"
+      />
+    </svg>
+  );
+}

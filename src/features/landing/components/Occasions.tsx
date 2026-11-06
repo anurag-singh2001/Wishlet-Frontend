@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { templateRegistry } from "@/features/templates/registry";
+import { useActiveFestival } from "@/features/festivals/components/FestivalProvider";
 import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
 
 interface Occasion {
@@ -85,13 +86,16 @@ const OCCASIONS: Occasion[] = [
 
 export function Occasions(): React.JSX.Element {
   const config = useSiteConfig();
+  const festival = useActiveFestival();
   // Config decides which occasions show and in what order; icons stay local.
   const visible = config.occasions
     .map((c) => {
       const local = OCCASIONS.find((o) => o.id === c.id);
       return local ? { ...local, label: c.label || local.label } : null;
     })
-    .filter((o): o is Occasion => o !== null);
+    .filter((o): o is Occasion => o !== null)
+    // The active festival goes first.
+    .sort((a, b) => Number(b.id === festival?.id) - Number(a.id === festival?.id));
   const designCount = (id: string): number =>
     config.templates.filter((t) => t.occasion === id && templateRegistry[t.id]).length;
   const lastWide = visible.length % 2 === 1 ? visible.length - 1 : -1;

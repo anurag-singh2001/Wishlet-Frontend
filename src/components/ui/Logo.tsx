@@ -11,6 +11,8 @@ export interface LogoProps {
   appName?: string;
   /** Custom logo image replacing the built-in mark. */
   logoUrl?: string | null;
+  /** Replaces the built-in mark (e.g. a festive variant). Ignored when logoUrl is set. */
+  mark?: React.ReactNode;
 }
 
 export function Logo({
@@ -19,6 +21,7 @@ export function Logo({
   className,
   appName = "Wishlet",
   logoUrl,
+  mark,
 }: LogoProps): React.JSX.Element {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
@@ -32,6 +35,8 @@ export function Logo({
           className="rounded-[7px] object-contain"
           style={{ width: size, height: size }}
         />
+      ) : mark ? (
+        mark
       ) : (
         <svg
           width={size}

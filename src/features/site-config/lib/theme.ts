@@ -4,7 +4,7 @@ import type { Branding } from "../types";
 
 const HEX = /^#[0-9a-f]{6}$/i;
 
-function mix(hex: string, target: number, amount: number): string {
+export function mix(hex: string, target: number, amount: number): string {
   const n = parseInt(hex.slice(1), 16);
   const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) =>
     Math.round(c + (target - c) * amount),

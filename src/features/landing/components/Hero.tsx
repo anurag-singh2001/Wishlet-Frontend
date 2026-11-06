@@ -1,7 +1,13 @@
+"use client";
+
 import { Button } from "@/components/ui";
+import { useActiveFestival } from "@/features/festivals/components/FestivalProvider";
+import { FestiveHero } from "./FestiveHero";
 import { PhoneDemo } from "./PhoneDemo";
 
 export function Hero(): React.JSX.Element {
+  const festival = useActiveFestival();
+  if (festival) return <FestiveHero pack={festival} />;
   return (
     <section className="mx-auto flex max-w-[1200px] flex-col gap-6 px-5 pb-6 pt-7 md:flex-row md:items-center md:gap-14 md:px-8 md:pb-20 md:pt-14">
       <div className="flex flex-col gap-4 md:flex-1 md:gap-6">

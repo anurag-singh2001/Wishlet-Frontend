@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FestivalDecor } from "@/features/festivals/components/FestivalDecor";
 import { Button } from "@/components/ui";
 import { AppMark } from "@/features/site-config/components/AppMark";
 import { QuickStartOccasions } from "@/features/site-config/components/QuickStartOccasions";
@@ -8,8 +9,9 @@ import { AppRecentWishes } from "./AppRecentWishes";
 export default function AppHomePage(): React.JSX.Element {
   return (
     <main className="flex min-h-dvh flex-col bg-ground">
-      <header className="safe-top rounded-b-[28px] bg-brand text-white">
-        <div className="flex flex-col gap-4 px-5 pb-7 pt-6">
+      <header className="safe-top relative overflow-hidden rounded-b-[28px] bg-brand text-white">
+        <FestivalDecor />
+        <div className="relative flex flex-col gap-4 px-5 pb-7 pt-6">
           <AppMark />
           <h1 className="font-display text-[30px] font-extrabold leading-[1.1]">
             Who are we making smile today?
