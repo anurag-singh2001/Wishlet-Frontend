@@ -137,6 +137,28 @@ const SUGGESTIONS: Record<string, MessageSuggestion[]> = {
       text: "Happy Diwali! May your sweets be many, your calories be few and your crackers be the loudest on the street.",
     },
   ],
+  christmas: [
+    {
+      id: "christmas-1",
+      style: "Warm",
+      text: "Wishing you a Christmas full of warm lights, good food and the people you love most. Merry Christmas!",
+    },
+    {
+      id: "christmas-2",
+      style: "Short & sweet",
+      text: "Merry Christmas and a very happy New Year to you and your family.",
+    },
+    {
+      id: "christmas-3",
+      style: "Heartfelt",
+      text: "You make every season brighter. This Christmas I just wanted to say how grateful I am to have you. May your days be merry and your heart be full.",
+    },
+    {
+      id: "christmas-4",
+      style: "Funny",
+      text: "Merry Christmas! I told Santa you were good this year. Please don't make me a liar before the 25th.",
+    },
+  ],
 };
 
 export function suggestionsFor(occasion: string): MessageSuggestion[] {

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChristmasMark } from "../packs/christmas-mark";
 import { DiwaliMark } from "../packs/diwali-mark";
 import { useActiveFestival } from "./FestivalProvider";
 
@@ -13,5 +14,6 @@ export function FestivalMark({
 }): React.JSX.Element | null {
   const pack = useActiveFestival();
   if (pack?.id === "diwali") return <DiwaliMark size={size} onDark={onDark} />;
+  if (pack?.id === "christmas") return <ChristmasMark size={size} onDark={onDark} />;
   return null;
 }

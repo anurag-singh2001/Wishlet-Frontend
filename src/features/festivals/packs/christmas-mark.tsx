@@ -1,0 +1,21 @@
+const SPARKLE =
+  "M16 5 C16.5 11 21 15.5 27 16 C21 16.5 16.5 21 16 27 C15.5 21 11 16.5 5 16 C11 15.5 15.5 11 16 5Z";
+
+/** The ✨ mark wearing a small Santa hat. `onDark` drops the tile for use on the brand colour. */
+export function ChristmasMark({
+  size,
+  onDark = false,
+}: {
+  size: number;
+  onDark?: boolean;
+}): React.JSX.Element {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
+      {!onDark && <rect width="32" height="32" rx="7" fill="var(--color-brand)" />}
+      <path d={SPARKLE} fill="#fff" />
+      <path d="M19.5 9.5 L24 2.5 L29 8.5 Z" fill="#E33A4F" />
+      <rect x="18.5" y="8" width="11.5" height="2.8" rx="1.4" fill="#fff" />
+      <circle cx="24" cy="2.6" r="1.8" fill="#fff" />
+    </svg>
+  );
+}

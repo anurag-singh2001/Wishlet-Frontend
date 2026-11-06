@@ -27,6 +27,18 @@ const OCCASIONS: Occasion[] = [
     ),
   },
   {
+    id: "christmas",
+    label: "Christmas",
+    bg: "#FBE7EA",
+    stroke: "#9E1028",
+    icon: (
+      <>
+        <path d="M12 3l5 7h-3l4 6H6l4-6H7z" />
+        <path d="M12 16v4" />
+      </>
+    ),
+  },
+  {
     id: "birthday",
     label: "Birthday",
     bg: "#FFF1EC",

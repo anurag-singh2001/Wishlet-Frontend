@@ -1,7 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useActiveFestival } from "@/features/festivals/components/FestivalProvider";
+import { FESTIVAL_PACKS } from "@/features/festivals/registry";
 import { TemplateFrame } from "@/features/templates/components/TemplateFrame";
 
 interface Demo {
@@ -21,6 +23,15 @@ const DEMOS: Demo[] = [
     recipientName: "Meera",
     senderName: "Arjun",
     message: "May every diya you light bring joy, health and a year full of sweet surprises.",
+  },
+  {
+    id: "christmas-snowglobe",
+    label: "Christmas · Snow Globe",
+    occasion: "christmas",
+    recipientName: "Sara",
+    senderName: "Kabir",
+    message:
+      "Wishing you cosy nights, twinkling lights and a Christmas full of the people you love.",
   },
   {
     id: "birthday-minimal",
@@ -73,13 +84,22 @@ function Slide({ demo, width }: { demo: Demo; width: number }): React.JSX.Elemen
 
 export function PhoneDemo(): React.JSX.Element {
   const reduce = useReducedMotion();
+  const festival = useActiveFestival();
+  // Festival demos show only while their festival is live, and go first.
+  const demos = useMemo(
+    () =>
+      DEMOS.filter((d) => !(d.occasion in FESTIVAL_PACKS) || d.occasion === festival?.id).sort(
+        (a, b) => Number(b.occasion === festival?.id) - Number(a.occasion === festival?.id),
+      ),
+    [festival?.id],
+  );
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     if (reduce) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % DEMOS.length), INTERVAL_MS);
+    const t = setInterval(() => setIndex((i) => (i + 1) % demos.length), INTERVAL_MS);
     return () => clearInterval(t);
-  }, [reduce]);
+  }, [reduce, demos.length]);
 
   const [width, setWidth] = useState(220);
   useEffect(() => {
@@ -90,8 +110,9 @@ export function PhoneDemo(): React.JSX.Element {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  const demo = DEMOS[index];
-  const next = DEMOS[(index + 1) % DEMOS.length];
+  const current = index % demos.length;
+  const demo = demos[current];
+  const next = demos[(current + 1) % demos.length];
 
   return (
     <div className="relative flex flex-col items-center gap-3">
@@ -128,18 +149,18 @@ export function PhoneDemo(): React.JSX.Element {
         {demo.label}
       </p>
       <div className="relative flex items-center">
-        {DEMOS.map((d, i) => (
+        {demos.map((d, i) => (
           <button
             key={d.id}
             type="button"
             aria-label={`Show ${d.label} example`}
-            aria-current={i === index}
+            aria-current={i === current}
             onClick={() => setIndex(i)}
             className="flex h-8 w-8 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             <span
               className={`h-2 rounded-full transition-all ${
-                i === index ? "w-5 bg-brand" : "w-2 bg-hairline"
+                i === current ? "w-5 bg-brand" : "w-2 bg-hairline"
               }`}
             />
           </button>

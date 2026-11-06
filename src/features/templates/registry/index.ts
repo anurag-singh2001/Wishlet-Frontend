@@ -80,4 +80,11 @@ export const templateRegistry: Record<string, TemplateConfig> = {
     description: "Glowing diyas, a blooming rangoli and soft fireworks in a night sky.",
     component: lazy(() => import("../templates/diwali-diyas")),
   },
+  "christmas-snowglobe": {
+    id: "christmas-snowglobe",
+    name: "Snow Globe",
+    occasion: "christmas",
+    description: "A twinkling snow globe, falling snow and a little pine under the stars.",
+    component: lazy(() => import("../templates/christmas-snowglobe")),
+  },
 };

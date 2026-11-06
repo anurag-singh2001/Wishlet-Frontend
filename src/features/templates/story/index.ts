@@ -3,6 +3,7 @@ import { AnniversaryCinematicStory } from "./anniversary-cinematic";
 import { AnniversaryElegantStory } from "./anniversary-elegant";
 import { BirthdayMinimalStory } from "./birthday-minimal";
 import { BirthdayNeonStory } from "./birthday-neon";
+import { ChristmasSnowglobeStory } from "./christmas-snowglobe";
 import { CongratulationsCelebrationStory } from "./congratulations-celebration";
 import { CongratulationsGoldStory } from "./congratulations-gold";
 import { DiwaliDiyasStory } from "./diwali-diyas";
@@ -29,6 +30,7 @@ export const storyCards: Record<string, StoryCard> = {
   "congratulations-gold": CongratulationsGoldStory,
   "sorry-rain-to-sun": SorryRainToSunStory,
   "diwali-diyas": DiwaliDiyasStory,
+  "christmas-snowglobe": ChristmasSnowglobeStory,
 };
 
 export function getStoryCard(templateId: string): StoryCard {

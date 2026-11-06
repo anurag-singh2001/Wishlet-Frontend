@@ -13,6 +13,7 @@ export interface OccasionInfo {
 
 export const OCCASIONS: OccasionInfo[] = [
   { id: "diwali", label: "Diwali", tint: "#FFF0D6", properNoun: true, kind: "festival" },
+  { id: "christmas", label: "Christmas", tint: "#FBE7EA", properNoun: true, kind: "festival" },
   { id: "birthday", label: "Birthday", tint: "#FFF1EC" },
   { id: "anniversary", label: "Anniversary", tint: "#FDEBF3" },
   { id: "thank-you", label: "Thank you", tint: "#EAF7EF" },

@@ -7,6 +7,7 @@ import { useActiveFestival } from "./FestivalProvider";
 // One lazy chunk per pack; nothing loads when no festival is active.
 const DECOR: Record<string, ComponentType> = {
   diwali: dynamic(() => import("../packs/diwali-decor")),
+  christmas: dynamic(() => import("../packs/christmas-decor")),
 };
 
 /** Decorative overlay for the active festival; place inside a `relative overflow-hidden` box. */
