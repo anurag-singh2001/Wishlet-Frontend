@@ -45,12 +45,13 @@ export function FestivalsEditor({ initial }: { initial: CatalogOccasion[] }): Re
 
   return (
     <div className="flex flex-col gap-4">
-      <CoreOccasionList occasions={draft.filter((o) => o.kind === "core")} onChange={patch} />
       {draft
         .filter((o) => o.kind === "festival")
         .map((o) => (
           <FestivalCard key={o.id} occasion={o} onChange={(p) => patch(o.id, p)} />
         ))}
+      <CoreOccasionList occasions={draft.filter((o) => o.kind === "core")} onChange={patch} />
+
       <div className="sticky bottom-0 flex items-center gap-3 bg-ground py-3">
         <Button loading={save.isPending} onClick={onSave}>
           Save

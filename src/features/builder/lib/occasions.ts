@@ -7,10 +7,12 @@ export interface OccasionInfo {
   tint: string;
   /** Festivals keep their capital in sentences ("Pick a Diwali design"). */
   properNoun?: boolean;
+  /** Festivals default the builder to "Many people". Known before the API config loads. */
+  kind?: "core" | "festival";
 }
 
 export const OCCASIONS: OccasionInfo[] = [
-  { id: "diwali", label: "Diwali", tint: "#FFF0D6", properNoun: true },
+  { id: "diwali", label: "Diwali", tint: "#FFF0D6", properNoun: true, kind: "festival" },
   { id: "birthday", label: "Birthday", tint: "#FFF1EC" },
   { id: "anniversary", label: "Anniversary", tint: "#FDEBF3" },
   { id: "thank-you", label: "Thank you", tint: "#EAF7EF" },

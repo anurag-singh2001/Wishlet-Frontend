@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { SignInView } from "@/features/auth/SignInView";
 
 export const metadata = {
-  title: "Sign in | Wishlet",
+  title: "Sign in",
   description: "Sign in with Google to start creating wishes.",
   robots: { index: false },
 };

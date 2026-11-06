@@ -30,7 +30,7 @@ export function resolveConfig(config: SiteConfig, isFallback: boolean): Resolved
         tint: o.tint || local?.tint || "#EEF0FF",
         properNoun: local?.properNoun,
         badge: o.badge,
-        kind: o.kind ?? "core",
+        kind: o.kind ?? local?.kind ?? "core",
       };
     }),
     templates: config.templates.map((t) => ({

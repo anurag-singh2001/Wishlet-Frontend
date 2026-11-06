@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui";
 import { AuthGate } from "@/features/auth/AuthGate";
 
 export const metadata = {
-  title: "Create a Wish | Wishlet",
+  title: "Create a Wish",
   description: "Create a personalized, beautiful occasion page in seconds.",
 };
 
