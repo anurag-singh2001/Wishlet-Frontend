@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 24-25 fallback (no adaptive icons): flat background + inset vector. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_newyear_bg" />
+    <item>
+        <inset android:drawable="@drawable/ic_launcher_newyear_fg" android:inset="16.7%" />
+    </item>
+</layer-list>

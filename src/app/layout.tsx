@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { NativeBackButton } from "@/components/providers/NativeBackButton";
+import { AppIconSync } from "@/components/providers/AppIconSync";
 import { AppIntro } from "@/components/providers/AppIntro";
 import { NativeHomeRedirect } from "@/components/providers/NativeHomeRedirect";
 import { AuthProvider } from "@/features/auth/AuthProvider";
@@ -110,6 +111,7 @@ export default async function RootLayout({
           <QueryProvider>
             <ToastProvider>
               <AuthProvider>{children}</AuthProvider>
+              <AppIconSync />
             </ToastProvider>
           </QueryProvider>
           <FestivalStatusBar />
