@@ -1,7 +1,7 @@
 import { API_URL } from "@/lib/api";
 import { authHeaders } from "@/lib/auth-token";
 import type { Branding } from "@/features/site-config/types";
-import type { AdminConfig, AdminStats, AdminWishPage, Catalog } from "../types";
+import type { AdminConfig, AdminStats, AdminWishPage, Catalog, CatalogUpdate } from "../types";
 
 /** Throws Error("FORBIDDEN"|"UNAUTHORIZED") or Error(message from the API). */
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -28,7 +28,8 @@ export const getAdminConfig = (): Promise<AdminConfig> => request("/config");
 
 export const saveBranding = (b: Branding): Promise<Branding> => request("/config/branding", put(b));
 
-export const saveCatalog = (c: Catalog): Promise<Catalog> => request("/config/catalog", put(c));
+export const saveCatalog = (c: CatalogUpdate): Promise<Catalog> =>
+  request("/config/catalog", put(c));
 
 export function uploadLogo(file: File): Promise<{ url: string; publicId: string }> {
   const form = new FormData();

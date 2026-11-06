@@ -6,13 +6,13 @@ import { Card, Skeleton } from "@/components/ui";
 import { AuthGate } from "@/features/auth/AuthGate";
 import { useAdminConfig } from "../hooks/use-admin";
 import { BrandingTab } from "./BrandingTab";
-import { CatalogTab } from "./CatalogTab";
+import { FestivalsTab } from "./FestivalsTab";
 import { ModerationTab } from "./ModerationTab";
 import { OverviewTab } from "./OverviewTab";
 
 const TABS = [
   { id: "overview", label: "Overview" },
-  { id: "catalog", label: "Occasions & Templates" },
+  { id: "catalog", label: "Festivals" },
   { id: "branding", label: "Branding" },
   { id: "moderation", label: "Moderation" },
 ] as const;
@@ -21,7 +21,7 @@ type TabId = (typeof TABS)[number]["id"];
 
 function Panel({ tab }: { tab: TabId }): React.ReactElement {
   if (tab === "overview") return <OverviewTab />;
-  if (tab === "catalog") return <CatalogTab />;
+  if (tab === "catalog") return <FestivalsTab />;
   if (tab === "branding") return <BrandingTab />;
   return <ModerationTab />;
 }

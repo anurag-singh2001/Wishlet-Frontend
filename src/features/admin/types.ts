@@ -4,11 +4,14 @@ export interface CatalogOccasion {
   id: string;
   label: string;
   tint: string;
+  kind: "core" | "festival";
   enabled: boolean;
   order: number;
+  festiveLook: boolean;
   startsAt: string | null;
   endsAt: string | null;
   badge: string | null;
+  status: "off" | "scheduled" | "live" | "ended";
 }
 
 export interface CatalogTemplate {
@@ -23,6 +26,8 @@ export interface Catalog {
   occasions: CatalogOccasion[];
   templates: CatalogTemplate[];
 }
+
+export type CatalogUpdate = { occasions: Omit<CatalogOccasion, "kind" | "status">[] };
 
 export interface AdminConfig {
   branding: Branding;

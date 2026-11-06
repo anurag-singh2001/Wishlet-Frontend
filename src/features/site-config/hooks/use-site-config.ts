@@ -10,7 +10,8 @@ import type { Branding, SiteConfig } from "../types";
 
 export interface ResolvedSiteConfig {
   branding: Branding;
-  occasions: (OccasionInfo & { badge: string | null })[];
+  occasions: (OccasionInfo & { badge: string | null; kind: "core" | "festival" })[];
+  activeFestival: string | null;
   templates: ApiTemplate[];
   /** True while loading or when the API failed (bundled defaults are shown). */
   isFallback: boolean;
@@ -20,6 +21,7 @@ export function resolveConfig(config: SiteConfig, isFallback: boolean): Resolved
   return {
     branding: config.branding,
     isFallback,
+    activeFestival: config.activeFestival ?? null,
     occasions: config.occasions.map((o) => {
       const local = OCCASIONS.find((x) => x.id === o.id);
       return {
@@ -28,6 +30,7 @@ export function resolveConfig(config: SiteConfig, isFallback: boolean): Resolved
         tint: o.tint || local?.tint || "#EEF0FF",
         properNoun: local?.properNoun,
         badge: o.badge,
+        kind: o.kind ?? "core",
       };
     }),
     templates: config.templates.map((t) => ({

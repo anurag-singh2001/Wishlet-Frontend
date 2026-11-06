@@ -75,7 +75,11 @@ export function SuccessScreen({
           />
         </div>
         <h1 className="font-display text-[30px] font-extrabold text-ink">
-          {group ? "Your group wish is ready" : name ? `${name}'s wish is ready` : "Your wish is ready"}
+          {group
+            ? "Your group wish is ready"
+            : name
+              ? `${name}'s wish is ready`
+              : "Your wish is ready"}
         </h1>
         <p className="text-[15px] leading-normal text-[#4B4766]">
           Only people you send the link to can open it.

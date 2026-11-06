@@ -3,6 +3,7 @@ import { Field, Input } from "@/components/ui";
 import type { BuilderState } from "../types";
 
 const GROUP_LABELS = ["Everyone", "Friends & Family", "Team"];
+export const DEFAULT_GROUP_LABEL = GROUP_LABELS[1];
 
 interface AudienceFieldProps {
   state: BuilderState;
@@ -19,7 +20,7 @@ export function AudienceField({ state, error, update }: AudienceFieldProps): Rea
 
   const choose = (audience: "one" | "group"): void => {
     if (audience === (state.audience ?? "one")) return;
-    update({ audience, recipientName: audience === "group" ? GROUP_LABELS[1] : "" });
+    update({ audience, recipientName: audience === "group" ? DEFAULT_GROUP_LABEL : "" });
   };
 
   return (

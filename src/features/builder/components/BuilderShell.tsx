@@ -7,6 +7,7 @@ import { trackCreateWishStarted } from "@/lib/analytics";
 import { AnnouncementBanner } from "@/features/site-config/components/AnnouncementBanner";
 import { useSiteConfig } from "@/features/site-config/hooks/use-site-config";
 import { useGenerateWish } from "../hooks/use-generate-wish";
+import { DEFAULT_GROUP_LABEL } from "./AudienceField";
 import { DEFAULT_TEMPLATES, templatesFor } from "../lib/occasions";
 import { validateDetails } from "../lib/validation";
 import type { ApiTemplate, BuilderState, BuilderStep } from "../types";
@@ -33,6 +34,11 @@ const NEXT_LABEL: Record<BuilderStep, string> = {
   3: "Create my wish",
 };
 
+/** Festival wishes default to "Many people"; core occasions leave the mode untouched. */
+function audienceFor(kind: "core" | "festival" | undefined): Partial<BuilderState> {
+  return kind === "festival" ? { audience: "group", recipientName: DEFAULT_GROUP_LABEL } : {};
+}
+
 export function BuilderShell(): React.ReactElement {
   const searchParams = useSearchParams();
   const occasionParam = searchParams.get("occasion") ?? "";
@@ -47,7 +53,12 @@ export function BuilderShell(): React.ReactElement {
     const wanted = searchParams.get("template");
     const options = templatesFor(templates, occasionParam);
     const chosen = options.find((t) => t.id === wanted) ?? options[0];
-    return { ...INITIAL_STATE, occasion: occasionParam, templateId: chosen?.id ?? "" };
+    return {
+      ...INITIAL_STATE,
+      ...audienceFor(config.occasions.find((o) => o.id === occasionParam)?.kind),
+      occasion: occasionParam,
+      templateId: chosen?.id ?? "",
+    };
   });
   const [attempted, setAttempted] = useState(false);
   const [stepError, setStepError] = useState("");
@@ -72,7 +83,13 @@ export function BuilderShell(): React.ReactElement {
   const selectOccasion = (occasion: string): void => {
     const first = templatesFor(templates, occasion)[0];
     // Changing occasion always resets the design to that occasion's first template.
-    update({ occasion, templateId: first?.id ?? "" });
+    const kind = config.occasions.find((o) => o.id === occasion)?.kind;
+    // Festivals are usually sent to many people; core occasions keep what the user already chose.
+    update({
+      occasion,
+      templateId: first?.id ?? "",
+      ...(kind === "festival" && state.audience !== "group" ? audienceFor(kind) : {}),
+    });
     setStepError("");
   };
 

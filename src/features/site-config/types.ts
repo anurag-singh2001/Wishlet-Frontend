@@ -12,6 +12,7 @@ export interface ConfigOccasion {
   id: string;
   label: string;
   tint: string;
+  kind?: "core" | "festival";
   badge: string | null;
 }
 
@@ -28,4 +29,5 @@ export interface SiteConfig {
   branding: Branding;
   occasions: ConfigOccasion[];
   templates: ConfigTemplate[];
+  activeFestival?: string | null;
 }
