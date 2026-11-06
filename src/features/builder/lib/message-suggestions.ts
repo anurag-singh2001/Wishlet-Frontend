@@ -137,6 +137,28 @@ const SUGGESTIONS: Record<string, MessageSuggestion[]> = {
       text: "Happy Diwali! May your sweets be many, your calories be few and your crackers be the loudest on the street.",
     },
   ],
+  newyear: [
+    {
+      id: "newyear-1",
+      style: "Warm",
+      text: "Happy New Year! May this year bring you good health, new adventures and plenty of reasons to smile.",
+    },
+    {
+      id: "newyear-2",
+      style: "Short & sweet",
+      text: "Wishing you a bright, happy and peaceful New Year.",
+    },
+    {
+      id: "newyear-3",
+      style: "Heartfelt",
+      text: "Thank you for being part of my year. I hope the next one gives you everything you've been working for, and a little more. Happy New Year!",
+    },
+    {
+      id: "newyear-4",
+      style: "Funny",
+      text: "Happy New Year! May your resolutions last longer than your phone battery.",
+    },
+  ],
   christmas: [
     {
       id: "christmas-1",

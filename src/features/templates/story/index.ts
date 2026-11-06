@@ -7,6 +7,7 @@ import { ChristmasSnowglobeStory } from "./christmas-snowglobe";
 import { CongratulationsCelebrationStory } from "./congratulations-celebration";
 import { CongratulationsGoldStory } from "./congratulations-gold";
 import { DiwaliDiyasStory } from "./diwali-diyas";
+import { NewYearMidnightStory } from "./newyear-midnight";
 import { OccasionStory } from "./OccasionStory";
 import { SorryRainToSunStory } from "./sorry-rain-to-sun";
 import { SorrySincereStory } from "./sorry-sincere";
@@ -31,6 +32,7 @@ export const storyCards: Record<string, StoryCard> = {
   "sorry-rain-to-sun": SorryRainToSunStory,
   "diwali-diyas": DiwaliDiyasStory,
   "christmas-snowglobe": ChristmasSnowglobeStory,
+  "newyear-midnight": NewYearMidnightStory,
 };
 
 export function getStoryCard(templateId: string): StoryCard {

@@ -42,6 +42,7 @@ const STORY_FONTS: Record<string, StoryFontFamily[]> = {
   "sorry-rain-to-sun": [playfair],
   "diwali-diyas": [playfair, greatVibes],
   "christmas-snowglobe": [playfair, greatVibes],
+  "newyear-midnight": [playfair, bricolage],
 };
 
 /** Unknown templates get no custom fonts, so `next/og` uses its built-in default. */

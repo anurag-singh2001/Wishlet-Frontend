@@ -34,6 +34,14 @@ const DEMOS: Demo[] = [
       "Wishing you cosy nights, twinkling lights and a Christmas full of the people you love.",
   },
   {
+    id: "newyear-midnight",
+    label: "New Year · Midnight Sparkle",
+    occasion: "newyear",
+    recipientName: "Aisha",
+    senderName: "Rohan",
+    message: "Here's to new adventures, big laughs and everything you're hoping for this year.",
+  },
+  {
     id: "birthday-minimal",
     label: "Birthday · Minimal",
     occasion: "birthday",

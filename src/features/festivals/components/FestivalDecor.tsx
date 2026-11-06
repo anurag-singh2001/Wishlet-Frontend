@@ -8,6 +8,7 @@ import { useActiveFestival } from "./FestivalProvider";
 const DECOR: Record<string, ComponentType> = {
   diwali: dynamic(() => import("../packs/diwali-decor")),
   christmas: dynamic(() => import("../packs/christmas-decor")),
+  newyear: dynamic(() => import("../packs/newyear-decor")),
 };
 
 /** Decorative overlay for the active festival; place inside a `relative overflow-hidden` box. */
